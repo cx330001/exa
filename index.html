@@ -8047,26 +8047,44 @@ ${contextSummaryForApproval}
                     renderChatList(); 
                     continue; 
 
-                case 'change_music':
-                    if (musicState.isActive && musicState.activeChatId === chatId) {
-                        const songNameToFind = msgData.song_name;
-                        const targetSongIndex = musicState.playlist.findIndex(track => track.name.toLowerCase() === songNameToFind.toLowerCase());
-                        if (targetSongIndex > -1) {
-                            playSong(targetSongIndex);
-                            const track = musicState.playlist[targetSongIndex];
-                            const musicChangeMessage = {
-                                role: 'system',
-                                type: 'pat_message',
-                                content: `[♪ ${chat.name} 为你切歌: 《${track.name}》 - ${track.artist}]`,
-                                timestamp: Date.now()
-                            };
-                            chat.history.push(musicChangeMessage);
-                            if (isViewingThisChat) {
-                                appendMessage(musicChangeMessage, chat);
-                            }
-                        }
-                    }
-                    continue;
+//... inside triggerAiResponse() -> switch (msgData.type)
+
+case 'change_music':
+    if (musicState.isActive && musicState.activeChatId === chatId) {
+        
+        // --- ▼▼▼ 核心修改就在这里 ▼▼▼ ---
+
+        // 原始代码:
+        // const songNameToFind = msgData.song_name;
+        
+        // 优化后代码 (自动去除歌名前的序号和符号):
+        const songNameToFind = msgData.song_name.replace(/^\[?\d+\]?[\s.-]*/, '').trim();
+
+        // --- ▲▲▲ 修改结束 ▲▲▲
+
+        const targetSongIndex = musicState.playlist.findIndex(track => track.name.toLowerCase() === songNameToFind.toLowerCase());
+        
+        if (targetSongIndex > -1) {
+            playSong(targetSongIndex);
+            const track = musicState.playlist[targetSongIndex];
+            const musicChangeMessage = {
+                role: 'system',
+                type: 'pat_message',
+                content: `[♪ ${msgData.name} 为你切歌: 《${track.name}》 - ${track.artist}]`,
+                timestamp: Date.now()
+            };
+            chat.history.push(musicChangeMessage);
+            if (isViewingThisChat) {
+                appendMessage(musicChangeMessage, chat);
+            }
+        } else {
+            // (可选) 如果你想知道为什么没成功，可以加上这个日志
+            console.warn(`歌曲查找失败: AI请求的歌曲名"${msgData.song_name}"(处理后为"${songNameToFind}") 在播放列表中未找到。`);
+        }
+    }
+    continue;
+
+//...
 
                 case 'create_memory':
                     const newMemory = {
@@ -13607,6 +13625,7 @@ postsList.addEventListener('click', async (e) => {
         await renderQzonePosts();
         return;
     }
+//... inside postsList.addEventListener('click', ...)
     const sendBtn = target.closest('.comment-send-btn');
     if (sendBtn) {
         const postContainer = sendBtn.closest('.qzone-post-container');
@@ -13615,22 +13634,46 @@ postsList.addEventListener('click', async (e) => {
         const commentInput = postContainer.querySelector('.comment-input');
         const commentText = commentInput.value.trim();
         if (!commentText) return alert('评论内容不能为空哦！');
+        
         const post = await db.qzonePosts.get(postId);
         if (!post) return;
+
         if (!post.comments) post.comments = [];
         post.comments.push({ commenterName: state.qzoneSettings.nickname, text: commentText, timestamp: Date.now() });
         await db.qzonePosts.update(postId, { comments: post.comments });
+
+        // --- ▼▼▼ 核心修改就在这里 ▼▼▼ ---
+
+        // 1. 我们为AI准备一个更详细的上下文摘要
+        let postSummary = (post.publicText || post.content || '').substring(0, 30);
+        if (post.type === 'image_post' || post.type === 'text_image') {
+            postSummary += ` [图片描述: ${(post.imageDescription || post.hiddenContent || '无').substring(0, 40)}...]`;
+        }
+
+        // 2. 遍历所有非群聊的角色
         for (const chatId in state.chats) {
             const chat = state.chats[chatId];
             if (!chat.isGroup) {
-                chat.history.push({ role: 'system', content: `[系统提示：'${state.qzoneSettings.nickname}' 在ID为${postId}的动态下发表了评论：“${commentText}”]`, timestamp: Date.now(), isHidden: true });
+                // 3. 构建包含完整上下文的系统提示
+                const historyMessage = { 
+                    role: 'system', 
+                    // 这条提示现在告诉了AI是谁、评论了哪个动态、动态内容是什么、以及评论是什么
+                    content: `[系统提示：'${state.qzoneSettings.nickname}' 在你的动态(ID: ${postId}, 内容摘要: “${postSummary}”)下发表了评论：“${commentText}”。请你对此作出回应。]`, 
+                    timestamp: Date.now(), 
+                    isHidden: true 
+                };
+                chat.history.push(historyMessage);
                 await db.chats.put(chat);
             }
         }
+        
+        // --- ▲▲▲ 修改结束 ▲▲▲ ---
+
         commentInput.value = '';
         await renderQzonePosts();
         return;
     }
+    //... a lot of other logic
 });
 // ▲▲▲ 替换结束 ▲▲▲
 
