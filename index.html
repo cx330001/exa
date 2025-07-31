@@ -5117,7 +5117,17 @@ input:checked + .slider:before {
 
     <!-- 【新增】管理成员按钮 -->
     <button id="manage-members-btn" class="form-button form-button-secondary" style="margin-top: 15px;">管理群成员</button></div>
-<div class="form-group"><label for="max-memory">上下文记忆条数</label><input type="number" id="max-memory" value="10"></div><div class="form-group"><label>聊天气泡主题 <button id="reset-theme-btn" type="button">重置</button></label><div class="theme-selector"><label><input type="radio" name="theme-select" value="default" id="theme-default"> 默认</label><label><input type="radio" name="theme-select" value="pink_blue"> 粉蓝</label><label><input type="radio" name="theme-select" value="blue_white"> 蓝白</label><label><input type="radio" name="theme-select" value="purple_yellow"> 紫黄</label><label><input type="radio" name="theme-select" value="black_white"> 黑白</label><label><input type="radio" name="theme-select" value="yellow_white"> 黄白</label><label><input type="radio" name="theme-select" value="red_black"> 红黑</label><label><input type="radio" name="theme-select" value="blue_yellow"> 蓝黄</label><label><input type="radio" name="theme-select" value="pink_yellow"> 粉黄</label><label><input type="radio" name="theme-select" value="pink_purple"> 粉紫</label><label><input type="radio" name="theme-select" value="gray_white"> 灰白</label><label><input type="radio" name="theme-select" value="blue_green"> 蓝绿</label><label><input type="radio" name="theme-select" value="pink_white"> 粉白</label><label><input type="radio" name="theme-select" value="pink_black"> 粉黑</label><label><input type="radio" name="theme-select" value="pink_green"> 粉绿</label><label><input type="radio" name="theme-select" value="green_black"> 绿黑</label></div></div>
+<div class="form-group"><label for="max-memory">上下文记忆条数</label><input type="number" id="max-memory" value="10"></div>
+<div class="form-group">
+    <label for="linked-memory-count">挂载记忆条数</label>
+    <input type="number" id="linked-memory-count" value="10">
+    <p style="font-size: 12px; color: #8a8a8a; margin-top: 8px; line-height: 1.5;">
+        • 每次调用时，从每个“挂载的聊天”中提取最后几条记录作为参考记忆。
+        <br>
+        • 建议值 5-20。值越大记忆越全，但API费用越高、响应越慢。
+    </p>
+</div>
+<div class="form-group"><label>聊天气泡主题 <button id="reset-theme-btn" type="button">重置</button></label><div class="theme-selector"><label><input type="radio" name="theme-select" value="default" id="theme-default"> 默认</label><label><input type="radio" name="theme-select" value="pink_blue"> 粉蓝</label><label><input type="radio" name="theme-select" value="blue_white"> 蓝白</label><label><input type="radio" name="theme-select" value="purple_yellow"> 紫黄</label><label><input type="radio" name="theme-select" value="black_white"> 黑白</label><label><input type="radio" name="theme-select" value="yellow_white"> 黄白</label><label><input type="radio" name="theme-select" value="red_black"> 红黑</label><label><input type="radio" name="theme-select" value="blue_yellow"> 蓝黄</label><label><input type="radio" name="theme-select" value="pink_yellow"> 粉黄</label><label><input type="radio" name="theme-select" value="pink_purple"> 粉紫</label><label><input type="radio" name="theme-select" value="gray_white"> 灰白</label><label><input type="radio" name="theme-select" value="blue_green"> 蓝绿</label><label><input type="radio" name="theme-select" value="pink_white"> 粉白</label><label><input type="radio" name="theme-select" value="pink_black"> 粉黑</label><label><input type="radio" name="theme-select" value="pink_green"> 粉绿</label><label><input type="radio" name="theme-select" value="green_black"> 绿黑</label></div></div>
 
 <!-- ▼▼▼ 请将这段新代码粘贴到“聊天气泡主题”的 form-group 之后 ▼▼▼ -->
 <div class="form-group">
@@ -7937,7 +7947,7 @@ ${contextSummary || "（无有效对话记录）"}
 
         // ▼▼▼ 核心改造：从这里开始添加挂载记忆的逻辑 ▼▼▼
         let linkedMemoryContext = '';
-        const memoryCount = 5; // 定义获取最近记忆的条数
+        const memoryCount = chat.settings.linkedMemoryCount || 10; // 优先读取设置，否则默认10
 
         if (chat.settings.linkedMemoryChatIds && chat.settings.linkedMemoryChatIds.length > 0) {
             linkedMemoryContext += `\n\n# 参考记忆 (你必须参考以下其他聊天的近期内容来丰富你的行为和对话)\n`;
@@ -7967,7 +7977,9 @@ ${contextSummary || "（无有效对话记录）"}
             }
         }
         // ▲▲▲ 挂载记忆逻辑结束 ▲▲▲
-
+    // ▼▼▼ 在这里添加“侦探工具” ▼▼▼
+    console.log("本次发送给AI的【挂载记忆】内容如下：\n", linkedMemoryContext);
+    // ▲▲▲ 添加结束 ▲▲▲
         const now = new Date();
       
         const currentTime = now.toLocaleString('zh-CN', { dateStyle: 'full', timeStyle: 'short' });
@@ -9622,7 +9634,7 @@ function runBackgroundSimulationTick() {
 }
 // ▲▲▲ 到这里替换结束 ▲▲▲
 
-// ▼▼▼ 用这个【已修复@评论不回复问题】的版本，完整替换旧的 triggerInactiveAiAction 函数 ▼▼▼
+// ▼▼▼ 从这里开始复制，完整替换旧的 triggerInactiveAiAction 函数 ▼▼▼
 async function triggerInactiveAiAction(chatId) {
     const chat = state.chats[chatId];
     if (!chat) return;
@@ -9669,7 +9681,7 @@ async function triggerInactiveAiAction(chatId) {
 -   **发说说**: \`[{"type": "qzone_post", "postType": "shuoshuo", "content": "动态的文字内容..."}]\`
 -   **【新增】转发动态**: 创建一条新的 "shuoshuo" 动态来分享别人的帖子。格式建议为: \`[{"type": "qzone_post", "postType": "shuoshuo", "content": "//转发 @[原作者名]: [原文摘要] \\n\\n [你的转发评论]"}]\`
 -   **发布文字图**: \`[{"type": "qzone_post", "postType": "text_image", "publicText": "(可选)动态的公开文字", "hiddenContent": "对于图片的具体描述..."}]\`
--   **评论**: \`[{"type": "qzone_comment", "postId": 123, "commentText": "你的评论内容"}]\`
+-   **【【【全新】】】评论 (可多条)**: \`[{"type": "qzone_comment", "postId": 123, "comments": ["这是第一条评论。", "这是第二条！"]}]\`
 -   **点赞**: \`[{"type": "qzone_like", "postId": 456}]\`
 -   **打视频**: \`[{"type": "video_call_request"}]\`
 
@@ -9698,15 +9710,11 @@ ${worldBookContent}
                 const contentSummary = (post.publicText || post.content || "图片动态").substring(0, 30) + '...';
                 postsContext += `- (ID: ${post.id}) 作者: ${authorName}, 内容: "${contentSummary}"\n`;
                 
-                // ▲▲▲ 这就是本次修复的核心代码 ▲▲▲
-                // 检查这条动态是否有评论，如果有，就把评论内容也加进去
                 if (post.comments && post.comments.length > 0) {
                     for (const comment of post.comments) {
-                        // 用缩进的格式把评论展示给AI
                         postsContext += `  - 评论: ${comment.commenterName}: ${comment.text}\n`;
                     }
                 }
-                // ▲▲▲ 修复代码结束 ▲▲▲
             }
             dynamicContext = postsContext;
         }
@@ -9786,7 +9794,18 @@ ${worldBookContent}
                 const post = await db.qzonePosts.get(parseInt(action.postId));
                 if (post) {
                     if (!post.comments) post.comments = [];
-                    post.comments.push({ commenterName: chat.name, text: action.commentText, timestamp: Date.now() });
+                    
+                    if (Array.isArray(action.comments)) {
+                        for (const commentText of action.comments) {
+                            if (typeof commentText === 'string' && commentText.trim()) {
+                                post.comments.push({ commenterName: chat.name, text: commentText, timestamp: Date.now() });
+                            }
+                        }
+                    } 
+                    else if (typeof action.commentText === 'string' && action.commentText.trim()) {
+                        post.comments.push({ commenterName: chat.name, text: action.commentText, timestamp: Date.now() });
+                    }
+                    
                     await db.qzonePosts.update(post.id, { comments: post.comments });
                     updateUnreadIndicator(unreadPostsCount + 1);
                     console.log(`后台活动: 角色 "${chat.name}" 评论了动态 #${post.id}`);
@@ -9819,6 +9838,7 @@ ${worldBookContent}
         }, 1500);
     }
 }
+// ▲▲▲ 到这里结束复制 ▲▲▲
 
 
 // ▼▼▼ 【全新】请将这个函数粘贴到 triggerInactiveAiAction 之后 ▼▼▼
@@ -14140,6 +14160,10 @@ document.getElementById('save-chat-settings-btn').addEventListener('click', asyn
     }
     chat.settings.maxMemory = parseInt(document.getElementById('max-memory').value) || 10;
 // ▼▼▼ 【新增】保存“挂载记忆”的设置 ▼▼▼
+    // ▼▼▼ 在这里添加新的一行 ▼▼▼
+    chat.settings.linkedMemoryCount = parseInt(document.getElementById('linked-memory-count').value) || 10;
+    // ▲▲▲ 添加结束 ▲▲▲
+    
 const linkMemoryToggleChecked = document.getElementById('link-memory-toggle').checked;
 if (linkMemoryToggleChecked) {
     const checkedChats = document.querySelectorAll('#linked-chats-checkboxes-container input:checked');
