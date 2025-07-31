@@ -4180,6 +4180,217 @@ input:checked + .slider:before {
     /* 其他样式将复用 .at-mention-popup 的现有样式 */
 }
 /* ▲▲▲ 新样式粘贴结束 ▲▲▲ */
+/* ▼▼▼ 【全新】群公告板弹窗样式 ▼▼▼ */
+#announcement-board-modal .modal-content {
+    height: 70%;
+    background-color: #f0f2f5;
+}
+#announcement-board-content {
+    padding: 15px;
+    flex-grow: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* 公告之间的间距 */
+}
+#announcement-board-content .message-wrapper {
+    max-width: 100%; /* 让公告消息可以撑满宽度 */
+    align-self: center;
+}
+#announcement-board-content .timestamp {
+    display: none; /* 公告板内不显示时间戳 */
+}
+/* ▲▲▲ 新CSS粘贴结束 ▲▲▲ */
+/* ▼▼▼ 【全新】公告板卡片管理样式 ▼▼▼ */
+.announcement-item-wrapper {
+    position: relative; /* 为了定位操作按钮 */
+    padding: 10px;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+.announcement-item-actions {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 20px;
+    font-weight: bold;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 5px;
+    line-height: 1;
+    border-radius: 50%;
+}
+.announcement-item-actions:hover {
+    background-color: #f0f0f0;
+}
+.pinned-indicator {
+    position: absolute;
+    top: -8px;
+    left: -8px;
+    width: 28px;
+    height: 28px;
+    background-color: #ffc107;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    border: 2px solid white;
+}
+/* ▲▲▲ 新CSS粘贴结束 ▲▲▲ */
+/* ▼▼▼ 【全新】转发功能样式 ▼▼▼ */
+
+/* 1. 转发后的动态，内嵌的原始内容容器 */
+.reposted-content-wrapper {
+    background-color: #f7f7f8;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 10px;
+    margin-top: 10px;
+}
+
+/* 在夜间模式下，为内嵌容器提供一个深色背景 */
+#phone-screen.dark-mode .reposted-content-wrapper {
+    background-color: #2c2c2e;
+    border-color: #38383a;
+}
+
+/* 2. 移除内嵌原始内容的底部互动区，避免混淆 */
+.reposted-content-wrapper .post-footer,
+.reposted-content-wrapper .post-feedback-icons,
+.reposted-content-wrapper .post-likes-section {
+    display: none;
+}
+
+/* 3. 让内嵌内容的头部信息稍微紧凑一些 */
+.reposted-content-wrapper .post-header {
+    margin-bottom: 8px;
+}
+.reposted-content-wrapper .post-avatar {
+    width: 32px;
+    height: 32px;
+}
+.reposted-content-wrapper .post-nickname {
+    font-size: 14px;
+}
+/* ▲▲▲ 新CSS粘贴结束 ▲▲▲ */
+/* ▼▼▼ 【再次替换】 AI心率显示样式 (标题下方居中) ▼▼▼ */
+#ai-heart-rate-display {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 10px; /* 调整这个数值，控制心率显示框与标题的垂直距离 */
+
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #ff8fab;
+    background-color: rgba(255, 255, 255, 0.7);
+    padding: 3px 8px;
+    border-radius: 10px;
+    z-index: 20;
+    transition: all 0.3s ease;
+}
+
+#phone-screen.dark-mode #ai-heart-rate-display {
+    background-color: rgba(0, 0, 0, 0.2);
+    color: #ff99b5;
+}
+
+#ai-heart-rate-display .heart-icon {
+    font-size: 14px;
+}
+/* ▲▲▲ 替换结束 ▲▲▲ */
+/* ▼▼▼ 【全新】共享位置卡片样式 (微信风格) ▼▼▼ */
+.message-bubble.is-location-share .content {
+    padding: 0;
+    background: transparent;
+    box-shadow: none;
+    border: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+}
+
+/* 卡片总容器，负责圆角和阴影 */
+.location-share-card {
+    width: 230px;
+    border-radius: 10px;
+    overflow: hidden; /* 关键：让子元素的直角被裁剪成圆角 */
+    background-color: #fff;
+    border: 1px solid #f0f0f0;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+}
+
+/* 上半部分：白色文字区 */
+.card-text-area {
+    padding: 12px;
+    border-bottom: 1px solid #f0f0f0; /* 文字区和地图区的分割线 */
+}
+
+.card-text-primary {
+    font-size: 16px;
+    font-weight: 600;
+    color: #222;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.card-text-secondary {
+    font-size: 12px;
+    color: #a0a0a0;
+}
+
+/* 下半部分：彩色地图区 */
+.card-map-area {
+    height: 80px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #FFF0F5; /* AI的卡片用柔和粉色 */
+}
+
+/* 用户发送的卡片，地图区用柔和绿色 */
+.message-bubble.user .location-share-card .card-map-area {
+    background-color: #F0FFF8;
+}
+
+.card-pin-icon {
+    font-size: 40px;
+    color: #FFB6C1; /* 粉色背景配深粉色图标 */
+}
+
+/* 用户卡片的绿色背景，配一个和谐的绿色图标 */
+.message-bubble.user .location-share-card .card-pin-icon {
+    color: #A8D8B9; 
+}
+/* ▲▲▲ 新CSS粘贴结束 ▲▲▲ */
+/* ▼▼▼ 【全新】AI 角色行动呼吸灯效果 ▼▼▼ */
+@keyframes breathing-light {
+    0% {
+        box-shadow: 0 0 6px rgba(0, 123, 255, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 18px 4px rgba(0, 123, 255, 0.8);
+    }
+    100% {
+        box-shadow: 0 0 6px rgba(0, 123, 255, 0.4);
+    }
+}
+
+.chat-list-item .avatar.is-acting {
+    /* 核心：应用呼吸灯动画 */
+    animation: breathing-light 2s ease-in-out infinite;
+    /* (可选) 同时添加一个常亮的边框，让效果更明显 */
+    border: 1.5px solid rgba(0, 123, 255, 0.7);
+}
+/* ▲▲▲ 新样式粘贴结束 ▲▲▲ */
     </style>
 </head>
 <body>
@@ -4503,7 +4714,13 @@ input:checked + .slider:before {
 
     <div class="header">
         <div class="default-controls">
-            <span class="back-btn" id="back-to-list-btn">‹</span>
+    <span class="back-btn" id="back-to-list-btn">‹</span>
+    
+    <div id="ai-heart-rate-display" style="display: none;">
+        <span class="heart-icon">❤️</span>
+        <span class="heart-rate-value">85</span>
+        <span class="bpm-unit">bpm</span>
+    </div>
             <div id="chat-header-title-wrapper">
                 <span id="chat-header-title">聊天对象</span>
                 <div id="chat-header-status">
@@ -4511,8 +4728,9 @@ input:checked + .slider:before {
                     <span class="status-text">在线</span>
                 </div>
             </div>
-            <div class="header-actions">
+<div class="header-actions">
                 <span class="action-btn" id="listen-together-btn" title="一起听"><img src="https://i.postimg.cc/dV8sdNcx/210-20250618115221.png" alt="一起听"></span>
+
                 <span class="action-btn" id="chat-settings-btn" title="聊天设置"><img src="https://i.postimg.cc/bvPq64cv/CCA834-BA-5-A90-408-D-94-FA-7-EE156-B6-A765.png" alt="设置"></span>
             </div>
         </div>
@@ -4547,8 +4765,12 @@ input:checked + .slider:before {
             <button id="send-waimai-request-btn" class="chat-action-icon-btn action-button" title="发起外卖请求"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg></button>
             <button id="video-call-btn" class="chat-action-icon-btn action-button" title="视频通话"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg></button>
             <button id="group-video-call-btn" class="chat-action-icon-btn action-button" title="群视频通话"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg></button>
+<button id="share-location-btn" class="chat-action-icon-btn action-button" title="共享位置"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg></button>
             <button id="send-poll-btn" class="chat-action-icon-btn action-button" title="发起投票"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h10"></path><path d="M6 6h.01"></path><path d="M8 12h10"></path><path d="M6 12h.01"></path><path d="M8 18h10"></path><path d="M6 18h.01"></path></svg></button>
             <button id="share-link-btn" class="chat-action-icon-btn action-button" title="分享链接"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.72"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.72-1.72"></path></svg></button>
+<button id="show-announcement-board-btn" class="chat-action-icon-btn action-button" title="群公告板" style="display: none;">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M21.782 6.132a1 1 0 0 0-1.053-.08l-4.729 2.489a1 1 0 0 0-.5.88v4.158a1 1 0 0 0 .5.88l4.729 2.489a1 1 0 0 0 1.053-.08a1 1 0 0 0 .499-.921V7.052a1 1 0 0 0-.499-.92zm-6 3.207L11 7.05v9.9l4.782-2.281V9.339zM10 6H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h6V6z"/></svg>
+</button>
         </div>
         <div id="chat-input-main-row">
             <textarea id="chat-input" rows="1" placeholder="输入消息..."></textarea>
@@ -4827,7 +5049,17 @@ input:checked + .slider:before {
     </div>
     <!-- ▲▲▲ 新代码粘贴结束 ▲▲▲ -->
 
-<div class="form-group" id="my-group-nickname-group"><label for="my-group-nickname-input">我的群昵称</label><input type="text" id="my-group-nickname-input"></div><div class="form-group" id="group-avatar-group"><label>群头像</label><div class="avatar-upload"><img id="group-avatar-preview"><button onclick="document.getElementById('group-avatar-input').click()">上传群头像</button><input type="file" id="group-avatar-input" accept="image/*"></div></div>
+<div class="form-group" id="my-group-nickname-group"><label for="my-group-nickname-input">我的群昵称</label><input type="text" id="my-group-nickname-input"></div>
+
+<div class="form-group" id="group-avatar-group">
+    <label>群头像</label>
+    <div class="avatar-upload">
+        <img id="group-avatar-preview">
+        <button onclick="document.getElementById('group-avatar-input').click()">上传群头像</button>
+        <button id="manage-group-avatar-library-btn">管理头像库</button>
+        <input type="file" id="group-avatar-input" accept="image/*">
+    </div>
+</div>
             <div class="form-group" id="world-book-link-group">
                 <label>关联世界书 (可多选)</label>
                 <div class="custom-multiselect">
@@ -4839,6 +5071,27 @@ input:checked + .slider:before {
                     </div>
                 </div>
             </div>
+
+<div class="form-group" id="ai-heart-rate-group">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+        <label for="ai-heart-rate-toggle" style="margin-bottom: 0;">显示AI心率</label>
+        <label class="toggle-switch">
+            <input type="checkbox" id="ai-heart-rate-toggle">
+            <span class="slider"></span>
+        </label>
+    </div>
+    <div id="ai-heart-rate-options" style="display: none;">
+        <label for="ai-heart-rate-personality">性格基础心率</label>
+        <select id="ai-heart-rate-personality">
+            <option value="custom">自定义</option>
+            <option value="shy">害羞型 (85bpm)</option>
+            <option value="calm">冷静型 (65bpm)</option>
+            <option value="passionate">热血型 (88bpm)</option>
+        </select>
+        <input type="number" id="ai-heart-rate-baseline" placeholder="自定义基础心率 (bpm)" style="margin-top: 8px;">
+    </div>
+</div>
+
 <div class="form-group" id="linked-memory-group">
     <label for="link-memory-toggle">挂载其他聊天记忆</label>
     <input type="checkbox" id="link-memory-toggle" style="width: auto; height: 20px; vertical-align: middle; margin-left: 10px;">
@@ -5070,6 +5323,7 @@ input:checked + .slider:before {
             <button id="edit-message-btn">编辑消息</button>
             <button id="copy-message-btn">复制文本</button>
             <button id="recall-message-btn">撤回</button>
+<button id="publish-to-announcement-btn" style="display: none;">发布到公告板</button>
 <button id="quote-message-btn">引用</button>
             <button id="select-message-btn">进入多选</button>
             <!-- 取消按钮 -->
@@ -5108,6 +5362,18 @@ input:checked + .slider:before {
         <div class="modal-footer">
             <button class="cancel" id="cancel-advanced-editor-btn">取消</button>
             <button class="save" id="save-advanced-editor-btn">保存更改</button>
+        </div>
+    </div>
+</div>
+<div id="repost-modal" class="modal">
+    <div id="custom-modal" style="width: 280px;">
+        <div class="custom-modal-header">转发动态</div>
+        <div class="custom-modal-body">
+            <textarea id="repost-comment-input" placeholder="请输入转发评论 (可选)" style="width: 100%; min-height: 60px; resize: vertical; border: 1px solid #ccc; border-radius: 6px; padding: 8px; font-size: 14px; box-sizing: border-box;"></textarea>
+        </div>
+        <div class="custom-modal-footer">
+            <button id="repost-cancel-btn">取消</button>
+            <button id="repost-confirm-btn" class="confirm-btn">确定</button>
         </div>
     </div>
 </div>
@@ -5288,7 +5554,29 @@ input:checked + .slider:before {
 </div>
 
 <!-- ▲▲▲ 新HTML粘贴结束 ▲▲▲ -->
-
+<div id="group-avatar-library-modal" class="modal">
+    <div class="modal-content" style="height: 70%;">
+        <div class="modal-header">
+            <span id="group-avatar-library-title">群头像库</span>
+            <button id="add-group-avatar-btn" class="action-button">添加</button>
+        </div>
+        <div class="modal-body" style="padding: 15px;">
+            <div id="group-avatar-library-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 15px;">
+                </div>
+        </div>
+        <div class="modal-footer">
+            <button class="save" id="close-group-avatar-library-btn" style="width: 100%;">关闭</button>
+        </div>
+    </div>
+</div>
+<div id="chat-list-actions-modal" class="modal">
+    <div id="custom-modal" style="width: 250px;">
+        <div class="custom-modal-footer">
+            <button id="chat-list-action-pin"></button> <button id="chat-list-action-delete" class="btn-danger">删除聊天</button>
+            <button id="chat-list-action-cancel" style="margin-top: 8px; border-radius: 8px; background-color: #f0f0f0;">取消</button>
+        </div>
+    </div>
+</div>
 <!-- ▼▼▼ 【全新】用户分享链接模态框 ▼▼▼ -->
 <div id="share-link-modal" class="modal">
     <div class="modal-content" style="width: 300px; height: auto;">
@@ -5410,9 +5698,32 @@ input:checked + .slider:before {
     </div>
 </div>
 <!-- ▲▲▲ 新HTML粘贴结束 ▲▲▲ -->
+<div id="announcement-board-modal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span>群公告板</span>
+        </div>
+        <div id="announcement-board-content">
+            </div>
+        <div class="modal-footer">
+            <button class="save" id="close-announcement-board-btn" style="width: 100%;">关闭</button>
+        </div>
+    </div>
+</div>
+<div id="announcement-actions-modal" class="modal">
+    <div id="custom-modal" style="width: 250px;">
+        <div class="custom-modal-footer">
+            <button id="announcement-action-pin">置顶公告</button>
+            <button id="announcement-action-delete" class="btn-danger">删除公告</button>
+            <button id="announcement-action-cancel" style="margin-top: 8px; border-radius: 8px; background-color: #f0f0f0;">取消</button>
+        </div>
+    </div>
+</div>
 
 <script>
-
+// ... 位于 <script> 标签顶部 ...
+let heartRateTimers = {}; // 用于统一管理每个聊天的“恢复计时器”和“波动计时器”
+// ...
         const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models'
     // gemini如果是多个密钥, 那么随机获取一个
     function getRandomValue(str) {
@@ -5544,7 +5855,7 @@ const DEFAULT_APP_ICONS = {
     'font': 'https://i.postimg.cc/pXxk1JXk/IMG-6442.jpg'
 };
 // ▲▲▲ 添加结束 ▲▲▲
-
+let repostTargetId = null; // 用于存储当前要转发的动态ID
         const STICKER_REGEX = /^(https:\/\/i\.postimg\.cc\/.+|https:\/\/files\.catbox\.moe\/.+|data:image)/;
         const MESSAGE_RENDER_WINDOW = 50;
         let currentRenderedCount = 0;
@@ -5796,7 +6107,7 @@ db.version(23).stores({
             }
         }
 
-// ▼▼▼ 请用这个【已集成@功能】的版本，完整替换掉旧的 renderQzonePosts 函数 ▼▼▼
+// ▼▼▼ 请用这个【已集成转发功能】的版本，完整替换旧的 renderQzonePosts 函数 ▼▼▼
 async function renderQzonePosts() {
     const postsListEl = document.getElementById('qzone-posts-list');
     if (!postsListEl) return;
@@ -5807,7 +6118,7 @@ async function renderQzonePosts() {
     ]);
 
     const favoritedPostIds = new Set(favorites.map(fav => fav.content.id));
-    
+
     postsListEl.innerHTML = '';
 
     if (posts.length === 0) {
@@ -5838,35 +6149,67 @@ async function renderQzonePosts() {
             authorAvatar = defaultAvatar;
             authorNickname = '{{char}}';
         }
-        
-        let contentHtml = '';
-        const publicTextHtml = post.publicText ? `<div class="post-content">${post.publicText.replace(/\n/g, '<br>')}</div>` : '';
 
-        if (post.type === 'shuoshuo') {
-            contentHtml = `<div class="post-content" style="margin-bottom: 10px;">${post.content.replace(/\n/g, '<br>')}</div>`;
-        } 
-        else if (post.type === 'image_post' && post.imageUrl) {
-            contentHtml = publicTextHtml ? `${publicTextHtml}<div style="margin-top:10px;"><img src="${post.imageUrl}" class="chat-image"></div>` : `<img src="${post.imageUrl}" class="chat-image">`;
-        } 
-        else if (post.type === 'text_image') {
-            contentHtml = publicTextHtml ? `${publicTextHtml}<div style="margin-top:10px;"><img src="https://i.postimg.cc/KYr2qRCK/1.jpg" class="chat-image" style="cursor: pointer;" data-hidden-text="${post.hiddenContent}"></div>` : `<img src="https://i.postimg.cc/KYr2qRCK/1.jpg" class="chat-image" style="cursor: pointer;" data-hidden-text="${post.hiddenContent}">`;
+        // 【核心修改1】创建用于渲染动态内容的辅助函数
+        function renderOriginalPostContent(targetPost) {
+            let innerContentHtml = '';
+            const publicTextHtml = targetPost.publicText ? `<div class="post-content">${targetPost.publicText.replace(/\n/g, '<br>')}</div>` : '';
+
+            if (targetPost.type === 'shuoshuo') {
+                innerContentHtml = `<div class="post-content" style="margin-bottom: 10px;">${targetPost.content.replace(/\n/g, '<br>')}</div>`;
+            } else if (targetPost.type === 'image_post' && targetPost.imageUrl) {
+                innerContentHtml = publicTextHtml ? `${publicTextHtml}<div style="margin-top:10px;"><img src="${targetPost.imageUrl}" class="chat-image"></div>` : `<img src="${targetPost.imageUrl}" class="chat-image">`;
+            } else if (targetPost.type === 'text_image') {
+                innerContentHtml = publicTextHtml ? `${publicTextHtml}<div style="margin-top:10px;"><img src="https://i.postimg.cc/KYr2qRCK/1.jpg" class="chat-image" style="cursor: pointer;" data-hidden-text="${targetPost.hiddenContent}"></div>` : `<img src="https://i.postimg.cc/KYr2qRCK/1.jpg" class="chat-image" style="cursor: pointer;" data-hidden-text="${targetPost.hiddenContent}">`;
+            }
+            return innerContentHtml;
+        }
+
+        let mainContentHtml;
+
+        if (post.type === 'repost') {
+            // 如果是转发动态
+            const repostCommentHtml = post.repostComment ? `<div class="post-content">${post.repostComment.replace(/\n/g, '<br>')}</div>` : '';
+
+            let originalAuthorAvatar = defaultAvatar;
+            let originalAuthorNickname = '原作者';
+
+            if (post.originalPost.authorId === 'user') {
+                originalAuthorAvatar = state.qzoneSettings.avatar;
+                originalAuthorNickname = state.qzoneSettings.nickname;
+            } else if (state.chats[post.originalPost.authorId]) {
+                originalAuthorAvatar = state.chats[post.originalPost.authorId].settings.aiAvatar;
+                originalAuthorNickname = state.chats[post.originalPost.authorId].name;
+            }
+
+            mainContentHtml = `
+                ${repostCommentHtml}
+                <div class="reposted-content-wrapper">
+                    <div class="post-header">
+                        <img src="${originalAuthorAvatar}" class="post-avatar">
+                        <div class="post-info">
+                            <span class="post-nickname">@${originalAuthorNickname}</span>
+                            <span class="post-timestamp">${formatPostTimestamp(post.originalPost.timestamp)}</span>
+                        </div>
+                    </div>
+                    <div class="post-main-content">${renderOriginalPostContent(post.originalPost)}</div>
+                </div>
+            `;
+        } else {
+            // 如果是原创动态
+            mainContentHtml = `<div class="post-main-content">${renderOriginalPostContent(post)}</div>`;
         }
 
         let likesHtml = '';
         if (post.likes && post.likes.length > 0) {
             likesHtml = `<div class="post-likes-section"><svg class="like-icon" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg><span>${post.likes.join('、')} 觉得很赞</span></div>`;
         }
-        
+
         let commentsHtml = '';
         if (post.comments && post.comments.length > 0) {
             commentsHtml = '<div class="post-comments-container">';
             post.comments.forEach((comment, index) => {
-                commentsHtml += `
-                    <div class="comment-item">
-                        <span class="commenter-name">${comment.commenterName}:</span>
-                        <span class="comment-text">${comment.text}</span>
-                        <span class="comment-delete-btn" data-comment-index="${index}">×</span>
-                    </div>`;
+                commentsHtml += `<div class="comment-item"><span class="commenter-name">${comment.commenterName}:</span><span class="comment-text">${comment.text}</span><span class="comment-delete-btn" data-comment-index="${index}">×</span></div>`;
             });
             commentsHtml += '</div>';
         }
@@ -5875,12 +6218,28 @@ async function renderQzonePosts() {
         const isLikedByUser = post.likes && post.likes.includes(userNickname);
         const isFavoritedByUser = favoritedPostIds.has(post.id);
 
+        // 【核心修改2】为非转发动态添加转发图标
+        let repostIconHtml = '';
+        if (post.type !== 'repost') {
+            repostIconHtml = `
+                <span class="action-icon repost">
+                    <svg viewBox="0 0 24 24"><path d="M17 2.1l4 4-4 4 M3 11.5v-3a4 4 0 0 1 4-4h13 M7 21.9l-4-4 4-4 M21 12.5v3a4 4 0 0 1-4 4H4"></path></svg>
+                </span>`;
+        }
+
+        // ▼▼▼ 找到下面这行 postEl.innerHTML 的赋值语句 ▼▼▼
         postEl.innerHTML = `
-            <div class="post-header"><img src="${authorAvatar}" class="post-avatar"><div class="post-info"><span class="post-nickname">${authorNickname}</span><span class="post-timestamp">${formatPostTimestamp(post.timestamp)}</span></div>
+            <div class="post-header">
+                <img src="${authorAvatar}" class="post-avatar" data-author-id="${post.authorId}">
+                <div class="post-info">
+                    <span class="post-nickname">${authorNickname}</span>
+                    <span class="post-timestamp">${formatPostTimestamp(post.timestamp)}</span>
+                </div>
                 <div class="post-actions-btn">…</div>
             </div>
-            <div class="post-main-content">${contentHtml}</div>
+            ${mainContentHtml}
             <div class="post-feedback-icons">
+                ${repostIconHtml}
                 <span class="action-icon like ${isLikedByUser ? 'active' : ''}"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg></span>
                 <span class="action-icon favorite ${isFavoritedByUser ? 'active' : ''}"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg></span>
             </div>
@@ -5888,7 +6247,7 @@ async function renderQzonePosts() {
             ${commentsHtml}
             <div class="post-footer"><div class="comment-section"><img src="${commentAvatar}" class="comment-avatar"><input type="text" class="comment-input" placeholder="友善的评论是交流的起点"><div class="at-mention-popup"></div></div><button class="comment-send-btn">发送</button></div>
         `;
-        
+
         const deleteAction = document.createElement('div');
         deleteAction.className = 'qzone-post-delete-action';
         deleteAction.innerHTML = '<span>删除</span>';
@@ -5900,12 +6259,60 @@ async function renderQzonePosts() {
             commentSection.addEventListener('mousedown', (e) => e.stopPropagation());
         }
         postsListEl.appendChild(postContainer);
-        
-
     });
 }
 // ▲▲▲ 替换结束 ▲▲▲
-             
+// ▼▼▼ 【全新】这三个函数是转发功能的核心，请将它们粘贴到JS功能函数定义区 ▼▼▼
+
+/**
+ * 打开转发评论的模态框
+ * @param {number} postId - 要转发的动态的ID
+ */
+function openRepostModal(postId) {
+    repostTargetId = postId;
+    document.getElementById('repost-comment-input').value = ''; // 清空输入框
+    document.getElementById('repost-modal').classList.add('visible');
+}
+
+/**
+ * 隐藏转发模态框
+ */
+function hideRepostModal() {
+    document.getElementById('repost-modal').classList.remove('visible');
+    repostTargetId = null;
+}
+
+/**
+ * 处理确认转发的逻辑
+ */
+async function handleConfirmRepost() {
+    if (!repostTargetId) return;
+
+    const comment = document.getElementById('repost-comment-input').value.trim();
+    const originalPost = await db.qzonePosts.get(repostTargetId);
+
+    if (!originalPost) {
+        alert("错误：找不到要转发的原始动态。");
+        hideRepostModal();
+        return;
+    }
+
+    const newPost = {
+        type: 'repost', // 标记为转发类型
+        timestamp: Date.now(),
+        authorId: 'user', // 转发者永远是当前用户
+        repostComment: comment,
+        originalPost: originalPost, // 将原始动态完整地嵌入新动态中
+        visibleGroupIds: null // 转发的动态默认对所有人可见
+    };
+
+    await db.qzonePosts.add(newPost);
+    hideRepostModal();
+    await renderQzonePosts();
+    alert('转发成功！');
+}
+
+// ▲▲▲ 新函数粘贴结束 ▲▲▲             
 // ▼▼▼ 请用下面这个【更新后的】函数，完整替换掉你代码中旧的 displayFilteredFavorites 函数 ▼▼▼
 
 function displayFilteredFavorites(items) {
@@ -6297,7 +6704,13 @@ async function loadAllDataFromDB() {
         console.log(`为旧角色 "${chat.name}" 补全了aiAvatarLibrary属性。`);
     }
     // ▲▲▲ 添加结束 ▲▲▲
-
+// ▼▼▼ 在这里添加 ▼▼▼
+if (chat.isGroup && (!chat.settings || !chat.settings.groupAvatarLibrary)) {
+    if (!chat.settings) chat.settings = {}; // 以防万一连settings都没有
+    chat.settings.groupAvatarLibrary = [];
+    console.log(`为旧群聊 "${chat.name}" 补全了groupAvatarLibrary属性。`);
+}
+// ▲▲▲ 添加结束 ▲▲▲
         if (!chat.musicData) chat.musicData = { totalTime: 0 };
         if (chat.settings && chat.settings.linkedWorldBookId && !chat.settings.linkedWorldBookIds) {
             chat.settings.linkedWorldBookIds = [chat.settings.linkedWorldBookId];
@@ -6578,31 +6991,48 @@ else if (!chat.isGroup && chat.relationship?.status === 'blocked_by_ai') {
         infoEl.addEventListener('click', () => openChat(chat.id));
     }
 
-// 在 createChatListItem 函数内部
+// ▼▼▼ 用这块【新代码】完整替换 createChatListItem 函数末尾的 addLongPressListener ▼▼▼
 addLongPressListener(item, async (e) => {
-    // ▼▼▼ 用这整块代码替换旧的长按逻辑 ▼▼▼
-    const action = await showCustomConfirm(
-        `操作 "${chat.name}"`, 
-        `你想对这个聊天做什么？`,
-        { confirmText: chat.isPinned ? '取消置顶' : '置顶聊天', cancelText: '删除' }
-    );
+    // 1. 调用我们新的、清晰的操作菜单
+    const action = await showChatListActions(chat);
 
-    if (action === true) { // 点击了主按钮（置顶/取消置顶）
-        chat.isPinned = !chat.isPinned;
-        await db.chats.put(chat);
-        renderChatList(); // 重新渲染列表以应用排序
-    } else if (action === false) { // 点击了次要按钮（删除）
-        const deleteConfirmed = await showCustomConfirm('删除对话', `确定要删除与 "${chat.name}" 的整个对话吗？此操作不可撤销。`, { confirmButtonClass: 'btn-danger' });
-        if (deleteConfirmed) {
-            if (musicState.isActive && musicState.activeChatId === chat.id) await endListenTogetherSession(false);
-            delete state.chats[chat.id];
-            if (state.activeChatId === chat.id) state.activeChatId = null;
-            await db.chats.delete(chat.id);
-            renderChatList();
-        }
+    // 2. 使用 switch 语句清晰地处理用户的选择
+    switch (action) {
+        case 'pin':
+            // 用户点击了“置顶”或“取消置顶”
+            chat.isPinned = !chat.isPinned;
+            await db.chats.put(chat);
+            renderChatList(); // 重新渲染列表以应用新排序
+            break;
+            
+        case 'delete':
+            // 用户点击了“删除”，现在我们再弹出最终确认框
+            const deleteConfirmed = await showCustomConfirm(
+                '删除对话', 
+                `确定要删除与 "${chat.name}" 的整个对话吗？此操作不可撤销。`, 
+                { confirmButtonClass: 'btn-danger' }
+            );
+            
+            // 如果最终确认了，才执行删除操作
+            if (deleteConfirmed) {
+                if (musicState.isActive && musicState.activeChatId === chat.id) {
+                    await endListenTogetherSession(false);
+                }
+                delete state.chats[chat.id];
+                if (state.activeChatId === chat.id) {
+                    state.activeChatId = null;
+                }
+                await db.chats.delete(chat.id);
+                renderChatList();
+            }
+            break;
+
+        default:
+            // 用户点击了“取消”或关闭了菜单，什么也不做
+            break;
     }
-    // ▲▲▲ 替换结束 ▲▲▲
 });
+// ▲▲▲ 替换结束 ▲▲▲
     return item;
 }
 
@@ -6611,6 +7041,18 @@ function renderChatInterface(chatId) {
     cleanupWaimaiTimers();
     const chat = state.chats[chatId];
     if (!chat) return;
+    // ▼▼▼ 【核心修改】在这里启动/停止心率功能 ▼▼▼
+    clearHeartRateTimers(chatId); // 无论如何，先清理旧的计时器
+    const heartRateDisplay = document.getElementById('ai-heart-rate-display');
+    if (chat.settings.aiHeartRate?.enabled && !chat.isGroup) {
+        heartRateDisplay.style.display = 'flex';
+        // 设置初始值为基准值，然后启动波动
+        heartRateDisplay.querySelector('.heart-rate-value').textContent = chat.settings.aiHeartRate.baseline || 65;
+        startHeartRateFluctuation(chatId); // 启动自然波动
+    } else {
+        heartRateDisplay.style.display = 'none';
+    }
+    // ▲▲▲ 修改结束 ▲▲▲
     exitSelectionMode();
     
     const messagesContainer = document.getElementById('chat-messages');
@@ -6978,7 +7420,25 @@ else if (msg.type === 'share_card') {
         </div>
     `;
 }
-
+// ▼▼▼ 在这里粘贴下面的新代码块 ▼▼▼
+else if (msg.type === 'location_share') {
+    bubble.classList.add('is-location-share');
+    
+    contentHtml = `
+        <div class="location-share-card">
+            <div class="card-text-area">
+                <div class="card-text-primary">${msg.content}</div>
+                <div class="card-text-secondary">共享实时位置</div>
+            </div>
+            <div class="card-map-area">
+                <div class="card-pin-icon">
+                    <svg width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 11.5C11.1716 11.5 10.5 10.8284 10.5 10C10.5 9.17157 11.1716 8.5 12 8.5C12.8284 8.5 13.5 9.17157 13.5 10C13.5 10.8284 12.8284 11.5 12 11.5Z"></path><path d="M12 2C7.92134 2 4.5 5.42134 4.5 9.5C4.5 14.5312 11.2188 21.4375 11.5938 21.8125C11.7954 22.014 12.2046 22.014 12.4062 21.8125C12.7812 21.4375 19.5 14.5312 19.5 9.5C19.5 5.42134 16.0787 2 12 2ZM12 12.5C10.6193 12.5 9.5 11.3807 9.5 10C9.5 8.61929 10.6193 7.5 12 7.5C13.3807 7.5 14.5 8.61929 14.5 10C14.5 11.3807 13.3807 12.5 12 12.5Z"></path></svg>
+                </div>
+            </div>
+        </div>
+    `;
+}
+// ▲▲▲ 新代码块粘贴结束 ▲▲▲
     else if (msg.type === 'user_photo' || msg.type === 'ai_image') {
         bubble.classList.add('is-ai-image');
         const altText = msg.type === 'user_photo' ? "用户描述的照片" : "AI生成的图片";
@@ -7306,7 +7766,9 @@ async function openChat(chatId) {
     showScreen('chat-interface-screen');
     window.updateListenTogetherIconProxy(state.activeChatId);
     toggleCallButtons(chat.isGroup || false);    
-
+// ▼▼▼ 在这里新增 ▼▼▼
+document.getElementById('show-announcement-board-btn').style.display = chat.isGroup ? 'flex' : 'none';
+// ▲▲▲ 新增结束 ▲▲▲
     if (!chat.isGroup && chat.relationship?.status === 'pending_ai_approval') {
         console.log(`检测到好友申请待处理状态，为角色 "${chat.name}" 自动触发AI响应...`);
         triggerAiResponse();
@@ -7321,20 +7783,60 @@ async function openChat(chatId) {
 
 
 
+// ▼▼▼ 【全新】请将这个“总开关”函数粘贴到JS功能区 ▼▼▼
+/**
+ * 【全新】设置指定角色所有可见头像的“行动中”状态（呼吸灯总开关）
+ * @param {string} chatId - 目标角色的ID
+ * @param {boolean} isActing - 是否设置为“行动中”状态
+ */
+function setAvatarActingState(chatId, isActing) {
+    const action = isActing ? 'add' : 'remove';
+    const classListAction = (element) => {
+        if (element) {
+            element.classList[action]('is-acting');
+        }
+    };
+
+    // 1. 控制【聊天列表】中的头像
+    const listAvatar = document.querySelector(`.chat-list-item[data-chat-id="${chatId}"] .avatar`);
+    classListAction(listAvatar);
+
+    // 2. 控制【动态页面】中所有属于该角色的头像
+    const qzoneAvatars = document.querySelectorAll(`.post-avatar[data-author-id="${chatId}"]`);
+    qzoneAvatars.forEach(classListAction);
+
+    // 3. 控制【视频通话界面】中的头像 (未来兼容)
+    const callAvatar = document.querySelector(`.participant-avatar[data-participant-id="${chatId}"]`);
+    classListAction(callAvatar);
+
+    // 未来如果还有其他地方显示头像，只需在这里补充选择器即可
+}
+// ▲▲▲ 新函数粘贴结束 ▲▲▲
 
 
 
 
 
 
-// ▼▼▼ 用下面这个【没有任何省略、可以直接替换】的完整函数，替换掉您代码里旧的 triggerAiResponse 函数 ▼▼▼
+
+// ▼▼▼ 用这个【已集成呼吸灯功能】的版本，完整替换旧的 triggerAiResponse 函数 ▼▼▼
 async function triggerAiResponse() {
     if (!state.activeChatId) return;
     const chatId = state.activeChatId;
     const chat = state.chats[state.activeChatId];
-
+    // ▼▼▼ 【核心修改】调用新的“总开关”函数来点亮所有相关头像 ▼▼▼
+    setAvatarActingState(chatId, true);
+    // ▲▲▲ 修改结束 ▲▲▲
     const chatHeaderTitle = document.getElementById('chat-header-title');
     const typingIndicator = document.getElementById('typing-indicator');
+
+    // ▼▼▼ 新增代码：获取头像元素并添加呼吸灯效果 ▼▼▼
+    const chatListItem = document.querySelector(`.chat-list-item[data-chat-id="${chatId}"]`);
+    const avatarInList = chatListItem ? chatListItem.querySelector('.avatar') : null;
+    if (avatarInList) {
+        avatarInList.classList.add('is-acting');
+    }
+    // ▲▲▲ 新增结束 ▲▲▲
 
     if (chat.isGroup) {
         if (typingIndicator) {
@@ -7467,6 +7969,7 @@ ${contextSummary || "（无有效对话记录）"}
         // ▲▲▲ 挂载记忆逻辑结束 ▲▲▲
 
         const now = new Date();
+      
         const currentTime = now.toLocaleString('zh-CN', { dateStyle: 'full', timeStyle: 'short' });
         let worldBookContent = '';
         if (chat.settings.linkedWorldBookIds && chat.settings.linkedWorldBookIds.length > 0) {
@@ -7549,12 +8052,43 @@ ${formattedHistory}
 ---
 `;
         }
+if (chat.isGroup) {
+        const membersList = chat.members.map(m => `- **${m.originalName}**: ${m.persona}`).join('\n');
+        const myNickname = chat.settings.myNickname || '我';
 
-        if (chat.isGroup) {
-            const membersList = chat.members.map(m => `- **${m.originalName}**: ${m.persona}`).join('\n');
-            const myNickname = chat.settings.myNickname || '我';
-            
-            systemPrompt = `你是一个群聊AI，负责扮演【除了用户以外】的所有角色。
+        // ▼▼▼ 在这里新增公告注入逻辑 ▼▼▼
+        let announcementContext = '';
+        const pinnedAnnouncements = (chat.announcements || []).filter(a => a.isPinned);
+        if (pinnedAnnouncements.length > 0) {
+            announcementContext += '\n# 【【【群公告 (最高优先级规则)】】】\n你【必须】阅读、理解并严格遵守以下所有公告，它们凌驾于你的人设之上。\n';
+            pinnedAnnouncements.forEach(anno => {
+                const originalMessage = chat.history.find(m => m.timestamp === anno.messageTimestamp);
+                if (originalMessage) {
+                    let contentText = String(originalMessage.content || '');
+                    if (originalMessage.type === 'ai_image') {
+                        contentText = `[图片内容: ${contentText}]`;
+                    }
+                    announcementContext += `- 公告内容: "${contentText}" (由 ${anno.publisher} 发布)\n`;
+                }
+            });
+            announcementContext += '---\n';
+        }
+        // ▲▲▲ 新增逻辑结束 ▲▲▲
+// ▼▼▼ 请用这【一整块新代码】完整替换旧的 group systemPrompt 相关定义 ▼▼▼
+
+// 1. 【新增】准备一个包含所有成员名的“禁用名”列表
+const memberNames = chat.members.map(m => m.originalName);
+const forbiddenNamesContext = `# 【【【群名修改铁律】】】\n在修改群名时，新的群名【绝对不能】与以下任何一个群成员的名字完全相同：[${memberNames.join('、 ')}]`;
+
+// 2. 准备头像库的文本 (这段代码保持不变，只是移动了位置)
+let groupAvatarLibraryContext = '# 可用群头像列表\n';
+if (chat.settings.groupAvatarLibrary && chat.settings.groupAvatarLibrary.length > 0) {
+    groupAvatarLibraryContext += chat.settings.groupAvatarLibrary.map(avatar => `- ${avatar.name}`).join('\n');
+} else {
+    groupAvatarLibraryContext += '- (头像库是空的，无法更换头像)';
+}
+
+systemPrompt = `你是一个群聊AI，负责扮演【除了用户以外】的所有角色。
 # 核心规则
 1.  **【【【身份铁律】】】**: 用户的身份是【${myNickname}】。你【绝对、永远、在任何情况下都不能】生成 \`name\` 字段为 **"${myNickname}"** 或 **"${chat.name}"(群聊名称本身)** 的消息。你的唯一任务是扮演且仅能扮演下方“群成员列表”中明确列出的角色。任何不属于该列表的名字都不允许出现。
 2.  **【【【输出格式】】】**: 你的回复【必须】是一个JSON数组格式的字符串。数组中的【每一个元素都必须是一个带有 "type" 和 "name" 字段的JSON对象】。
@@ -7568,6 +8102,7 @@ ${formattedHistory}
     - 如果提示是**用户投了票**，你可以根据自己的性格决定是否也使用 "vote" 指令跟票。
     - 如果提示是**投票已结束**，你应该根据投票结果发表你的看法或评论。
     - 你也可以随时主动发起投票。
+8. **群组管理**: 你可以根据对话发展，适时地修改群名或群头像来反映群聊的氛围或主题。
 ## 你可以使用的操作指令 (JSON数组中的元素):
 -   **发送文本**: \`{"type": "text", "name": "角色名", "message": "文本内容"}\`
 -   **【【【全新】】】发送后立刻撤回 (动画效果)**: \`{"type": "send_and_recall", "name": "角色名", "content": "你想让角色说出后立刻消失的话"}\`
@@ -7582,9 +8117,12 @@ ${formattedHistory}
 -   **发专属红包**: \`{"type": "red_packet", "packetType": "direct", "name": "你的角色名", "amount": 5.20, "receiver": "接收者角色名", "greeting": "给你的~"}\`
 -   **打开红包**: \`{"type": "open_red_packet", "name": "你的角色名", "packet_timestamp": (你想打开的红包消息的时间戳)}\`
 -   **【新】发送系统消息**: \`{"type": "system_message", "content": "你想在聊天中显示的系统文本"}\` 
+-   **【全新】共享位置**: \`{"type": "location_share", "name": "角色名", "content": "你想分享的位置名"}\`
 -   **【【【全新】】】发起投票**: \`{"type": "poll", "name": "你的角色名", "question": "投票的问题", "options": "选项A\\n选项B\\n选项C"}\` (重要提示：options字段是一个用换行符 \\n 分隔的字符串，不是数组！)
 -   **【【【全新】】】参与投票**: \`{"type": "vote", "name": "你的角色名", "poll_timestamp": (投票消息的时间戳), "choice": "你选择的选项文本"}\`
 - **【全新】引用回复**: \`{"type": "quote_reply", "target_timestamp": (你想引用的消息的时间戳), "reply_content": "你的回复内容"}\` (提示：每条历史消息的开头都提供了 \`(Timestamp: ...)\`，请使用它！)
+-   **修改群名**: \`{"type": "change_group_name", "name": "你的角色名", "new_name": "新的群聊名称"}\`
+-   **修改群头像**: \`{"type": "change_group_avatar", "name": "你的角色名", "avatar_name": "头像名"}\` (头像名必须从下面的“可用群头像列表”中选择)
 # 如何区分图片与表情:
 -   **图片 (ai_image)**: 指的是【模拟真实相机拍摄的照片】，比如风景、自拍、美食等。指令: \`{"type": "ai_image", "description": "图片的详细文字描述..."}\`
 -   **表情 (sticker)**: 指的是【卡通或梗图】，用于表达情绪。
@@ -7593,15 +8131,22 @@ ${formattedHistory}
 2.  **响应请求**: 当历史记录中出现【其他成员】发起的 "waimai_request" 请求时，你可以根据自己扮演的角色的性格和与发起人的关系，决定是否为Ta买单。
 3.  **响应方式**: 如果你决定买单，你【必须】使用以下指令：\`{"type": "waimai_response", "name": "你的角色名", "status": "paid", "for_timestamp": (被代付请求的原始时间戳)}\`
 4.  **【【【至关重要】】】**: 一旦历史记录中出现了针对某个代付请求的【任何一个】"status": "paid" 的响应（无论是用户支付还是其他角色支付），就意味着该订单【已经完成】。你【绝对不能】再对【同一个】订单发起支付。你可以选择对此事发表评论，但不能再次支付。
+${forbiddenNamesContext} // <-- 在这里注入了新的群名修改规则
+# 当前群聊信息
+- **群名称**: ${chat.name}
 ${worldBookContent}
 ${musicContext}
 ${sharedContext} 
 ${linkedMemoryContext}
+${groupAvatarLibraryContext} 
+
+
 # 群成员列表及人设
 ${membersList}
 # 用户的角色
 - **${myNickname}**: ${chat.settings.myPersona}
 现在，请根据以上所有规则和下方的对话历史，继续这场群聊。`;
+// ▲▲▲ 替换结束 ▲▲▲
             
             messagesPayload = historySlice.map(msg => {
                 const sender = msg.role === 'user' ? myNickname : msg.senderName;
@@ -7616,6 +8161,12 @@ ${membersList}
                 else if (msg.type === 'ai_image') content = `[${sender} 发送了一张图片]`;
                 else if (msg.type === 'voice_message') content = `[${sender} 发送了一条语音，内容是：'${msg.content}']`;
                 else if (msg.type === 'transfer') content = `[${msg.senderName} 向 ${msg.receiverName} 转账 ${msg.amount}元, 备注: ${msg.note}]`;
+// ▼▼▼ 在这里粘贴下面的新代码块 ▼▼▼
+                else if (msg.type === 'location_share') {
+                    content = `[${sender} 分享了Ta的位置：'${msg.content}']`;
+// ▲▲▲ 新代码块粘贴结束 ▲▲▲
+
+                } 
                 else if (msg.type === 'waimai_request') {
                     if(msg.status === 'paid') {
                         content = `[系统提示：${msg.paidBy} 为 ${sender} 的外卖订单支付了 ${msg.amount} 元。此订单已完成。]`;
@@ -7651,7 +8202,7 @@ ${chat.settings.aiPersona}
     - **当我们在“一起听歌”时**，你会知道当前播放的歌曲和整个播放列表。你可以根据对话内容或氛围，【主动切换】到播放列表中的另一首歌。
 5.  **【新】更新状态**: 你可以在对话中【自然地】改变你的状态。比如，聊到一半你可能会说“我先去洗个澡”，然后更新你的状态。
 6.  **【【【最终手段】】】**: 只有在对话让你的角色感到不适、被冒犯或关系破裂时，你才可以使用 \`block_user\` 指令。这是一个非常严肃的操作，会中断你们的对话。
-7. **后台行为**: 你有几率在回复聊天内容的同时，执行一些“后台”操作来表现你的独立生活（发动态、评论、点赞）。
+7. **后台行为**: 你有几率在回复聊天内容的同时，执行一些“后台”操作来表现你的独立生活（发动态、评论、点赞、转发）。
 # 你的头像库
 - 你可以根据对话内容或你的心情，从下面的头像库中选择一个新头像来更换。
 - **可用头像列表 (请从以下名称中选择一个)**:
@@ -7676,7 +8227,9 @@ ${chat.settings.aiAvatarLibrary && chat.settings.aiAvatarLibrary.length > 0
 - **【新】发起视频通话**: \`{"type": "video_call_request"}\`
 - **【新】回应视频通话-接受**: \`{"type": "video_call_response", "decision": "accept"}\`
 - **【新】回应视频通话-拒绝**: \`{"type": "video_call_response", "decision": "reject"}\`
+- **【全新】共享位置**: \`{"type": "location_share", "content": "你想分享的位置名"}\`
 - **发布说说**: \`{"type": "qzone_post", "postType": "shuoshuo", "content": "动态的文字内容..."}\`
+- **【新增】转发动态**: 创建一条新的 "shuoshuo" 动态来分享你看到的、觉得有趣的帖子。格式建议为: \`[{"type": "qzone_post", "postType": "shuoshuo", "content": "//转发 @[原作者名]: [原文摘要] \\n\\n [你的转发评论]"}]\`
 - **发布文字图**: \`{"type": "qzone_post", "postType": "text_image", "publicText": "(可选)动态的公开文字", "hiddenContent": "对于图片的具体描述..."}\`
 - **评论动态**: \`{"type": "qzone_comment", "postId": 123, "commentText": "@作者名 这太有趣了！"}\`
 - **点赞动态**: \`{"type": "qzone_like", "postId": 456}\`
@@ -8014,7 +8567,15 @@ ${contextSummaryForApproval}
                     }
                     renderChatList(); 
                     continue; 
-
+// ▼▼▼ 在这里添加新代码 ▼▼▼
+                case 'location_share':
+                    aiMessage = {
+                        ...baseMessage,
+                        type: 'location_share',
+                        content: msgData.content
+                    };
+                    break;
+                // ▲▲▲ 新代码添加结束 ▲▲▲
 //... inside triggerAiResponse() -> switch (msgData.type)
 
 case 'change_music':
@@ -8276,7 +8837,73 @@ case 'change_music':
                     }
                     continue;
                 }
+// ▼▼▼ 将这【一整块新代码】粘贴到 switch (msgData.type) 的内部 ▼▼▼
 
+// ▼▼▼ 用这块【新代码】替换旧的 'change_group_name' case ▼▼▼
+case 'change_group_name':
+    if (chat.isGroup && msgData.new_name) {
+        const newName = msgData.new_name.trim();
+        const memberNames = chat.members.map(m => m.originalName);
+
+        // --- 【核心安全校验】---
+        // 检查新群名是否与任何成员的“本名”相同
+        if (memberNames.includes(newName)) {
+            // 如果相同，就在控制台打印一个警告，并阻止这个操作
+            console.warn(`AI (${msgData.name}) 试图将群名更改为成员名 ("${newName}")。操作已被程序阻止。`);
+            // 使用 continue 跳过本次循环，不执行后续的改名逻辑
+            continue; 
+        }
+        // --- 安全校验结束 ---
+
+        // 如果校验通过，才执行正常的改名逻辑
+        chat.name = newName; 
+
+        const systemMessage = {
+            role: 'system',
+            type: 'pat_message',
+            content: `${msgData.name} 将群名修改为 “${chat.name}”`,
+            timestamp: messageTimestamp++
+        };
+        chat.history.push(systemMessage);
+
+        if (isViewingThisChat) {
+            appendMessage(systemMessage, chat);
+            document.getElementById('chat-header-title').textContent = chat.name;
+        }
+    }
+    continue;
+// ▲▲▲ 替换结束 ▲▲▲
+
+case 'change_group_avatar':
+    if (chat.isGroup && msgData.avatar_name) {
+        const avatarName = msgData.avatar_name;
+        const library = chat.settings.groupAvatarLibrary || [];
+        // 从头像库中查找AI指定的头像
+        const foundAvatar = library.find(avatar => avatar.name === avatarName);
+
+        if (foundAvatar) {
+            // 如果找到了，就使用它的URL
+            chat.settings.groupAvatar = foundAvatar.url;
+            
+            const systemMessage = {
+                role: 'system',
+                type: 'pat_message',
+                content: `${msgData.name} 更换了群头像`,
+                timestamp: messageTimestamp++
+            };
+            chat.history.push(systemMessage);
+
+            if (isViewingThisChat) {
+                appendMessage(systemMessage, chat);
+            }
+        } else {
+            // 如果没找到，可以在控制台打印一个警告，方便调试
+            console.warn(`AI 尝试使用一个不存在的群头像: "${avatarName}"`);
+        }
+    }
+    continue; // 同样是管理操作，继续循环
+
+// ▲▲▲ 新代码粘贴结束 ▲▲▲
                 case 'system_message':
                     aiMessage = { role: 'system', type: 'pat_message', content: msgData.content, timestamp: Date.now() };
                     break;
@@ -8434,6 +9061,11 @@ case 'change_music':
             renderChatInterface(chatId);
         }
     } finally {
+        // ▼▼▼ 【核心修改】调用新的“总开关”函数来熄灭所有相关头像 ▼▼▼
+        setAvatarActingState(chatId, false);
+        // ▲▲▲ 修改结束 ▲▲▲
+
+       
         if (chat.isGroup) {
             if (typingIndicator) {
                 typingIndicator.style.display = 'none';
@@ -8461,7 +9093,34 @@ case 'change_music':
         async function sendSticker(sticker) { if (!state.activeChatId) return; const chat = state.chats[state.activeChatId]; const msg = { role: 'user', content: sticker.url, meaning: sticker.name, timestamp: Date.now() }; chat.history.push(msg); await db.chats.put(chat); appendMessage(msg, chat); renderChatList(); document.getElementById('sticker-panel').classList.remove('visible'); }
 
         async function sendUserTransfer() { if (!state.activeChatId) return; const amountInput = document.getElementById('transfer-amount'); const noteInput = document.getElementById('transfer-note'); const amount = parseFloat(amountInput.value); const note = noteInput.value.trim(); if (isNaN(amount) || amount < 0 || amount > 9999) { alert('请输入有效的金额 (0 到 9999 之间)！'); return; } const chat = state.chats[state.activeChatId]; const senderName = chat.isGroup ? (chat.settings.myNickname || '我') : '我'; const receiverName = chat.isGroup ? '群聊' : chat.name; const msg = { role: 'user', type: 'transfer', amount: amount, note: note, senderName, receiverName, timestamp: Date.now() }; chat.history.push(msg); await db.chats.put(chat); appendMessage(msg, chat); renderChatList(); document.getElementById('transfer-modal').classList.remove('visible'); amountInput.value = ''; noteInput.value = ''; }
+// ▼▼▼ 【全新】请将这个函数粘贴到JS功能函数定义区 ▼▼▼
+/**
+ * 发送一个位置共享卡片
+ */
+async function sendLocationShare() {
+    if (!state.activeChatId) return;
 
+    // 弹出输入框，让用户直接输入
+    const locationName = await showCustomPrompt("共享位置", "你现在在哪里呀？", "");
+
+    // 如果用户输入了有效内容
+    if (locationName && locationName.trim()) {
+        const chat = state.chats[state.activeChatId];
+        const msg = {
+            role: 'user',
+            type: 'location_share',
+            content: locationName.trim(), // `content` 字段存储位置名
+            timestamp: Date.now()
+        };
+        
+        // 保存并更新UI
+        chat.history.push(msg);
+        await db.chats.put(chat);
+        appendMessage(msg, chat);
+        renderChatList();
+    }
+}
+// ▲▲▲ 新函数粘贴结束 ▲▲▲
         function enterSelectionMode(initialMsgTimestamp) { if (isSelectionMode) return; isSelectionMode = true; document.getElementById('chat-interface-screen').classList.add('selection-mode'); toggleMessageSelection(initialMsgTimestamp); }
 
         function exitSelectionMode() {
@@ -8917,65 +9576,63 @@ function stopBackgroundSimulation() {
 /**
  * 这是模拟器的“心跳”，每次定时器触发时运行
  */
+// ▼▼▼ 从这里开始替换 ▼▼▼
+/**
+ * 这是模拟器的“心跳”，每次定时器触发时运行
+ */
 function runBackgroundSimulationTick() {
     console.log("模拟器心跳 Tick...");
     if (!state.globalSettings.enableBackgroundActivity) {
         stopBackgroundSimulation();
         return;
     }
+
+    // --- 1. 处理所有单聊 ---
     const allSingleChats = Object.values(state.chats).filter(chat => !chat.isGroup);
-
-    if (allSingleChats.length === 0) return;
-
     allSingleChats.forEach(chat => {
-        // 【核心修正】将两种状态检查分离开，逻辑更清晰
-
-        // 检查1：处理【被用户拉黑】的角色
+        // 处理【被用户拉黑】的角色
         if (chat.relationship?.status === 'blocked_by_user') {
             const blockedTimestamp = chat.relationship.blockedTimestamp;
-            // 安全检查：确保有拉黑时间戳
-            if (!blockedTimestamp) {
-                console.warn(`角色 "${chat.name}" 状态为拉黑，但缺少拉黑时间戳，跳过处理。`);
-                return; // 跳过这个角色，继续下一个
-            }
-
+            if (!blockedTimestamp) return;
             const blockedDuration = Date.now() - blockedTimestamp;
             const cooldownMilliseconds = (state.globalSettings.blockCooldownHours || 1) * 60 * 60 * 1000;
-
-            console.log(`检查角色 "${chat.name}"：已拉黑 ${Math.round(blockedDuration/1000/60)}分钟，冷静期需 ${cooldownMilliseconds/1000/60}分钟。`); // 添加日志
-
-            // 【核心修改】移除了随机概率，只要冷静期一过，就触发！
             if (blockedDuration > cooldownMilliseconds) {
-                console.log(`角色 "${chat.name}" 的冷静期已过，触发“反思”并申请好友事件...`);
-                
-                // 【重要】为了防止在AI响应前重复触发，我们在触发后立刻更新状态
-                chat.relationship.status = 'pending_system_reflection'; // 设置一个临时的、防止重复触发的状态
-                
+                chat.relationship.status = 'pending_system_reflection';
                 triggerAiFriendApplication(chat.id);
             }
         }
-        // 检查2：处理【好友关系】的正常后台活动
+        // 处理【好友关系】的正常后台活动
         else if (chat.relationship?.status === 'friend' && chat.id !== state.activeChatId) {
-            // 这里的随机触发逻辑保持不变，因为我们不希望所有好友同时行动
-            if (Math.random() < 0.20) {
+            if (Math.random() < 0.20) { // 单聊保持20%的几率
                 console.log(`角色 "${chat.name}" 被唤醒，准备独立行动...`);
                 triggerInactiveAiAction(chat.id);
             }
         }
     });
-}
 
-// ▼▼▼ 用下面这个【完整的、已修正】的新函数，替换掉您代码里旧的 triggerInactiveAiAction 函数 ▼▼▼
+    // --- 2. 【全新】处理所有群聊 ---
+    const allGroupChats = Object.values(state.chats).filter(chat => chat.isGroup);
+    allGroupChats.forEach(chat => {
+        // 确保不在当前打开的聊天窗口，且通过随机概率检查
+        if (chat.id !== state.activeChatId && Math.random() < 0.10) { // 群聊几率可以设低一些，比如10%，避免太吵
+            console.log(`群聊 "${chat.name}" 被唤醒，准备独立行动...`);
+            triggerGroupAiAction(chat.id); // 调用我们为群聊新建的函数！
+        }
+    });
+}
+// ▲▲▲ 到这里替换结束 ▲▲▲
+
+// ▼▼▼ 用这个【已修复@评论不回复问题】的版本，完整替换旧的 triggerInactiveAiAction 函数 ▼▼▼
 async function triggerInactiveAiAction(chatId) {
     const chat = state.chats[chatId];
     if (!chat) return;
+    setAvatarActingState(chatId, true);
 
     const { proxyUrl, apiKey, model } = state.apiConfig;
     if (!proxyUrl || !apiKey || !model) return;
 
-    const now = new Date();
-    const currentTime = now.toLocaleTimeString('zh-CN', { hour: 'numeric', minute: 'numeric', hour12: true });
     const userNickname = state.qzoneSettings.nickname;
+    const now = new Date();
 
     const lastUserMessage = chat.history.filter(m => m.role === 'user' && !m.isHidden).slice(-1)[0];
     const lastAiMessage = chat.history.filter(m => m.role === 'assistant' && !m.isHidden).slice(-1)[0];
@@ -8998,20 +9655,19 @@ async function triggerInactiveAiAction(chatId) {
         }
     }
 
-    // ▼▼▼ 核心修正2：在这里重构了System Prompt，给AI更明确的 fallback 指令 ▼▼▼
     const systemPrompt = `
 # 你的任务
 你现在扮演一个名为"${chat.name}"的角色。你已经有一段时间没有和用户（${userNickname}）互动了，现在你有机会【主动】做点什么，来表现你的个性和独立生活。这是一个秘密的、后台的独立行动。
 # 核心规则
-1.  **优先互动**：如果下方的“最近的动态列表”中有你【尚未互动过】的动态，你应该优先选择对它进行评论或点赞。
-2.  **【【【重要备选方案】】】**：如果动态列表是空的，或者你已经与所有动态都互动过了，你【必须】考虑执行其他行动来展示你的生活，例如：
-    -   **发布一条你自己的动态** (使用 \`qzone_post\` 指令)。
-    -   **给用户发送一条消息**，并更新你自己的状态 (使用 \`update_status\` 和 \`text\` 指令)。
-3.  你的回复【必须】是包含一个对象的JSON数组。
+1.  **【【【决策依据】】】**: 你的所有行动（无论是发动态、评论还是发消息）都【必须深度结合你的角色设定、核心世界观、以及你们最后的对话摘要】。不要凭空捏造与上下文无关的内容。
+2.  **优先互动**：如果下方的“最近的动态列表”中有你【尚未互动过】的动态，你应该优先选择对它进行评论或点赞。特别是，如果评论区有人@了你，你应该优先回应。
+3.  **【备选方案】**：如果动态列表是空的，或者你已经与所有动态都互动过了，你【必须】考虑执行其他行动来展示你的生活，例如发布一条你自己的动态或给用户发送一条消息。
+4.  你的回复【必须】是包含一个对象的JSON数组。
 
 # 你的可选行动指令:
 -   **发消息+更新状态**: \`[{"type": "update_status", "status_text": "正在做的事", "is_busy": true}, {"type": "text", "content": "你想对用户说的话..."}]\`
 -   **发说说**: \`[{"type": "qzone_post", "postType": "shuoshuo", "content": "动态的文字内容..."}]\`
+-   **【新增】转发动态**: 创建一条新的 "shuoshuo" 动态来分享别人的帖子。格式建议为: \`[{"type": "qzone_post", "postType": "shuoshuo", "content": "//转发 @[原作者名]: [原文摘要] \\n\\n [你的转发评论]"}]\`
 -   **发布文字图**: \`[{"type": "qzone_post", "postType": "text_image", "publicText": "(可选)动态的公开文字", "hiddenContent": "对于图片的具体描述..."}]\`
 -   **评论**: \`[{"type": "qzone_comment", "postId": 123, "commentText": "你的评论内容"}]\`
 -   **点赞**: \`[{"type": "qzone_like", "postId": 456}]\`
@@ -9020,52 +9676,55 @@ async function triggerInactiveAiAction(chatId) {
 # 供你决策的参考信息：
 -   **你的角色设定**: ${chat.settings.aiPersona}
 ${worldBookContent}
--   **当前时间**: ${currentTime}
+-   **当前时间**: ${now.toLocaleString('zh-CN', { timeStyle: 'short' })}
 -   **你们最后的对话摘要**: ${recentContextSummary}`;
-    // ▲▲▲ 修正结束 ▲▲▲
-
-    const messagesPayload = [];
-    messagesPayload.push({ role: 'system', content: systemPrompt });
 
     try {
         const allRecentPosts = await db.qzonePosts.orderBy('timestamp').reverse().limit(3).toArray();
         const visiblePosts = filterVisiblePostsForAI(allRecentPosts, chat);
         const aiName = chat.name;
-        
-        // ▼▼▼ 核心修正1：在这里过滤掉已经互动过的动态 ▼▼▼
+
         const unInteractedPosts = visiblePosts.filter(post => {
             const alreadyLiked = post.likes && post.likes.includes(aiName);
             const alreadyCommented = post.comments && post.comments.some(c => c.commenterName === aiName);
             return !alreadyLiked && !alreadyCommented;
         });
-        // ▲▲▲ 修正结束 ▲▲▲
 
-        let dynamicContext = ""; 
+        let dynamicContext = "";
         if (unInteractedPosts.length > 0) {
             let postsContext = "\n\n# 最近的动态列表 (供你参考和评论):\n";
-            for (const post of unInteractedPosts) { // 只使用未互动过的帖子
+            for (const post of unInteractedPosts) {
                 let authorName = post.authorId === 'user' ? userNickname : (state.chats[post.authorId]?.name || '一位朋友');
                 const contentSummary = (post.publicText || post.content || "图片动态").substring(0, 30) + '...';
                 postsContext += `- (ID: ${post.id}) 作者: ${authorName}, 内容: "${contentSummary}"\n`;
+                
+                // ▲▲▲ 这就是本次修复的核心代码 ▲▲▲
+                // 检查这条动态是否有评论，如果有，就把评论内容也加进去
+                if (post.comments && post.comments.length > 0) {
+                    for (const comment of post.comments) {
+                        // 用缩进的格式把评论展示给AI
+                        postsContext += `  - 评论: ${comment.commenterName}: ${comment.text}\n`;
+                    }
+                }
+                // ▲▲▲ 修复代码结束 ▲▲▲
             }
             dynamicContext = postsContext;
         }
 
-        messagesPayload.push({
-            role: 'user',
-            content: `[系统指令：请根据你在 system prompt 中读到的规则和以下最新信息，开始你的独立行动。]\n${dynamicContext}`
-        });
-        
-        console.log(`正在为后台活动发送API请求 ("${chat.name}")，Payload:`, JSON.stringify(messagesPayload, null, 2));
+        const messagesPayload = [
+            { role: 'user', content: `${systemPrompt}\n\n[系统指令：请根据你在上面读到的规则和以下最新信息，开始你的独立行动。]\n${dynamicContext}` }
+        ];
+
+        console.log(`正在为后台活动发送API请求 ("${chat.name}")`);
 
         let  isGemini = proxyUrl === GEMINI_API_URL;
-        let geminiConfig = toGeminiRequestData(model,apiKey,systemPrompt, messagesPayload)
+        let geminiConfig = toGeminiRequestData(model,apiKey,systemPrompt, messagesPayload);
         const response = isGemini ? await fetch(geminiConfig.url, geminiConfig.data) :  await fetch(`${proxyUrl}/v1/chat/completions`, {
             method: 'POST',
             headers: {'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}`},
             body: JSON.stringify({
                 model: model,
-                messages: messagesPayload,
+                messages: [{role: 'system', content: systemPrompt}, ...messagesPayload.slice(1)],
                 temperature: 0.9,
             })
         });
@@ -9075,7 +9734,7 @@ ${worldBookContent}
             throw new Error(`API请求失败: ${response.status} - ${JSON.stringify(errorData)}`);
         }
         const data = await response.json();
-        
+
         const aiResponseContent = isGemini ? data.candidates[0].content.parts[0].text : data.choices[0].message.content;
 
         if (!aiResponseContent || aiResponseContent.trim() === '') {
@@ -9084,12 +9743,12 @@ ${worldBookContent}
         }
 
         const responseArray = parseAiResponse(aiResponseContent);
-        
+
         if (!responseArray || responseArray.length === 0) {
              console.warn(`API格式不正确，角色 "${chat.name}" 的本次后台活动跳过。原始回复:`, aiResponseContent);
              return;
         }
-        
+
         for (const action of responseArray) {
             if (!action) continue;
 
@@ -9101,7 +9760,7 @@ ${worldBookContent}
                 renderChatList();
             }
             if (action.type === 'text' && action.content) {
-                const aiMessage = { role: 'assistant', content: String(action.content), timestamp: Date.now() };
+                const aiMessage = { role: 'assistant', content: String(action.content), timestamp: Date.now() };           
                 chat.unreadCount = (chat.unreadCount || 0) + 1;
                 chat.history.push(aiMessage);
                 await db.chats.put(chat);
@@ -9154,8 +9813,111 @@ ${worldBookContent}
         }
     } catch (error) {
         console.error(`角色 "${chat.name}" 的独立行动失败:`, error);
+    } finally {
+        setTimeout(() => {
+            setAvatarActingState(chatId, false);
+        }, 1500);
     }
 }
+
+
+// ▼▼▼ 【全新】请将这个函数粘贴到 triggerInactiveAiAction 之后 ▼▼▼
+/**
+ * 【全新】触发后台群聊中的AI独立行动
+ * @param {string} chatId - 群聊的ID
+ */
+async function triggerGroupAiAction(chatId) {
+    const chat = state.chats[chatId];
+    if (!chat || !chat.isGroup) return;
+
+    // ▼▼▼ 【核心修改】调用新的“总开关”函数来点亮所有相关头像 ▼▼▼
+    setAvatarActingState(chatId, true);
+    // ▲▲▲ 修改结束 ▲▲▲
+
+    const { proxyUrl, apiKey, model } = state.apiConfig;
+    if (!proxyUrl || !apiKey || !model) return;
+
+    const myNickname = chat.settings.myNickname || '我';
+    const recentHistory = chat.history.slice(-5).map(msg => {
+        const sender = msg.role === 'user' ? myNickname : (msg.senderName || '未知成员');
+        return `${sender}: ${String(msg.content).substring(0, 40)}...`;
+    }).join('\n');
+
+    const membersList = chat.members.map(m => `- **${m.originalName}**: ${m.persona}`).join('\n');
+    
+    const systemPrompt = `
+# 你的任务
+你是一个群聊AI导演。现在是后台时间，用户不在线，但群聊是活跃的。你需要根据每个角色的设定和最近的聊天记录，选择【一个或多个】角色，让他们【主动发起】对话或互动，让群聊看起来充满生活气息。
+# 核心规则
+1.  **【【【身份铁律】】】**: 用户的身份是【${myNickname}】，你【绝对不能】扮演用户。
+2.  **【【【输出格式】】】**: 你的回复【必须】是一个JSON数组，每个对象代表一个角色的发言或行动。
+3.  **自然感**: 你的行动应该符合逻辑和角色性格。可以是延续之前的话题，也可以是开启新话题，或者只是一个简单的互动（如发表情）。
+# 可用指令:
+-   发送文本: \`{"type": "text", "name": "角色名", "message": "文本内容"}\`
+-   发送表情: \`{"type": "sticker", "url": "...", "meaning": "..."}\`
+-   发动态: \`{"type": "qzone_post", "postType": "shuoshuo", "content": "..."}\` (注意：后台行动中，角色发动态比发消息更常见)
+-   拍一拍群友: \`{"type": "pat_user", "name": "你的角色名", "target": "被拍的群友名"}\`
+# 参考信息
+-   **群成员列表及人设**:
+${membersList}
+-   **最近的聊天记录**:
+${recentHistory}
+现在，请开始你的导演工作。`;
+
+    const messagesPayload = [{ role: 'user', content: systemPrompt }];
+    
+    try {
+        let isGemini = proxyUrl === GEMINI_API_URL;
+        let geminiConfig = toGeminiRequestData(model, apiKey, systemPrompt, messagesPayload);
+        const response = isGemini ? await fetch(geminiConfig.url, geminiConfig.data) : await fetch(`${proxyUrl}/v1/chat/completions`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+            body: JSON.stringify({
+                model: model,
+                messages: [{ role: 'system', content: systemPrompt.split('# 参考信息')[0] }, ...messagesPayload],
+                temperature: 0.9,
+            })
+        });
+
+        if (!response.ok) throw new Error(`API请求失败: ${response.status}`);
+        const data = await response.json();
+        const aiResponseContent = isGemini ? data.candidates[0].content.parts[0].text : data.choices[0].message.content;
+
+        const responseArray = parseAiResponse(aiResponseContent);
+        if (!responseArray || responseArray.length === 0) return;
+
+        let notificationShown = false;
+        for (const action of responseArray) {
+            if (action.type === 'text' && action.message) {
+                const aiMessage = { role: 'assistant', senderName: action.name, content: String(action.message), timestamp: Date.now() };
+                chat.history.push(aiMessage);
+                if (!notificationShown) {
+                    showNotification(chatId, `${action.name}: ${aiMessage.content}`);
+                    notificationShown = true;
+                }
+                chat.unreadCount = (chat.unreadCount || 0) + 1;
+            }
+            // (此处可以添加对其他后台行动类型的处理, 如发动态等)
+        }
+        await db.chats.put(chat);
+        renderChatList(); // 更新列表以显示未读红点
+
+    } catch (error) {
+        console.error(`群聊 "${chat.name}" 的后台行动失败:`, error);
+    } finally {
+        // ▼▼▼ 【核心修改】调用新的“总开关”函数来熄灭所有相关头像（保留延迟效果） ▼▼▼
+        setTimeout(() => {
+            setAvatarActingState(chatId, false);
+        }, 1500);
+        // ▲▲▲ 修改结束 ▲▲▲
+    }
+}
+// ▲▲▲ 全新函数粘贴结束 ▲▲▲
+
+
+
+
+
 // ▼▼▼ 请用这个【终极修正版】函数，完整替换掉你旧的 applyScopedCss 函数 ▼▼▼
 
 /**
@@ -9302,6 +10064,10 @@ async function deleteGroup(groupId) {
  * @param {number} timestamp - 被长按消息的时间戳
  */
 function showMessageActions(timestamp) {
+// ▼▼▼ 在这里新增 ▼▼▼
+const chat = state.chats[state.activeChatId];
+document.getElementById('publish-to-announcement-btn').style.display = chat.isGroup ? 'block' : 'none';
+// ▲▲▲ 新增结束 ▲▲▲
     // 如果已经在多选模式，则不弹出菜单
     if (isSelectionMode) return;
     
@@ -11578,7 +12344,122 @@ function closeAiAvatarLibraryModal() {
 }
 
 // ▲▲▲ 新函数粘贴结束 ▲▲▲
+// ▼▼▼ 【全新】群头像库管理功能函数 ▼▼▼
 
+/**
+ * 打开群头像库管理模态框
+ */
+function openGroupAvatarLibraryModal() {
+    if (!state.activeChatId) return;
+    const chat = state.chats[state.activeChatId];
+    document.getElementById('group-avatar-library-title').textContent = `“${chat.name}”的头像库`;
+    renderGroupAvatarLibrary();
+    document.getElementById('group-avatar-library-modal').classList.add('visible');
+}
+
+/**
+ * 渲染群头像库的内容
+ */
+function renderGroupAvatarLibrary() {
+    const grid = document.getElementById('group-avatar-library-grid');
+    grid.innerHTML = '';
+    const chat = state.chats[state.activeChatId];
+    const library = chat.settings.groupAvatarLibrary || [];
+
+    if (library.length === 0) {
+        grid.innerHTML = '<p style="color: var(--text-secondary); grid-column: 1 / -1; text-align: center;">这个头像库还是空的，点击右上角“添加”吧！</p>';
+        return;
+    }
+
+    library.forEach((avatar, index) => {
+        const item = document.createElement('div');
+        item.className = 'sticker-item'; // 复用表情面板的样式
+        item.style.backgroundImage = `url(${avatar.url})`;
+        item.title = avatar.name;
+
+        const deleteBtn = document.createElement('div');
+        deleteBtn.className = 'delete-btn';
+        deleteBtn.innerHTML = '×';
+        deleteBtn.style.display = 'block'; // 总是显示删除按钮
+        deleteBtn.onclick = async (e) => {
+            e.stopPropagation();
+            const confirmed = await showCustomConfirm('删除头像', `确定要从头像库中删除“${avatar.name}”吗？`, { confirmButtonClass: 'btn-danger' });
+            if (confirmed) {
+                chat.settings.groupAvatarLibrary.splice(index, 1);
+                await db.chats.put(chat);
+                renderGroupAvatarLibrary();
+            }
+        };
+        item.appendChild(deleteBtn);
+        grid.appendChild(item);
+    });
+}
+
+/**
+ * 向当前群聊的头像库中添加新头像
+ */
+async function addAvatarToGroupLibrary() {
+    const name = await showCustomPrompt("添加头像", "请为这个头像起个名字（例如：春日野餐、学习时间）");
+    if (!name || !name.trim()) return;
+
+    const url = await showCustomPrompt("添加头像", "请输入头像的图片URL", "", "url");
+    if (!url || !url.trim().startsWith('http')) {
+        alert("请输入有效的图片URL！");
+        return;
+    }
+    
+    const chat = state.chats[state.activeChatId];
+    if (!chat.settings.groupAvatarLibrary) {
+        chat.settings.groupAvatarLibrary = [];
+    }
+
+    chat.settings.groupAvatarLibrary.push({ name: name.trim(), url: url.trim() });
+    await db.chats.put(chat);
+    renderGroupAvatarLibrary();
+}
+
+/**
+ * 关闭群头像库管理模态框
+ */
+function closeGroupAvatarLibraryModal() {
+    document.getElementById('group-avatar-library-modal').classList.remove('visible');
+}
+
+// ▲▲▲ 新函数粘贴结束 ▲▲▲
+// ▼▼▼ 【全新】聊天列表长按操作菜单的核心功能 ▼▼▼
+
+/**
+ * 显示一个包含“置顶”和“删除”选项的操作菜单
+ * @param {object} chat - 被长按的聊天对象
+ * @returns {Promise<string|null>} - 返回一个Promise，当用户点击时解析为 'pin', 'delete', 或 null (取消)
+ */
+function showChatListActions(chat) {
+    return new Promise(resolve => {
+        const modal = document.getElementById('chat-list-actions-modal');
+        const pinBtn = document.getElementById('chat-list-action-pin');
+        const deleteBtn = document.getElementById('chat-list-action-delete');
+        const cancelBtn = document.getElementById('chat-list-action-cancel');
+
+        // 根据当前聊天是否已置顶，动态设置按钮文字
+        pinBtn.textContent = chat.isPinned ? '取消置顶' : '置顶聊天';
+
+        // 使用克隆节点技巧，确保每次打开菜单时都绑定全新的、干净的事件监听器
+        const newPinBtn = pinBtn.cloneNode(true);
+        pinBtn.parentNode.replaceChild(newPinBtn, pinBtn);
+        newPinBtn.onclick = () => { modal.classList.remove('visible'); resolve('pin'); };
+
+        const newDeleteBtn = deleteBtn.cloneNode(true);
+        deleteBtn.parentNode.replaceChild(newDeleteBtn, deleteBtn);
+        newDeleteBtn.onclick = () => { modal.classList.remove('visible'); resolve('delete'); };
+
+        const newCancelBtn = cancelBtn.cloneNode(true);
+        cancelBtn.parentNode.replaceChild(newCancelBtn, cancelBtn);
+        newCancelBtn.onclick = () => { modal.classList.remove('visible'); resolve(null); };
+
+        modal.classList.add('visible');
+    });
+}
+// ▲▲▲ 新函数粘贴结束 ▲▲▲
 // ▼▼▼ 请将这两个【新函数】粘贴到JS功能函数定义区 ▼▼▼
 
 /**
@@ -12394,8 +13275,350 @@ async function deleteCategory(categoryId) {
     }
 }
 
-// ▲▲▲ 新函数粘贴结束 ▲▲▲
+// ▼▼▼ 【全新版本】发布公告函数 (无评论) ▼▼▼
+async function publishToAnnouncementBoard() {
+    if (!activeMessageTimestamp) return;
 
+    const timestampToPublish = activeMessageTimestamp;
+    hideMessageActions(); 
+
+    const chat = state.chats[state.activeChatId];
+    const message = chat.history.find(m => m.timestamp === timestampToPublish);
+    if (!message) return;
+
+    // 提取消息内容用于预览
+    let contentPreview = String(message.content || '').substring(0, 50) + '...';
+    if (message.type === 'ai_image') contentPreview = '[图片] ' + contentPreview;
+
+    const confirmed = await showCustomConfirm(
+        "发布公告",
+        `确定要将以下消息发布到公告板吗？\n\n“${contentPreview}”`,
+        { confirmText: "确定发布" }
+    );
+
+    if (confirmed) {
+        const myNickname = chat.settings.myNickname || '我';
+
+        if (!Array.isArray(chat.announcements)) {
+            chat.announcements = [];
+        }
+
+        // 新增的公告对象
+        const newAnnouncement = {
+            id: 'anno_' + Date.now(), // 为每个公告添加唯一ID
+            messageTimestamp: timestampToPublish,
+            publisher: myNickname,
+            publishedAt: Date.now(),
+            isPinned: false // 默认为不置顶
+        };
+
+        chat.announcements.push(newAnnouncement);
+
+        const systemMessage = {
+            role: 'system',
+            type: 'pat_message',
+            content: `${myNickname} 发布了一条新公告`,
+            timestamp: Date.now()
+        };
+        chat.history.push(systemMessage);
+
+        await db.chats.put(chat);
+        appendMessage(systemMessage, chat);
+        renderChatList();
+
+        await showCustomAlert("成功", "公告已发布！");
+    }
+}
+// ▲▲▲ 替换结束 ▲▲▲
+/**
+ * 显示群公告板弹窗
+ */
+// ▼▼▼ 【全新版本】显示公告板函数 (支持多条与管理) ▼▼▼
+function showAnnouncementBoard() {
+// ▼▼▼ 【全新】公告管理核心功能 ▼▼▼
+let activeAnnouncementId = null; // 用于暂存正在操作的公告ID
+
+function showAnnouncementActions(annoId) {
+    activeAnnouncementId = annoId;
+    const chat = state.chats[state.activeChatId];
+    const announcement = chat.announcements.find(a => a.id === annoId);
+    if (!announcement) return;
+
+    const pinButton = document.getElementById('announcement-action-pin');
+    pinButton.textContent = announcement.isPinned ? '取消置顶' : '置顶公告';
+
+    document.getElementById('announcement-actions-modal').classList.add('visible');
+}
+
+async function handlePinAnnouncement() {
+    if (!activeAnnouncementId) return;
+    const chat = state.chats[state.activeChatId];
+    const announcement = chat.announcements.find(a => a.id === activeAnnouncementId);
+    if (announcement) {
+        announcement.isPinned = !announcement.isPinned; // 切换置顶状态
+        await db.chats.put(chat);
+        showAnnouncementBoard(); // 重新渲染公告板以更新UI
+    }
+    document.getElementById('announcement-actions-modal').classList.remove('visible');
+}
+
+async function handleDeleteAnnouncement() {
+    if (!activeAnnouncementId) return;
+
+    const confirmed = await showCustomConfirm("确认删除", "确定要删除这条公告吗？此操作不可恢复。", { confirmButtonClass: 'btn-danger' });
+
+    if (confirmed) {
+        const chat = state.chats[state.activeChatId];
+        chat.announcements = chat.announcements.filter(a => a.id !== activeAnnouncementId);
+        await db.chats.put(chat);
+        showAnnouncementBoard(); // 重新渲染
+    }
+    document.getElementById('announcement-actions-modal').classList.remove('visible');
+}
+// ▲▲▲ 新函数粘贴结束 ▲▲▲
+    const chat = state.chats[state.activeChatId];
+    const announcements = chat.announcements || [];
+
+    if (!chat || announcements.length === 0) {
+        showCustomAlert("提示", "当前群聊还没有公告哦。");
+        return;
+    }
+
+    const contentEl = document.getElementById('announcement-board-content');
+    contentEl.innerHTML = '';
+
+    // 将置顶的公告排在最前面
+    announcements.sort((a, b) => (b.isPinned ? 1 : 0) - (a.isPinned ? 1 : 0));
+
+    announcements.forEach(anno => {
+        const originalMessage = chat.history.find(m => m.timestamp === anno.messageTimestamp);
+
+        const wrapper = document.createElement('div');
+        wrapper.className = 'announcement-item-wrapper';
+
+        if (originalMessage) {
+            const messageBubbleEl = createMessageElement(originalMessage, chat);
+            wrapper.appendChild(messageBubbleEl);
+        } else {
+            wrapper.innerHTML = '<p style="text-align:center; color: var(--text-secondary);">公告的原消息已被删除。</p>';
+        }
+
+        // 添加置顶标志
+        if (anno.isPinned) {
+            wrapper.innerHTML += `<div class="pinned-indicator">📌</div>`;
+        }
+
+        // 添加“...”操作按钮
+        wrapper.innerHTML += `<div class="announcement-item-actions" data-anno-id="${anno.id}">...</div>`;
+
+        contentEl.appendChild(wrapper);
+    });
+
+    document.getElementById('announcement-board-modal').classList.add('visible');
+}
+// ▲▲▲ 替换结束 ▲▲▲
+// ▲▲▲ 新函数粘贴结束 ▲▲▲
+// ▼▼▼ 【这是您缺失的核心功能代码，请粘贴在这里】 ▼▼▼
+let activeAnnouncementId = null; // 用于暂存正在操作的公告ID
+
+/**
+ * 点击“...”时，显示操作菜单（置顶/删除）
+ * @param {string} annoId - 公告的唯一ID
+ */
+function showAnnouncementActions(annoId) {
+    activeAnnouncementId = annoId;
+    const chat = state.chats[state.activeChatId];
+    const announcement = chat.announcements.find(a => a.id === annoId);
+    if (!announcement) return;
+
+    const pinButton = document.getElementById('announcement-action-pin');
+    // 根据当前是否已置顶，动态改变按钮文字
+    pinButton.textContent = announcement.isPinned ? '取消置顶' : '置顶公告';
+
+    document.getElementById('announcement-actions-modal').classList.add('visible');
+}
+
+/**
+ * 处理“置顶/取消置顶”操作
+ */
+async function handlePinAnnouncement() {
+    if (!activeAnnouncementId) return;
+    const chat = state.chats[state.activeChatId];
+    const announcement = chat.announcements.find(a => a.id === activeAnnouncementId);
+    if (announcement) {
+        announcement.isPinned = !announcement.isPinned; // 切换置顶状态
+        await db.chats.put(chat);
+        showAnnouncementBoard(); // 重新渲染公告板以更新UI
+    }
+    document.getElementById('announcement-actions-modal').classList.remove('visible');
+}
+
+/**
+ * 处理“删除公告”操作
+ */
+async function handleDeleteAnnouncement() {
+    if (!activeAnnouncementId) return;
+    
+    const confirmed = await showCustomConfirm("确认删除", "确定要删除这条公告吗？此操作不可恢复。", { confirmButtonClass: 'btn-danger' });
+    
+    if (confirmed) {
+        const chat = state.chats[state.activeChatId];
+        // 从公告数组中过滤掉要删除的公告
+        chat.announcements = chat.announcements.filter(a => a.id !== activeAnnouncementId);
+        await db.chats.put(chat);
+        showAnnouncementBoard(); // 重新渲染
+    }
+    document.getElementById('announcement-actions-modal').classList.remove('visible');
+}
+// ▲▲▲ 粘贴结束 ▲▲▲
+// ▼▼▼ 【全新】请用这一整块代码，替换掉所有旧的心率相关JS函数 ▼▼▼
+
+/**
+ * 清理指定聊天的所有心率计时器（恢复计时器和波动计时器）
+ * @param {string} chatId - 聊天ID
+ */
+function clearHeartRateTimers(chatId) {
+    if (heartRateTimers[chatId]) {
+        if (heartRateTimers[chatId].recovery) {
+            clearInterval(heartRateTimers[chatId].recovery);
+        }
+        if (heartRateTimers[chatId].fluctuation) {
+            clearInterval(heartRateTimers[chatId].fluctuation);
+        }
+        delete heartRateTimers[chatId];
+    }
+}
+
+/**
+ * 启动心率在基准值附近的自然波动
+ * @param {string} chatId - 聊天ID
+ */
+function startHeartRateFluctuation(chatId) {
+    const chat = state.chats[chatId];
+    if (!chat || !chat.settings.aiHeartRate?.enabled) return;
+
+    // 先确保没有正在运行的波动计时器
+    if (heartRateTimers[chatId]?.fluctuation) {
+        clearInterval(heartRateTimers[chatId].fluctuation);
+    }
+    if (!heartRateTimers[chatId]) {
+        heartRateTimers[chatId] = {};
+    }
+
+    const display = document.getElementById('ai-heart-rate-display');
+    const valueEl = display.querySelector('.heart-rate-value');
+    const baseline = chat.settings.aiHeartRate.baseline || 65;
+    const fluctuationRange = 5; // 基准心率上下波动的范围
+
+    const fluctuate = () => {
+        // 只有当没有恢复计时器在运行时（即心率不处于激动状态），才进行自然波动
+        if (!heartRateTimers[chatId]?.recovery) {
+            const randomOffset = Math.floor(Math.random() * (fluctuationRange * 2 + 1)) - fluctuationRange;
+            valueEl.textContent = baseline + randomOffset;
+        }
+    };
+
+    // 使用一个随机的时间间隔来模拟更真实的波动
+    const scheduleNextFluctuation = () => {
+        fluctuate();
+        const randomInterval = Math.random() * 1500 + 1000; // 1-2.5秒随机波动一次
+        heartRateTimers[chatId].fluctuation = setTimeout(scheduleNextFluctuation, randomInterval);
+    };
+    
+    scheduleNextFluctuation();
+}
+
+// ▼▼▼ 【最终版】请用这整块代码，完整替换旧的 spikeHeartRate 函数 ▼▼▼
+
+/**
+ * 【V3.0 拟真版】心率反应函数：快速飙升 -> 高位波动 -> 缓慢平复
+ * @param {string} chatId - 聊天ID
+ * @param {number} increaseAmount - 心率增加的数值
+ * @param {number} sustainDuration - 激动状态要持续的毫秒数
+ */
+function spikeHeartRate(chatId, increaseAmount, sustainDuration = 3000) {
+    const chat = state.chats[chatId];
+    if (!chat || !chat.settings.aiHeartRate?.enabled) return;
+
+    // 停止所有正在运行的计时器，防止效果叠加混乱
+    if (heartRateTimers[chatId]) {
+        if (heartRateTimers[chatId].fluctuation) clearTimeout(heartRateTimers[chatId].fluctuation);
+        if (heartRateTimers[chatId].spike) clearInterval(heartRateTimers[chatId].spike);
+        if (heartRateTimers[chatId].sustain) clearTimeout(heartRateTimers[chatId].sustain);
+        if (heartRateTimers[chatId].peakFluctuation) clearInterval(heartRateTimers[chatId].peakFluctuation); // 【新增】清理峰值波动计时器
+        if (heartRateTimers[chatId].recovery) clearInterval(heartRateTimers[chatId].recovery);
+    }
+    if (!heartRateTimers[chatId]) heartRateTimers[chatId] = {};
+
+    const display = document.getElementById('ai-heart-rate-display');
+    const valueEl = display.querySelector('.heart-rate-value');
+    const baseline = chat.settings.aiHeartRate.baseline || 65;
+    const currentRate = parseInt(valueEl.textContent);
+    const targetRate = Math.max(currentRate, baseline) + increaseAmount;
+
+    // --- 阶段1：心率飙升动画 ---
+    heartRateTimers[chatId].spike = setInterval(() => {
+        const rateOnTick = parseInt(valueEl.textContent);
+        if (rateOnTick < targetRate) {
+            valueEl.textContent = rateOnTick + 2;// 每次+1，快速跳动
+        } else {
+            clearInterval(heartRateTimers[chatId].spike);
+            heartRateTimers[chatId].spike = null;
+
+            // --- 阶段2：峰值波动 ---
+            const fluctuationRange = 5; // 在峰值上下 ±2 的范围内波动
+            heartRateTimers[chatId].peakFluctuation = setInterval(() => {
+                const randomOffset = Math.floor(Math.random() * (fluctuationRange * 2 + 1)) - fluctuationRange;
+                valueEl.textContent = targetRate + randomOffset;
+            }, 1200); // 每 1.2 秒在峰值附近波动一次，模拟不平稳的心跳
+
+            // --- 阶段3：启动“持续时间”计时器 ---
+            // 这个计时器的唯一作用，就是在持续时间结束后，停止“峰值波动”并启动“缓慢恢复”
+            heartRateTimers[chatId].sustain = setTimeout(() => {
+                clearInterval(heartRateTimers[chatId].peakFluctuation); // 停止峰值波动
+                heartRateTimers[chatId].peakFluctuation = null;
+
+                // --- 阶段4：缓慢恢复 ---
+                heartRateTimers[chatId].recovery = setInterval(() => {
+                    const recoveryRateTick = parseInt(valueEl.textContent);
+                    if (recoveryRateTick > baseline) {
+                        valueEl.textContent = recoveryRateTick - 2;
+                    } else {
+                        valueEl.textContent = baseline;
+                        clearInterval(heartRateTimers[chatId].recovery);
+                        heartRateTimers[chatId].recovery = null;
+                        startHeartRateFluctuation(chatId); // 恢复到平静的基准波动
+                    }
+                }, 1200);
+
+            }, sustainDuration);
+        }
+    }, 1200);
+}
+
+// ▲▲▲ 替换结束 ▲▲▲
+// ▼▼▼ 【请用这个全新版本】替换旧的 checkMessageForHeartRateTrigger 函数 ▼▼▼
+
+/**
+ * 检查用户消息中的关键词以触发心率变化
+ * @param {string} chatId - 聊天ID
+ * @param {string} messageText - 用户发送的消息内容
+ */
+function checkMessageForHeartRateTrigger(chatId, messageText) {
+    const text = messageText.toLowerCase();
+    
+    // 高强度关键词: 心率飙升25，并【持续5秒】后才开始平复
+    if (/爱你|想你|抱抱|喜欢你|结婚/.test(text)) {
+        spikeHeartRate(chatId, 25, 30000); 
+    } 
+    // 中等强度关键词: 心率飙升15，并【持续3秒】后才开始平复
+    else if (/宝贝|亲爱的|撒娇|表白|亲亲/.test(text)) {
+        spikeHeartRate(chatId, 15, 30000);
+    }
+}
+
+// ▲▲▲ 替换结束 ▲▲▲
+// ▲▲▲ 全新代码块结束 ▲▲▲
         // ===================================================================
         // 4. 初始化函数 init()
         // ===================================================================
@@ -12459,7 +13682,11 @@ applyAppIcons();
             document.getElementById('import-btn').addEventListener('click', () => document.getElementById('import-data-input').click());
             document.getElementById('import-data-input').addEventListener('change', e => importBackup(e.target.files[0]));
             document.getElementById('back-to-list-btn').addEventListener('click', () => { 
-
+    // ▼▼▼ 【核心修改】在这里添加清理计时器的逻辑 ▼▼▼
+    if (state.activeChatId) {
+        clearHeartRateTimers(state.activeChatId);
+    }
+    // ▲▲▲ 修改结束 ▲▲▲
     // ▼▼▼ 修改这两行 ▼▼▼
     applyScopedCss('', '#chat-messages', 'custom-bubble-style'); // 清除真实聊天界面的自定义样式
     applyScopedCss('', '#settings-preview-area', 'preview-bubble-style'); // 清除预览区的自定义样式
@@ -12527,7 +13754,9 @@ document.getElementById('add-group-chat-btn').addEventListener('click', openCont
 document.getElementById('send-btn').addEventListener('click', async () => { 
     const content = chatInput.value.trim(); 
     if (!content || !state.activeChatId) return; 
-
+    // ▼▼▼ 【请确认您的代码中有这一行】 ▼▼▼
+    checkMessageForHeartRateTrigger(state.activeChatId, content);
+    // ▲▲▲ 确认结束 ▲▲
     const chat = state.chats[state.activeChatId]; 
 
     const msg = { 
@@ -12680,11 +13909,13 @@ function updateWorldBookSelectionDisplay() { const checkedBoxes = worldBookCheck
             worldBookSelectBox.addEventListener('click', (e) => { e.stopPropagation(); worldBookCheckboxesContainer.classList.toggle('visible'); worldBookSelectBox.classList.toggle('expanded'); });
             document.getElementById('world-book-checkboxes-container').addEventListener('change', updateWorldBookSelectionDisplay);
             window.addEventListener('click', (e) => { if (!document.querySelector('.custom-multiselect').contains(e.target)) { worldBookCheckboxesContainer.classList.remove('visible'); worldBookSelectBox.classList.remove('expanded'); } });
-
-// ▼▼▼ 请用这段【完整、全新的代码】替换旧的 chat-settings-btn 点击事件 ▼▼▼
+// ▼▼▼ 用这块【新代码】替换旧的 'chat-settings-btn' 点击事件监听器 ▼▼▼
 document.getElementById('chat-settings-btn').addEventListener('click', async () => {
     if (!state.activeChatId) return;
     const chat = state.chats[state.activeChatId];
+    // ▼▼▼ 请在这里添加下面这行诊断代码 ▼▼▼
+    console.log('打开设置时，当前聊天对象:', chat);
+    // ▲▲▲ 添加结束 ▲▲▲
     const isGroup = chat.isGroup;
 
     // --- 统一显示/隐藏控件 ---
@@ -12694,13 +13925,15 @@ document.getElementById('chat-settings-btn').addEventListener('click', async () 
     document.getElementById('my-group-nickname-group').style.display = isGroup ? 'block' : 'none';
     document.getElementById('group-avatar-group').style.display = isGroup ? 'block' : 'none';
     document.getElementById('group-members-group').style.display = isGroup ? 'block' : 'none';
+
+    // 【核心修改就在这里】
+    // 当是群聊(isGroup=true)时，隐藏“对方人设”；否则（单聊）就显示。
     document.getElementById('ai-persona-group').style.display = isGroup ? 'none' : 'block';
-    document.getElementById('ai-avatar-group').style.display = isGroup ? 'none' : 'block';
     
-    // 【核心修改1】根据是否为群聊，显示或隐藏“好友分组”区域
+    document.getElementById('ai-avatar-group').style.display = isGroup ? 'none' : 'block';
     document.getElementById('assign-group-section').style.display = isGroup ? 'none' : 'block';
     
-    // --- 加载表单数据 ---
+    // --- 加载表单数据 (后续代码保持不变) ---
     document.getElementById('chat-name-input').value = chat.name;
     document.getElementById('my-persona').value = chat.settings.myPersona;
     document.getElementById('my-avatar-preview').src = chat.settings.myAvatar || (isGroup ? defaultMyGroupAvatar : defaultAvatar);
@@ -12720,19 +13953,18 @@ document.getElementById('chat-settings-btn').addEventListener('click', async () 
         document.getElementById('my-group-nickname-input').value = chat.settings.myNickname || '';
         document.getElementById('group-avatar-preview').src = chat.settings.groupAvatar || defaultGroupAvatar;
         renderGroupMemberSettings(chat.members);
+
     } else {
         document.getElementById('ai-persona').value = chat.settings.aiPersona;
         document.getElementById('ai-avatar-preview').src = chat.settings.aiAvatar || defaultAvatar;
         
-        // 【核心修改2】如果是单聊，就加载分组列表到下拉框
         const select = document.getElementById('assign-group-select');
-        select.innerHTML = '<option value="">未分组</option>'; // 清空并设置默认选项
+        select.innerHTML = '<option value="">未分组</option>';
         const groups = await db.qzoneGroups.toArray();
         groups.forEach(group => {
             const option = document.createElement('option');
             option.value = group.id;
             option.textContent = group.name;
-            // 如果当前好友已经有分组，就默认选中它
             if (chat.groupId === group.id) {
                 option.selected = true;
             }
@@ -12740,7 +13972,6 @@ document.getElementById('chat-settings-btn').addEventListener('click', async () 
         }); 
     }
     
-    // 加载世界书
     const worldBookCheckboxesContainer = document.getElementById('world-book-checkboxes-container');
     worldBookCheckboxesContainer.innerHTML = '';
     const linkedIds = chat.settings.linkedWorldBookIds || [];
@@ -12753,58 +13984,67 @@ document.getElementById('chat-settings-btn').addEventListener('click', async () 
         });
     }
     updateWorldBookSelectionDisplay();
-// ▼▼▼ 【新增】加载“挂载记忆”的设置和选项 ▼▼▼
-const linkMemoryToggle = document.getElementById('link-memory-toggle');
-const linkedMemorySelection = document.getElementById('linked-memory-selection');
-const linkedChatsContainer = document.getElementById('linked-chats-checkboxes-container');
-const linkedMemoryIds = chat.settings.linkedMemoryChatIds || [];
-
-// 根据是否已保存设置，来决定总开关是否开启
-linkMemoryToggle.checked = linkedMemoryIds.length > 0;
-linkedMemorySelection.style.display = linkMemoryToggle.checked ? 'block' : 'none';
-
-linkedChatsContainer.innerHTML = ''; // 清空旧选项
-Object.values(state.chats).forEach(c => {
-    if (c.id === chat.id) return; // 不能挂载自己
-
-    const isChecked = linkedMemoryIds.includes(c.id);
-    const prefix = c.isGroup ? '[群聊]' : '[私聊]';
-    const label = document.createElement('label');
-    label.innerHTML = `<input type="checkbox" value="${c.id}" ${isChecked ? 'checked' : ''}> ${prefix} ${c.name}`;
-    linkedChatsContainer.appendChild(label);
-});
-
-// 动态更新多选框标题的辅助函数
-function updateLinkedMemorySelectionDisplay() {
-    const checkedBoxes = linkedChatsContainer.querySelectorAll('input:checked');
-    const displayText = linkedMemorySelection.querySelector('.selected-options-text');
-    if (checkedBoxes.length === 0) {
-        displayText.textContent = '-- 点击选择 --';
-    } else if (checkedBoxes.length > 2) {
-        displayText.textContent = `已选择 ${checkedBoxes.length} 项`;
-    } else {
-        displayText.textContent = Array.from(checkedBoxes).map(cb => cb.parentElement.textContent.trim()).join(', ');
+    const heartRateGroup = document.getElementById('ai-heart-rate-group');
+    heartRateGroup.style.display = isGroup ? 'none' : 'block';
+    if (!isGroup) {
+        const heartRateToggle = document.getElementById('ai-heart-rate-toggle');
+        const heartRateOptions = document.getElementById('ai-heart-rate-options');
+        const heartRatePersonality = document.getElementById('ai-heart-rate-personality');
+        const heartRateBaseline = document.getElementById('ai-heart-rate-baseline');
+        
+        const settings = chat.settings.aiHeartRate || {};
+        heartRateToggle.checked = settings.enabled || false;
+        heartRateOptions.style.display = heartRateToggle.checked ? 'block' : 'none';
+        heartRatePersonality.value = settings.personality || 'custom';
+        heartRateBaseline.value = settings.baseline || 65;
     }
-}
-updateLinkedMemorySelectionDisplay(); // 初始化显示
 
-// 为新增的UI元素绑定事件
-linkMemoryToggle.addEventListener('change', () => {
+    const linkMemoryToggle = document.getElementById('link-memory-toggle');
+    const linkedMemorySelection = document.getElementById('linked-memory-selection');
+    const linkedChatsContainer = document.getElementById('linked-chats-checkboxes-container');
+    const linkedMemoryIds = chat.settings.linkedMemoryChatIds || [];
+
+    linkMemoryToggle.checked = linkedMemoryIds.length > 0;
     linkedMemorySelection.style.display = linkMemoryToggle.checked ? 'block' : 'none';
-});
 
-const linkedMemorySelectBox = linkedMemorySelection.querySelector('.select-box');
-const newLinkedMemorySelectBox = linkedMemorySelectBox.cloneNode(true); // 使用克隆节点清除旧事件
-linkedMemorySelectBox.parentNode.replaceChild(newLinkedMemorySelectBox, linkedMemorySelectBox);
-newLinkedMemorySelectBox.addEventListener('click', (e) => {
-    e.stopPropagation();
-    linkedChatsContainer.classList.toggle('visible');
-    newLinkedMemorySelectBox.classList.toggle('expanded');
-});
+    linkedChatsContainer.innerHTML = '';
+    Object.values(state.chats).forEach(c => {
+        if (c.id === chat.id) return;
 
-linkedChatsContainer.addEventListener('change', updateLinkedMemorySelectionDisplay);
-// ▲▲▲ 新增代码结束 ▲▲▲
-    // 加载并更新所有预览相关控件
+        const isChecked = linkedMemoryIds.includes(c.id);
+        const prefix = c.isGroup ? '[群聊]' : '[私聊]';
+        const label = document.createElement('label');
+        label.innerHTML = `<input type="checkbox" value="${c.id}" ${isChecked ? 'checked' : ''}> ${prefix} ${c.name}`;
+        linkedChatsContainer.appendChild(label);
+    });
+
+    function updateLinkedMemorySelectionDisplay() {
+        const checkedBoxes = linkedChatsContainer.querySelectorAll('input:checked');
+        const displayText = linkedMemorySelection.querySelector('.selected-options-text');
+        if (checkedBoxes.length === 0) {
+            displayText.textContent = '-- 点击选择 --';
+        } else if (checkedBoxes.length > 2) {
+            displayText.textContent = `已选择 ${checkedBoxes.length} 项`;
+        } else {
+            displayText.textContent = Array.from(checkedBoxes).map(cb => cb.parentElement.textContent.trim()).join(', ');
+        }
+    }
+    updateLinkedMemorySelectionDisplay();
+
+    linkMemoryToggle.addEventListener('change', () => {
+        linkedMemorySelection.style.display = linkMemoryToggle.checked ? 'block' : 'none';
+    });
+
+    const linkedMemorySelectBox = linkedMemorySelection.querySelector('.select-box');
+    const newLinkedMemorySelectBox = linkedMemorySelectBox.cloneNode(true);
+    linkedMemorySelectBox.parentNode.replaceChild(newLinkedMemorySelectBox, linkedMemorySelectBox);
+    newLinkedMemorySelectBox.addEventListener('click', (e) => {
+        e.stopPropagation();
+        linkedChatsContainer.classList.toggle('visible');
+        newLinkedMemorySelectBox.classList.toggle('expanded');
+    });
+
+    linkedChatsContainer.addEventListener('change', updateLinkedMemorySelectionDisplay);
     const themeRadio = document.querySelector(`input[name="theme-select"][value="${chat.settings.theme || 'default'}"]`);
     if (themeRadio) themeRadio.checked = true;
     const fontSizeSlider = document.getElementById('font-size-slider');
@@ -12884,13 +14124,20 @@ document.getElementById('save-chat-settings-btn').addEventListener('click', asyn
     if (chat.isGroup) {
         chat.settings.myNickname = document.getElementById('my-group-nickname-input').value.trim();
         chat.settings.groupAvatar = document.getElementById('group-avatar-preview').src;
+
     } else {
         chat.settings.aiPersona = document.getElementById('ai-persona').value;
         chat.settings.aiAvatar = document.getElementById('ai-avatar-preview').src;
+        // ▼▼▼ 把【缺失的代码】完整地粘贴到这里 ▼▼▼
+        chat.settings.aiHeartRate = {
+            enabled: document.getElementById('ai-heart-rate-toggle').checked,
+            personality: document.getElementById('ai-heart-rate-personality').value,
+            baseline: parseInt(document.getElementById('ai-heart-rate-baseline').value) || 65
+        };
+        // ▲▲▲ 粘贴结束 ▲▲▲
         const selectedGroupId = document.getElementById('assign-group-select').value;
         chat.groupId = selectedGroupId ? parseInt(selectedGroupId) : null;
     }
-
     chat.settings.maxMemory = parseInt(document.getElementById('max-memory').value) || 10;
 // ▼▼▼ 【新增】保存“挂载记忆”的设置 ▼▼▼
 const linkMemoryToggleChecked = document.getElementById('link-memory-toggle').checked;
@@ -13348,12 +14595,14 @@ document.getElementById('confirm-create-post-btn').addEventListener('click', asy
 
         // 只有满足条件的角色才会被通知
         if (shouldNotify) {
-            const historyMessage = {
-                role: 'system',
-                content: `[系统提示：用户刚刚发布了一条动态(ID: ${newPostId})，内容摘要是：“${postSummary}”。你现在可以对这条动态进行评论了。]`,
-                timestamp: Date.now(),
-                isHidden: true
-            };
+// ▼▼▼ 从这里开始替换 ▼▼▼
+const historyMessage = {
+    role: 'system',
+    content: `[系统提示：用户刚刚发布了一条动态(ID: ${newPostId})，内容摘要是：“${postSummary}”。请你【结合自己的角色设定、世界观和你们的最近聊天内容】，对这条动态发表一条自然的评论。]`,
+    timestamp: Date.now(),
+    isHidden: true
+};
+// ▲▲▲ 到这里替换结束 ▲▲▲
             chat.history.push(historyMessage);
             await db.chats.put(chat);
         }
@@ -13558,6 +14807,12 @@ postsList.addEventListener('click', async (e) => {
         if (!postContainer) return;
         const postId = parseInt(postContainer.dataset.postId);
         if (isNaN(postId)) return;
+    // ▼▼▼ 在这里添加新的 'if' 判断 ▼▼▼
+    if (icon.classList.contains('repost')) {
+        openRepostModal(postId);
+        return; // 处理完后直接返回
+    }
+    // ▲▲▲ 添加结束 ▲▲▲
         if (icon.classList.contains('like')) {
             const post = await db.qzonePosts.get(postId);
             if (!post) return;
@@ -14415,7 +15670,11 @@ document.getElementById('manage-ai-avatar-library-btn').addEventListener('click'
 document.getElementById('add-ai-avatar-btn').addEventListener('click', addAvatarToLibrary);
 document.getElementById('close-ai-avatar-library-btn').addEventListener('click', closeAiAvatarLibraryModal);
 // ▲▲▲ 新增结束 ▲▲▲
-
+// ▼▼▼ 【全新】群头像库功能事件绑定 ▼▼▼
+document.getElementById('manage-group-avatar-library-btn').addEventListener('click', openGroupAvatarLibraryModal);
+document.getElementById('add-group-avatar-btn').addEventListener('click', addAvatarToGroupLibrary);
+document.getElementById('close-group-avatar-library-btn').addEventListener('click', closeGroupAvatarLibraryModal);
+// ▲▲▲ 新增结束 ▲▲▲
 // ▼▼▼ 在 init() 的事件监听区域，粘贴这段【新代码】▼▼▼
 document.getElementById('icon-settings-grid').addEventListener('click', async (e) => {
     if (e.target.classList.contains('change-icon-btn')) {
@@ -14482,7 +15741,8 @@ document.getElementById('quote-message-btn').addEventListener('click', startRepl
 // 绑定回复预览栏中的“取消”按钮
 document.getElementById('cancel-reply-btn').addEventListener('click', cancelReplyMode);
 // ▲▲▲ 粘贴结束 ▲▲▲
-
+// ▼▼▼ 在 init() 的事件监听器区域添加这行代码 ▼▼▼
+document.getElementById('share-location-btn').addEventListener('click', sendLocationShare);
 // 在你的 init() 函数的事件监听器区域...
 
 // ▼▼▼ 用这段代码替换旧的转账卡片点击事件 ▼▼▼
@@ -14798,6 +16058,27 @@ document.getElementById('existing-categories-list').addEventListener('click', (e
         deleteCategory(categoryId);
     }
 });
+// ▼▼▼ 在 init() 的事件监听器区域末尾，添加这部分代码 ▼▼▼
+document.getElementById('repost-cancel-btn').addEventListener('click', hideRepostModal);
+document.getElementById('repost-confirm-btn').addEventListener('click', handleConfirmRepost);
+// ▲▲▲ 添加结束 ▲▲▲
+    // ▼▼▼ 把【缺失的代码】完整地粘贴到这里 ▼▼▼
+    const heartRateToggle = document.getElementById('ai-heart-rate-toggle');
+    const heartRateOptions = document.getElementById('ai-heart-rate-options');
+    const heartRatePersonality = document.getElementById('ai-heart-rate-personality');
+    const heartRateBaseline = document.getElementById('ai-heart-rate-baseline');
+
+    heartRateToggle.addEventListener('change', () => {
+        heartRateOptions.style.display = heartRateToggle.checked ? 'block' : 'none';
+    });
+
+    heartRatePersonality.addEventListener('change', () => {
+        const personality = heartRatePersonality.value;
+        if (personality === 'shy') heartRateBaseline.value = 85;
+        else if (personality === 'calm') heartRateBaseline.value = 65;
+        else if (personality === 'passionate') heartRateBaseline.value = 88;
+    });
+    // ▲▲▲ 粘贴结束 ▲▲▲
 // 在 init() 的事件监听器区域末尾
 // ...
 // 绑定消息操作菜单中的“引用”按钮
@@ -14933,7 +16214,30 @@ chatInputForMention.addEventListener('input', () => {
 chatInputForMention.addEventListener('blur', () => {
     setTimeout(() => { chatMentionPopup.style.display = 'none'; }, 200);
 });
-// ▲▲▲ 新代码粘贴到这里结束 ▲▲▲          
+// ▲▲▲ 新代码粘贴到这里结束 ▲▲▲     
+// ▼▼▼ 【全新】新版群公告事件绑定 ▼▼▼
+document.getElementById('publish-to-announcement-btn').addEventListener('click', publishToAnnouncementBoard);
+document.getElementById('show-announcement-board-btn').addEventListener('click', showAnnouncementBoard);
+document.getElementById('close-announcement-board-btn').addEventListener('click', () => {
+    document.getElementById('announcement-board-modal').classList.remove('visible');
+});
+// ▲▲▲ 新增结束 ▲▲▲  
+// ▼▼▼ 【全新】公告板内部事件委托与操作菜单事件绑定 ▼▼▼
+document.getElementById('announcement-board-content').addEventListener('click', (e) => {
+    if (e.target.classList.contains('announcement-item-actions')) {
+        const annoId = e.target.dataset.annoId;
+        if (annoId) {
+            showAnnouncementActions(annoId);
+        }
+    }
+});
+
+document.getElementById('announcement-action-pin').addEventListener('click', handlePinAnnouncement);
+document.getElementById('announcement-action-delete').addEventListener('click', handleDeleteAnnouncement);
+document.getElementById('announcement-action-cancel').addEventListener('click', () => {
+    document.getElementById('announcement-actions-modal').classList.remove('visible');
+});
+// ▲▲▲ 新增结束 ▲▲▲   
             showScreen('home-screen');
         }
 
