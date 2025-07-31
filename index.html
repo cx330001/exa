@@ -8170,7 +8170,7 @@ ${membersList}
                 prefix += ': ';
                 let content;
                 if (msg.type === 'user_photo') content = `[${sender} 发送了一张图片，内容是：'${msg.content}']`;
-                else if (msg.type === 'ai_image') content = `[${sender} 发送了一张图片]`;
+                else if (msg.type === 'ai_image') content = `[${sender} 发送了一张图片，图片内容描述为：'${msg.content}']`;
                 else if (msg.type === 'voice_message') content = `[${sender} 发送了一条语音，内容是：'${msg.content}']`;
                 else if (msg.type === 'transfer') content = `[${msg.senderName} 向 ${msg.receiverName} 转账 ${msg.amount}元, 备注: ${msg.note}]`;
 // ▼▼▼ 在这里粘贴下面的新代码块 ▼▼▼
