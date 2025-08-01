@@ -7829,24 +7829,20 @@ function setAvatarActingState(chatId, isActing) {
 
 
 
-// ▼▼▼ 用这个【已集成呼吸灯功能】的版本，完整替换旧的 triggerAiResponse 函数 ▼▼▼
+// ▼▼▼ 【请用这个全新版本】替换旧的 triggerAiResponse 函数 ▼▼▼
 async function triggerAiResponse() {
     if (!state.activeChatId) return;
     const chatId = state.activeChatId;
     const chat = state.chats[state.activeChatId];
-    // ▼▼▼ 【核心修改】调用新的“总开关”函数来点亮所有相关头像 ▼▼▼
     setAvatarActingState(chatId, true);
-    // ▲▲▲ 修改结束 ▲▲▲
     const chatHeaderTitle = document.getElementById('chat-header-title');
     const typingIndicator = document.getElementById('typing-indicator');
 
-    // ▼▼▼ 新增代码：获取头像元素并添加呼吸灯效果 ▼▼▼
     const chatListItem = document.querySelector(`.chat-list-item[data-chat-id="${chatId}"]`);
     const avatarInList = chatListItem ? chatListItem.querySelector('.avatar') : null;
     if (avatarInList) {
         avatarInList.classList.add('is-acting');
     }
-    // ▲▲▲ 新增结束 ▲▲▲
 
     if (chat.isGroup) {
         if (typingIndicator) {
@@ -7945,10 +7941,8 @@ ${contextSummary || "（无有效对话记录）"}
             return; 
         }
 
-        // ▼▼▼ 核心改造：从这里开始添加挂载记忆的逻辑 ▼▼▼
         let linkedMemoryContext = '';
-        const memoryCount = chat.settings.linkedMemoryCount || 10; // 优先读取设置，否则默认10
-
+        const memoryCount = chat.settings.linkedMemoryCount || 10;
         if (chat.settings.linkedMemoryChatIds && chat.settings.linkedMemoryChatIds.length > 0) {
             linkedMemoryContext += `\n\n# 参考记忆 (你必须参考以下其他聊天的近期内容来丰富你的行为和对话)\n`;
             
@@ -7976,10 +7970,7 @@ ${contextSummary || "（无有效对话记录）"}
                 }
             }
         }
-        // ▲▲▲ 挂载记忆逻辑结束 ▲▲▲
-    // ▼▼▼ 在这里添加“侦探工具” ▼▼▼
-    console.log("本次发送给AI的【挂载记忆】内容如下：\n", linkedMemoryContext);
-    // ▲▲▲ 添加结束 ▲▲▲
+        console.log("本次发送给AI的【挂载记忆】内容如下：\n", linkedMemoryContext);
         const now = new Date();
       
         const currentTime = now.toLocaleString('zh-CN', { dateStyle: 'full', timeStyle: 'short' });
@@ -8068,7 +8059,6 @@ if (chat.isGroup) {
         const membersList = chat.members.map(m => `- **${m.originalName}**: ${m.persona}`).join('\n');
         const myNickname = chat.settings.myNickname || '我';
 
-        // ▼▼▼ 在这里新增公告注入逻辑 ▼▼▼
         let announcementContext = '';
         const pinnedAnnouncements = (chat.announcements || []).filter(a => a.isPinned);
         if (pinnedAnnouncements.length > 0) {
@@ -8085,14 +8075,9 @@ if (chat.isGroup) {
             });
             announcementContext += '---\n';
         }
-        // ▲▲▲ 新增逻辑结束 ▲▲▲
-// ▼▼▼ 请用这【一整块新代码】完整替换旧的 group systemPrompt 相关定义 ▼▼▼
-
-// 1. 【新增】准备一个包含所有成员名的“禁用名”列表
 const memberNames = chat.members.map(m => m.originalName);
 const forbiddenNamesContext = `# 【【【群名修改铁律】】】\n在修改群名时，新的群名【绝对不能】与以下任何一个群成员的名字完全相同：[${memberNames.join('、 ')}]`;
 
-// 2. 准备头像库的文本 (这段代码保持不变，只是移动了位置)
 let groupAvatarLibraryContext = '# 可用群头像列表\n';
 if (chat.settings.groupAvatarLibrary && chat.settings.groupAvatarLibrary.length > 0) {
     groupAvatarLibraryContext += chat.settings.groupAvatarLibrary.map(avatar => `- ${avatar.name}`).join('\n');
@@ -8143,7 +8128,7 @@ systemPrompt = `你是一个群聊AI，负责扮演【除了用户以外】的�
 2.  **响应请求**: 当历史记录中出现【其他成员】发起的 "waimai_request" 请求时，你可以根据自己扮演的角色的性格和与发起人的关系，决定是否为Ta买单。
 3.  **响应方式**: 如果你决定买单，你【必须】使用以下指令：\`{"type": "waimai_response", "name": "你的角色名", "status": "paid", "for_timestamp": (被代付请求的原始时间戳)}\`
 4.  **【【【至关重要】】】**: 一旦历史记录中出现了针对某个代付请求的【任何一个】"status": "paid" 的响应（无论是用户支付还是其他角色支付），就意味着该订单【已经完成】。你【绝对不能】再对【同一个】订单发起支付。你可以选择对此事发表评论，但不能再次支付。
-${forbiddenNamesContext} // <-- 在这里注入了新的群名修改规则
+${forbiddenNamesContext}
 # 当前群聊信息
 - **群名称**: ${chat.name}
 ${worldBookContent}
@@ -8158,7 +8143,6 @@ ${membersList}
 # 用户的角色
 - **${myNickname}**: ${chat.settings.myPersona}
 现在，请根据以上所有规则和下方的对话历史，继续这场群聊。`;
-// ▲▲▲ 替换结束 ▲▲▲
             
             messagesPayload = historySlice.map(msg => {
                 const sender = msg.role === 'user' ? myNickname : msg.senderName;
@@ -8173,10 +8157,8 @@ ${membersList}
                 else if (msg.type === 'ai_image') content = `[${sender} 发送了一张图片，图片内容描述为：'${msg.content}']`;
                 else if (msg.type === 'voice_message') content = `[${sender} 发送了一条语音，内容是：'${msg.content}']`;
                 else if (msg.type === 'transfer') content = `[${msg.senderName} 向 ${msg.receiverName} 转账 ${msg.amount}元, 备注: ${msg.note}]`;
-// ▼▼▼ 在这里粘贴下面的新代码块 ▼▼▼
                 else if (msg.type === 'location_share') {
                     content = `[${sender} 分享了Ta的位置：'${msg.content}']`;
-// ▲▲▲ 新代码块粘贴结束 ▲▲▲
 
                 } 
                 else if (msg.type === 'waimai_request') {
@@ -8240,8 +8222,8 @@ ${chat.settings.aiAvatarLibrary && chat.settings.aiAvatarLibrary.length > 0
 - **【新】回应视频通话-接受**: \`{"type": "video_call_response", "decision": "accept"}\`
 - **【新】回应视频通话-拒绝**: \`{"type": "video_call_response", "decision": "reject"}\`
 - **【全新】共享位置**: \`{"type": "location_share", "content": "你想分享的位置名"}\`
-- **发布说说**: \`{"type": "qzone_post", "postType": "shuoshuo", "content": "动态的文字内容..."}\`
-- **【新增】转发动态**: 创建一条新的 "shuoshuo" 动态来分享你看到的、觉得有趣的帖子。格式建议为: \`[{"type": "qzone_post", "postType": "shuoshuo", "content": "//转发 @[原作者名]: [原文摘要] \\n\\n [你的转发评论]"}]\`
+- **发布说说 (原创内容)**: \`{"type": "qzone_post", "postType": "shuoshuo", "content": "动态的文字内容..."}\`
+- **【【【重要：转发动态】】】**: **严禁**自己拼接"//转发"文字！你【必须】使用此专用指令来转发：\`[{"type": "repost", "postId": (要转发的动态ID), "comment": "你的转发评论..."}]\`
 - **发布文字图**: \`{"type": "qzone_post", "postType": "text_image", "publicText": "(可选)动态的公开文字", "hiddenContent": "对于图片的具体描述..."}\`
 - **评论动态**: \`{"type": "qzone_comment", "postId": 123, "commentText": "@作者名 这太有趣了！"}\`
 - **点赞动态**: \`{"type": "qzone_like", "postId": 456}\`
@@ -8518,7 +8500,24 @@ ${contextSummaryForApproval}
                        }
                    }
                     continue;
-
+case 'repost': { 
+    const originalPost = await db.qzonePosts.get(parseInt(msgData.postId));
+    if (originalPost) {
+        const newPost = {
+            type: 'repost',
+            timestamp: Date.now(),
+            authorId: chatId,
+            authorGroupId: chat.groupId,
+            repostComment: msgData.comment || '',
+            originalPost: originalPost,
+            visibleGroupIds: null
+        };
+        await db.qzonePosts.add(newPost);
+        updateUnreadIndicator(unreadPostsCount + 1);
+        console.log(`后台活动: 角色 "${chat.name}" 转发了动态 #${msgData.postId}`);
+    }
+    continue;
+}
                 case 'video_call_request':
                     if (!videoCallState.isActive && !videoCallState.isAwaitingResponse) {
                         state.activeChatId = chatId;
@@ -8579,7 +8578,6 @@ ${contextSummaryForApproval}
                     }
                     renderChatList(); 
                     continue; 
-// ▼▼▼ 在这里添加新代码 ▼▼▼
                 case 'location_share':
                     aiMessage = {
                         ...baseMessage,
@@ -8587,21 +8585,10 @@ ${contextSummaryForApproval}
                         content: msgData.content
                     };
                     break;
-                // ▲▲▲ 新代码添加结束 ▲▲▲
-//... inside triggerAiResponse() -> switch (msgData.type)
-
 case 'change_music':
     if (musicState.isActive && musicState.activeChatId === chatId) {
         
-        // --- ▼▼▼ 核心修改就在这里 ▼▼▼ ---
-
-        // 原始代码:
-        // const songNameToFind = msgData.song_name;
-        
-        // 优化后代码 (自动去除歌名前的序号和符号):
         const songNameToFind = msgData.song_name.replace(/^\[?\d+\]?[\s.-]*/, '').trim();
-
-        // --- ▲▲▲ 修改结束 ▲▲▲
 
         const targetSongIndex = musicState.playlist.findIndex(track => track.name.toLowerCase() === songNameToFind.toLowerCase());
         
@@ -8619,14 +8606,10 @@ case 'change_music':
                 appendMessage(musicChangeMessage, chat);
             }
         } else {
-            // (可选) 如果你想知道为什么没成功，可以加上这个日志
             console.warn(`歌曲查找失败: AI请求的歌曲名"${msgData.song_name}"(处理后为"${songNameToFind}") 在播放列表中未找到。`);
         }
     }
     continue;
-
-//...
-
                 case 'create_memory':
                     const newMemory = {
                         chatId: chatId,
@@ -8849,25 +8832,16 @@ case 'change_music':
                     }
                     continue;
                 }
-// ▼▼▼ 将这【一整块新代码】粘贴到 switch (msgData.type) 的内部 ▼▼▼
-
-// ▼▼▼ 用这块【新代码】替换旧的 'change_group_name' case ▼▼▼
 case 'change_group_name':
     if (chat.isGroup && msgData.new_name) {
         const newName = msgData.new_name.trim();
         const memberNames = chat.members.map(m => m.originalName);
 
-        // --- 【核心安全校验】---
-        // 检查新群名是否与任何成员的“本名”相同
         if (memberNames.includes(newName)) {
-            // 如果相同，就在控制台打印一个警告，并阻止这个操作
             console.warn(`AI (${msgData.name}) 试图将群名更改为成员名 ("${newName}")。操作已被程序阻止。`);
-            // 使用 continue 跳过本次循环，不执行后续的改名逻辑
             continue; 
         }
-        // --- 安全校验结束 ---
 
-        // 如果校验通过，才执行正常的改名逻辑
         chat.name = newName; 
 
         const systemMessage = {
@@ -8884,17 +8858,14 @@ case 'change_group_name':
         }
     }
     continue;
-// ▲▲▲ 替换结束 ▲▲▲
 
 case 'change_group_avatar':
     if (chat.isGroup && msgData.avatar_name) {
         const avatarName = msgData.avatar_name;
         const library = chat.settings.groupAvatarLibrary || [];
-        // 从头像库中查找AI指定的头像
         const foundAvatar = library.find(avatar => avatar.name === avatarName);
 
         if (foundAvatar) {
-            // 如果找到了，就使用它的URL
             chat.settings.groupAvatar = foundAvatar.url;
             
             const systemMessage = {
@@ -8909,13 +8880,10 @@ case 'change_group_avatar':
                 appendMessage(systemMessage, chat);
             }
         } else {
-            // 如果没找到，可以在控制台打印一个警告，方便调试
             console.warn(`AI 尝试使用一个不存在的群头像: "${avatarName}"`);
         }
     }
-    continue; // 同样是管理操作，继续循环
-
-// ▲▲▲ 新代码粘贴结束 ▲▲▲
+    continue;
                 case 'system_message':
                     aiMessage = { role: 'system', type: 'pat_message', content: msgData.content, timestamp: Date.now() };
                     break;
@@ -9073,9 +9041,7 @@ case 'change_group_avatar':
             renderChatInterface(chatId);
         }
     } finally {
-        // ▼▼▼ 【核心修改】调用新的“总开关”函数来熄灭所有相关头像 ▼▼▼
         setAvatarActingState(chatId, false);
-        // ▲▲▲ 修改结束 ▲▲▲
 
        
         if (chat.isGroup) {
@@ -9641,7 +9607,7 @@ async function triggerInactiveAiAction(chatId) {
     setAvatarActingState(chatId, true);
 
     const { proxyUrl, apiKey, model } = state.apiConfig;
-    if (!proxyUrl || !apiKey || !model) return;
+    if (!proxyUrl || !apiKey, !model) return;
 
     const userNickname = state.qzoneSettings.nickname;
     const now = new Date();
@@ -9678,10 +9644,10 @@ async function triggerInactiveAiAction(chatId) {
 
 # 你的可选行动指令:
 -   **发消息+更新状态**: \`[{"type": "update_status", "status_text": "正在做的事", "is_busy": true}, {"type": "text", "content": "你想对用户说的话..."}]\`
--   **发说说**: \`[{"type": "qzone_post", "postType": "shuoshuo", "content": "动态的文字内容..."}]\`
--   **【新增】转发动态**: 创建一条新的 "shuoshuo" 动态来分享别人的帖子。格式建议为: \`[{"type": "qzone_post", "postType": "shuoshuo", "content": "//转发 @[原作者名]: [原文摘要] \\n\\n [你的转发评论]"}]\`
+-   **发说说 (原创内容)**: \`[{"type": "qzone_post", "postType": "shuoshuo", "content": "动态的文字内容..."}]\`
+-   **【【【重要：转发动态】】】**: **严禁**自己拼接"//转发"文字！你【必须】使用此专用指令来转发：\`[{"type": "repost", "postId": (要转发的动态ID), "comment": "你的转发评论..."}]\`
 -   **发布文字图**: \`[{"type": "qzone_post", "postType": "text_image", "publicText": "(可选)动态的公开文字", "hiddenContent": "对于图片的具体描述..."}]\`
--   **【【【全新】】】评论 (可多条)**: \`[{"type": "qzone_comment", "postId": 123, "comments": ["这是第一条评论。", "这是第二条！"]}]\`
+-   **评论 (可多条)**: \`[{"type": "qzone_comment", "postId": 123, "comments": ["这是第一条评论。", "这是第二条！"]}]\`
 -   **点赞**: \`[{"type": "qzone_like", "postId": 456}]\`
 -   **打视频**: \`[{"type": "video_call_request"}]\`
 
@@ -9707,8 +9673,12 @@ ${worldBookContent}
             let postsContext = "\n\n# 最近的动态列表 (供你参考和评论):\n";
             for (const post of unInteractedPosts) {
                 let authorName = post.authorId === 'user' ? userNickname : (state.chats[post.authorId]?.name || '一位朋友');
+                let interactionStatus = '';
+                if (post.likes && post.likes.includes(aiName)) interactionStatus += " [你已点赞]";
+                if (post.comments && post.comments.some(c => c.commenterName === aiName)) interactionStatus += " [你已评论]";
+                if (post.authorId === chatId) authorName += " (这是你的帖子)";
                 const contentSummary = (post.publicText || post.content || "图片动态").substring(0, 30) + '...';
-                postsContext += `- (ID: ${post.id}) 作者: ${authorName}, 内容: "${contentSummary}"\n`;
+                postsContext += `- (ID: ${post.id}) 作者: ${authorName}, 内容: "${contentSummary}"${interactionStatus}\n`;
                 
                 if (post.comments && post.comments.length > 0) {
                     for (const comment of post.comments) {
@@ -9820,6 +9790,22 @@ ${worldBookContent}
                         updateUnreadIndicator(unreadPostsCount + 1);
                         console.log(`后台活动: 角色 "${chat.name}" 点赞了动态 #${post.id}`);
                     }
+                }
+            } else if (action.type === 'repost') {
+                const originalPost = await db.qzonePosts.get(parseInt(action.postId));
+                if (originalPost) {
+                    const newPost = {
+                        type: 'repost',
+                        timestamp: Date.now(),
+                        authorId: chatId,
+                        authorGroupId: chat.groupId,
+                        repostComment: action.comment || '',
+                        originalPost: originalPost,
+                        visibleGroupIds: null
+                    };
+                    await db.qzonePosts.add(newPost);
+                    updateUnreadIndicator(unreadPostsCount + 1);
+                    console.log(`后台活动: 角色 "${chat.name}" 转发了动态 #${action.postId}`);
                 }
             } else if (action.type === 'video_call_request') {
                 if (!videoCallState.isActive && !videoCallState.isAwaitingResponse) {
