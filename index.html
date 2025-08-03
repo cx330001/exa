@@ -6075,7 +6075,7 @@ function showCustomPrompt(title, placeholder, initialValue = '', type = 'text', 
         const inputId = 'custom-prompt-input';
         
         const inputHtml = type === 'textarea' 
-            ? `<textarea id="${inputId}" placeholder="${placeholder}" rows="4" style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #ccc; font-size: 14px; box-sizing: border-box; resize: vertical;">${initialValue}</textarea>`
+            ? `<textarea id="${inputId}" placeholder="${placeholder}" rows="4" style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #ccc; font-size: 16px; box-sizing: border-box; resize: vertical;">${initialValue}</textarea>`
             : `<input type="${type}" id="${inputId}" placeholder="${placeholder}" value="${initialValue}">`;
         
         modalBody.innerHTML = extraHtml + inputHtml;
