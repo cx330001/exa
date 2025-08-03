@@ -6017,24 +6017,33 @@ let repostTargetId = null; // 用于存储当前要转发的动态ID
             if (modalResolve) modalResolve(null); 
         }
 
-// ▼▼▼ 用这个【升级版】替换旧的 showCustomConfirm 函数 ▼▼▼
+// ▼▼▼ 请用这个【修正后】的完整函数，替换掉您现有的 showCustomConfirm 函数 ▼▼▼
+
 function showCustomConfirm(title, message, options = {}) {
     return new Promise(resolve => {
         modalResolve = resolve;
         modalTitle.textContent = title;
         modalBody.innerHTML = `<p>${message}</p>`;
-        modalCancelBtn.style.display = 'block';
 
-        // 【核心修改】
-        modalConfirmBtn.textContent = options.confirmText || '确定';
-        modalCancelBtn.textContent = options.cancelText || '取消';
+        // 【核心修正】在函数被调用时，重新获取最新的按钮元素
+        const confirmBtn = document.getElementById('custom-modal-confirm');
+        const cancelBtn = document.getElementById('custom-modal-cancel');
+
+        cancelBtn.style.display = 'block';
+
+        confirmBtn.textContent = options.confirmText || '确定';
+        cancelBtn.textContent = options.cancelText || '取消';
 
         if (options.confirmButtonClass) {
-            modalConfirmBtn.classList.add(options.confirmButtonClass);
+            confirmBtn.classList.add(options.confirmButtonClass);
+        } else {
+            // 确保之前的危险操作样式被移除
+            confirmBtn.classList.remove('btn-danger');
         }
 
-        modalConfirmBtn.onclick = () => { resolve(true); hideCustomModal(); };
-        modalCancelBtn.onclick = () => { resolve(false); hideCustomModal(); };
+        // 为最新的按钮绑定本次的点击事件
+        confirmBtn.onclick = () => { resolve(true); hideCustomModal(); };
+        cancelBtn.onclick = () => { resolve(false); hideCustomModal(); };
         showCustomModal();
     });
 }
@@ -6057,7 +6066,8 @@ function showCustomConfirm(title, message, options = {}) {
             });
         }
 
-// ▼▼▼ 请用这个【功能增强版】替换旧的 showCustomPrompt 函数 ▼▼▼
+// ▼▼▼ 请用这个【修正后】的完整函数，替换掉您现有的 showCustomPrompt 函数 ▼▼▼
+
 function showCustomPrompt(title, placeholder, initialValue = '', type = 'text', extraHtml = '') {
     return new Promise(resolve => {
         modalResolve = resolve;
@@ -6068,35 +6078,161 @@ function showCustomPrompt(title, placeholder, initialValue = '', type = 'text', 
             ? `<textarea id="${inputId}" placeholder="${placeholder}" rows="4" style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #ccc; font-size: 14px; box-sizing: border-box; resize: vertical;">${initialValue}</textarea>`
             : `<input type="${type}" id="${inputId}" placeholder="${placeholder}" value="${initialValue}">`;
         
-        // 【核心修改】将额外的HTML和输入框组合在一起
         modalBody.innerHTML = extraHtml + inputHtml;
         const input = document.getElementById(inputId);
 
-        // 【核心修改】为格式助手按钮绑定事件
         modalBody.querySelectorAll('.format-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 const templateStr = btn.dataset.template;
                 if (templateStr) {
                     try {
                         const templateObj = JSON.parse(templateStr);
-                        // 使用 null, 2 参数让JSON字符串格式化，带缩进，更易读
                         input.value = JSON.stringify(templateObj, null, 2);
                         input.focus();
-                    } catch(e) {
-                        console.error("解析格式模板失败:", e);
-                    }
+                    } catch(e) { console.error("解析格式模板失败:", e); }
                 }
             });
         });
         
-        modalConfirmBtn.onclick = () => { resolve(input.value); hideCustomModal(); };
-        modalCancelBtn.onclick = () => { resolve(null); hideCustomModal(); };
+        // 【核心修正】在函数被调用时，重新获取最新的按钮元素
+        const confirmBtn = document.getElementById('custom-modal-confirm');
+        const cancelBtn = document.getElementById('custom-modal-cancel');
+        
+        // 为最新的按钮绑定本次的点击事件
+        confirmBtn.onclick = () => { resolve(input.value); hideCustomModal(); };
+        cancelBtn.onclick = () => { resolve(null); hideCustomModal(); };
+
         showCustomModal();
         setTimeout(() => input.focus(), 100);
     });
 }
 // ▲▲▲ 替换结束 ▲▲▲
+// ▼▼▼ 请将这段【全新】的函数代码粘贴到 showCustomPrompt 函数的后面 ▼▼▼
 
+// ▼▼▼ 请用这个【修正后】的完整函数，替换掉您现有的 showChoiceModal 函数 ▼▼▼
+
+/**
+ * 【全新】显示一个包含多个选项的操作菜单模态框
+ * @param {string} title - 模态框的标题
+ * @param {Array<object>} options - 按钮选项数组, e.g., [{ text: '按钮文字', value: '返回值' }]
+ * @returns {Promise<string|null>} - 返回用户点击按钮的value，如果取消则返回null
+ */
+function showChoiceModal(title, options) {
+    return new Promise(resolve => {
+        const modal = document.getElementById('custom-modal-overlay');
+        const modalTitle = document.getElementById('custom-modal-title');
+        const modalBody = document.getElementById('custom-modal-body');
+        
+        // 【核心修正】使用 querySelector 通过 class 来查找元素
+        const modalFooter = document.querySelector('#custom-modal .custom-modal-footer');
+
+        // 1. 设置标题和清空内容区
+        modalTitle.textContent = title;
+        modalBody.innerHTML = ''; // 这个模态框不需要内容区
+        
+        // 2. 动态创建选项按钮
+        modalFooter.innerHTML = ''; // 清空默认的“确定/取消”按钮
+        modalFooter.style.flexDirection = 'column'; // 让按钮垂直排列
+
+        options.forEach(option => {
+            const button = document.createElement('button');
+            button.textContent = option.text;
+            button.onclick = () => {
+                modal.classList.remove('visible');
+                resolve(option.value);
+            };
+            modalFooter.appendChild(button);
+        });
+
+        // 3. 添加一个标准的取消按钮
+        const cancelButton = document.createElement('button');
+        cancelButton.textContent = '取消';
+        cancelButton.style.marginTop = '8px';
+        cancelButton.style.borderRadius = '8px';
+        cancelButton.style.backgroundColor = '#f0f0f0';
+        cancelButton.onclick = () => {
+            modal.classList.remove('visible');
+            resolve(null);
+        };
+        modalFooter.appendChild(cancelButton);
+
+        // 4. 显示模态框
+        modal.classList.add('visible');
+
+    }).finally(() => {
+        // 5. 【重要】当模态框关闭后，恢复其默认结构给其他功能使用
+        
+        // 【核心修正】同样在这里使用 querySelector
+        const modalFooter = document.querySelector('#custom-modal .custom-modal-footer');
+
+        modalFooter.style.flexDirection = 'row';
+        modalFooter.innerHTML = `
+            <button id="custom-modal-cancel">取消</button>
+            <button id="custom-modal-confirm" class="confirm-btn">确定</button>
+        `;
+        document.getElementById('custom-modal-cancel').addEventListener('click', hideCustomModal);
+    });
+}
+// ▲▲▲ 替换结束 ▲▲▲
+// ▼▼▼ 请将这个【全新】的函数粘贴到 showChoiceModal 函数的后面 ▼▼▼
+
+/**
+ * 【全新】获取歌词内容（支持文件和粘贴，并修复粘贴格式）
+ * @returns {Promise<string|null>} 返回歌词文本字符串，如果用户取消则返回null
+ */
+async function getLrcContent() {
+    // 1. 弹出选择框
+    const choice = await showChoiceModal('选择歌词导入方式', [
+        { text: '📁 从本地文件 (.lrc)', value: 'file' },
+        { text: '📋 直接粘贴歌词文本', value: 'paste' }
+    ]);
+
+    // 2. 根据用户的选择执行不同操作
+    if (choice === 'file') {
+        // 用户选择文件：这部分逻辑不变，它工作正常
+        return new Promise(resolve => {
+            const lrcInput = document.getElementById('lrc-upload-input');
+            const lrcChangeHandler = (e) => {
+                const lrcFile = e.target.files[0];
+                if (lrcFile) {
+                    const reader = new FileReader();
+                    reader.onload = (readEvent) => resolve(readEvent.target.result);
+                    reader.onerror = () => resolve(""); // 出错时返回空字符串
+                    reader.readAsText(lrcFile);
+                } else {
+                    resolve(null); // 用户关闭了文件选择框
+                }
+                lrcInput.removeEventListener('change', lrcChangeHandler);
+                lrcInput.value = ''; // 重置input，以便下次能选择同名文件
+            };
+            lrcInput.addEventListener('change', lrcChangeHandler, { once: true });
+            lrcInput.click();
+        });
+    } else if (choice === 'paste') {
+        // 用户选择粘贴：弹出文本输入框
+        const pastedText = await showCustomPrompt(
+            '粘贴歌词',
+            '请在此处粘贴完整的LRC格式歌词...',
+            '',
+            'textarea' // 使用多行文本框
+        );
+        
+        // --- ★★★ 核心修复就在这里 ★★★ ---
+        if (pastedText) {
+            // 在解析之前，自动为每个时间戳前添加换行符
+            // 这会修复单行粘贴的问题
+            const formattedText = pastedText.replace(/\[/g, '\n[').trim();
+            return formattedText;
+        }
+        return pastedText; // 如果用户取消，这里会返回 null
+        // --- ★★★ 修复结束 ★★★ ---
+
+    } else {
+        // 用户点击了“取消”
+        return null;
+    }
+}
+// ▲▲▲ 新函数粘贴结束 ▲▲▲
         // ===================================================================
         // 2. 数据库结构定义
         // ===================================================================
@@ -9498,12 +9634,18 @@ function updatePlaylistUI() {
     });
 }
 
+// ▼▼▼ 您代码里应该有这段，这就是要找的第二个函数 ▼▼▼
+
 function playSong(index) {
     if (index < 0 || index >= musicState.playlist.length) return;
+    
+    // This pause call is the source of the error, but we'll keep it 
+    // and simply handle the error it causes.
+    audioPlayer.pause();
+
     musicState.currentIndex = index;
     const track = musicState.playlist[index];
     musicState.parsedLyrics = parseLRC(track.lrcContent || "");
-    musicState.currentLyricIndex = -1;
     renderLyrics();
     if (track.isLocal && track.src instanceof Blob) {
         audioPlayer.src = URL.createObjectURL(track.src);
@@ -9513,11 +9655,29 @@ function playSong(index) {
         console.error('本地歌曲源错误:', track);
         return;
     }
-    audioPlayer.play();
+
+    // --- Core Fix Start ---
+    // The play() method returns a promise. We will add a .catch() block
+    // to it to handle the AbortError silently.
+    const playPromise = audioPlayer.play();
+    if (playPromise !== undefined) {
+        playPromise.catch(error => {
+            // We expect an AbortError, so we can safely ignore it.
+            if (error.name === 'AbortError') {
+                console.log('Playback aborted by new play request, this is expected.');
+            } else {
+                console.error('Playback error:', error);
+            }
+        });
+    }
+    // --- Core Fix End ---
+
     updatePlaylistUI();
     updatePlayerUI();
     updateMusicProgressBar();
 }
+
+// ▲▲▲ 您要找的函数到此结束 ▲▲▲
 
         function togglePlayPause() { if (audioPlayer.paused) { if (musicState.currentIndex === -1 && musicState.playlist.length > 0) { playSong(0); } else if (musicState.currentIndex > -1) { audioPlayer.play(); } } else { audioPlayer.pause(); } }
 
@@ -9528,6 +9688,8 @@ function playSong(index) {
         function changePlayMode() { const modes = ['order', 'random', 'single']; const currentModeIndex = modes.indexOf(musicState.playMode); musicState.playMode = modes[(currentModeIndex + 1) % modes.length]; document.getElementById('music-mode-btn').textContent = {'order': '顺序', 'random': '随机', 'single': '单曲'}[musicState.playMode]; }
 
         async function addSongFromURL() { const url = await showCustomPrompt("添加网络歌曲", "请输入歌曲的URL", "", "url"); if (!url) return; const name = await showCustomPrompt("歌曲信息", "请输入歌名"); if (!name) return; const artist = await showCustomPrompt("歌曲信息", "请输入歌手名"); if (!artist) return; musicState.playlist.push({ name, artist, src: url, isLocal: false }); await saveGlobalPlaylist(); updatePlaylistUI(); if(musicState.currentIndex === -1) { musicState.currentIndex = musicState.playlist.length - 1; updatePlayerUI(); } }
+
+// ▼▼▼ 请用这个【新版本】的函数，完整替换旧的 addSongFromLocal 函数 ▼▼▼
 
 async function addSongFromLocal(event) {
     const files = event.target.files;
@@ -9542,26 +9704,10 @@ async function addSongFromLocal(event) {
         if (artist === null) continue;
 
         let lrcContent = "";
-        const wantLrc = await showCustomConfirm("导入歌词", `要为《${name}》导入歌词文件 (.lrc) 吗？`);
+        const wantLrc = await showCustomConfirm("导入歌词", `要为《${name}》添加歌词吗？`);
         if (wantLrc) {
-            lrcContent = await new Promise(resolve => {
-                const lrcInput = document.getElementById('lrc-upload-input');
-                const lrcChangeHandler = (e) => {
-                    const lrcFile = e.target.files[0];
-                    if (lrcFile) {
-                        const reader = new FileReader();
-                        reader.onload = (readEvent) => resolve(readEvent.target.result);
-                        reader.onerror = () => resolve("");
-                        reader.readAsText(lrcFile);
-                    } else {
-                        resolve("");
-                    }
-                    lrcInput.removeEventListener('change', lrcChangeHandler);
-                    lrcInput.value = '';
-                };
-                lrcInput.addEventListener('change', lrcChangeHandler);
-                lrcInput.click();
-            });
+            // 【核心修改】直接调用我们新的统一函数！
+            lrcContent = await getLrcContent() || ""; // 如果用户取消，则lrcContent为""
         }
         
         musicState.playlist.push({ 
@@ -9581,6 +9727,7 @@ async function addSongFromLocal(event) {
     }
     event.target.value = null;
 }
+// ▲▲▲ 替换结束 ▲▲▲
 
         async function deleteTrack(index) { if (index < 0 || index >= musicState.playlist.length) return; const track = musicState.playlist[index]; const wasPlaying = musicState.isPlaying && musicState.currentIndex === index; if (track.isLocal && audioPlayer.src.startsWith('blob:') && musicState.currentIndex === index) URL.revokeObjectURL(audioPlayer.src); musicState.playlist.splice(index, 1); await saveGlobalPlaylist(); if (musicState.playlist.length === 0) { if (musicState.isPlaying) audioPlayer.pause(); audioPlayer.src = ''; musicState.currentIndex = -1; musicState.isPlaying = false; } else { if (wasPlaying) { playNext(); } else { if (musicState.currentIndex >= index) musicState.currentIndex = Math.max(0, musicState.currentIndex - 1); } } updatePlayerUI(); updatePlaylistUI(); }
 
@@ -13458,25 +13605,44 @@ function closeMusicPlayerWithAnimation(callback) {
     }, 400); 
 }
 
+/**
+ * 【最终正确版】解析LRC歌词内容
+ * @param {string} lrcContent - 包含LRC格式歌词的字符串
+ * @returns {Array<object>} - 返回一个包含 {time, text} 对象的数组
+ */
 function parseLRC(lrcContent) {
     if (!lrcContent) return [];
-    const lines = lrcContent.split('\n');
+    
+    // 1. 使用正则表达式来分割字符串，这样可以同时兼容 \n 和 \r\n 等多种换行符
+    const lines = String(lrcContent).split(/\r\n?|\n/);
+    
     const lyrics = [];
+    // 2. 正则表达式，用于匹配时间标签，并支持 . 和 : 作为毫秒分隔符
     const timeRegex = /\[(\d{2}):(\d{2})[.:](\d{2,3})\]/g;
 
     for (const line of lines) {
+        // 3. 安全地剥离所有时间标签，得到纯净的歌词文本
         const text = line.replace(timeRegex, '').trim();
+        
+        // 4. 如果处理后没有文本了（例如，元数据行或空行），就跳过
         if (!text) continue;
+
+        // 5. 重置正则表达式，回头再去原始行里匹配所有时间戳
         timeRegex.lastIndex = 0;
         let match;
         while ((match = timeRegex.exec(line)) !== null) {
             const minutes = parseInt(match[1], 10);
             const seconds = parseInt(match[2], 10);
+            // 兼容2位或3位的毫秒数
             const milliseconds = parseInt(match[3].padEnd(3, '0'), 10);
             const time = minutes * 60 + seconds + milliseconds / 1000;
+            
+            // 6. 为每个时间戳关联上正确的歌词文本
             lyrics.push({ time, text });
         }
     }
+    
+    // 7. 按时间排序后返回，确保歌词顺序正确
     return lyrics.sort((a, b) => a.time - b.time);
 }
 
@@ -16424,6 +16590,8 @@ audioPlayer.addEventListener('play', () => {
     } 
 });
 
+// ▼▼▼ 请用这个【新版本】的代码，完整替换旧的 playlist-body 事件监听器 ▼▼▼
+
 document.getElementById('playlist-body').addEventListener('click', async (e) => {
     const target = e.target;
     if (target.classList.contains('delete-track-btn')) {
@@ -16438,27 +16606,16 @@ document.getElementById('playlist-body').addEventListener('click', async (e) => 
     if (target.classList.contains('lyrics-btn')) {
         const index = parseInt(target.dataset.index);
         if (isNaN(index)) return;
-        const lrcContent = await new Promise(resolve => {
-            const lrcInput = document.getElementById('lrc-upload-input');
-            const handler = (event) => {
-                const file = event.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = (re) => resolve(re.target.result);
-                    reader.readAsText(file);
-                } else {
-                    resolve(null);
-                }
-                lrcInput.removeEventListener('change', handler);
-                lrcInput.value = '';
-            };
-            lrcInput.addEventListener('change', handler);
-            lrcInput.click();
-        });
+
+        // 【核心修改】同样地，直接调用我们新的统一函数！
+        const lrcContent = await getLrcContent();
+        
+        // 如果用户没有取消 (lrcContent不是null)
         if (lrcContent !== null) {
             musicState.playlist[index].lrcContent = lrcContent;
             await saveGlobalPlaylist();
             alert('歌词导入成功！');
+            // 如果修改的是当前正在播放的歌曲，则立即刷新歌词显示
             if (musicState.currentIndex === index) {
                 musicState.parsedLyrics = parseLRC(lrcContent);
                 renderLyrics();
@@ -16466,6 +16623,7 @@ document.getElementById('playlist-body').addEventListener('click', async (e) => 
         }
     }
 });
+// ▲▲▲ 替换结束 ▲▲▲
 
 document.querySelector('.progress-bar').addEventListener('click', (e) => {
     if (!audioPlayer.duration) return;
