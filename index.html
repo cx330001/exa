@@ -24,19 +24,20 @@ body {
     /* 核心：移除了所有 height 和 overflow 属性，让body自然伸缩 */
 }
 
-/* 3. 【核心修复】让 #phone-screen 成为固定于视口的根容器 */
+/* ▼▼▼ Safari工具栏适配 (最终版)：请用这块新样式替换旧的 #phone-screen 样式 ▼▼▼ */
+
 #phone-screen {
-    position: fixed; /* 关键：将其从 relative 改为 fixed，使其固定到浏览器视口 */
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    /* width 和 height 现在由上面的 top/left/right/bottom 决定，不再需要 */
-    
-    overflow: hidden; /* 保留，防止内部内容溢出 */
+    width: 100%;
+    /* 为不支持 dvh 的旧浏览器提供一个后备方案 */
+    height: 100vh; 
+    /* 核心修正：使用动态视口高度，它会随工具栏的显隐而自动变化 */
+    height: 100dvh; 
+
+    position: relative; /* 保持您原有的 position 以免破坏其他布局 */
+    overflow: hidden;
     display: flex;
     flex-direction: column;
-    background-color: #000; /* 保留一个默认的黑色背景 */
+    background-color: #000;
 }
 
 /* ▲▲▲ 替换结束 ▲▲▲ */
