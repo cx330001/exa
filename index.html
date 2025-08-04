@@ -4509,6 +4509,158 @@ input:checked + .slider:before {
 }
 
 /* ▲▲▲ 新样式粘贴结束 ▲▲▲ */
+/* === 头像框选择模态框样式 === */
+.change-frame-btn {
+    padding: 6px 10px;
+    border: 1px solid #ccc;
+    background-color: #f0f0f0;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 13px;
+    margin-left: 10px;
+}
+
+#avatar-frame-modal .modal-content {
+    height: 70%;
+}
+
+#avatar-frame-modal .modal-body {
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.frame-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border-color);
+    flex-shrink: 0;
+}
+
+.frame-tab {
+    flex: 1;
+    padding: 12px;
+    text-align: center;
+    font-weight: 500;
+    cursor: pointer;
+    color: var(--text-secondary);
+    border-bottom: 2px solid transparent;
+}
+
+.frame-tab.active {
+    color: var(--accent-color);
+    border-bottom-color: var(--accent-color);
+}
+
+.frame-content {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 15px;
+}
+
+.frame-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+    gap: 15px;
+}
+
+.frame-item {
+    aspect-ratio: 1 / 1;
+    border: 2px solid transparent;
+    border-radius: 10px;
+    cursor: pointer;
+    background-color: #f0f0f0;
+    background-size: cover;
+    background-position: center;
+    padding: 5px;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.frame-item.selected {
+    border-color: var(--accent-color);
+    transform: scale(1.05);
+}
+
+.frame-item .preview-avatar {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.frame-item .preview-frame {
+    position: absolute;
+    top: -7px;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+
+/* ▼▼▼ 请用下面这【一整块最终修正版】的代码，替换掉所有旧的头像相关样式 ▼▼▼ */
+
+/* 1. 头像最外层容器，负责占位和动态变宽 */
+.avatar-group {
+    width: 34px;
+    flex-shrink: 0;
+    position: relative;
+    transition: width 0.2s ease;
+}
+.avatar-group.has-frame {
+    width: 42px; /* 佩戴头像框时，容器变宽以推动消息文本 */
+}
+
+/* 2. 普通的、无框的头像样式 */
+.message-bubble .avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 20%;
+    object-fit: cover;
+}
+
+/* 3. 【核心】带框头像的容器 */
+.avatar-with-frame {
+    position: relative; /* 关键：为内部的头像框提供定位锚点 */
+    width: 43px; /* 默认大小 */
+    height: 43px;
+    margin: 0 auto;
+    transition: all 0.2s ease;
+}
+/* 当有框时，此容器也变大，让内部图片可以更大 */
+.avatar-group.has-frame .avatar-with-frame {
+    width: 43px;
+    height: 43px;
+}
+
+/* 4. 带框头像中的图片本身，永远撑满其容器 */
+.avatar-with-frame .avatar-img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%; /* 佩戴头像框时，图片本身是圆形的 */
+    object-fit: cover;
+    z-index: 1;
+}
+
+/* 5. 【最终解决方案】头像框本身，使用transform进行完美居中 */
+.avatar-with-frame .avatar-frame {
+    position: absolute;
+    width: 52px;  /* 保持您头像框素材的原始尺寸 */
+    height: 52px;
+    /* --- 这就是确保完美包裹的关键代码 --- */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    /* --- 关键代码结束 --- */
+    z-index: 2;
+    pointer-events: none; /* 让鼠标可以点到下面的头像 */
+}
+
+/* ▲▲▲ 替换结束 ▲▲▲ */
+
+
     </style>
 </head>
 <body>
@@ -5230,8 +5382,8 @@ input:checked + .slider:before {
         </p>
     </div>
 </div>
-            <div class="form-group" id="ai-persona-group"><label for="ai-persona">对方人设 (AI Persona)</label><textarea id="ai-persona" rows="3"></textarea></div><div class="form-group" id="ai-avatar-group"><label>对方头像</label><div class="avatar-upload"><img id="ai-avatar-preview"><button onclick="document.getElementById('ai-avatar-input').click()">上传对方头像</button><button id="manage-ai-avatar-library-btn">管理头像库</button>
-<input type="file" id="ai-avatar-input" accept="image/*"></div></div><div class="form-group" id="my-persona-group"><label for="my-persona">我的人设 (My Persona)</label><textarea id="my-persona" rows="3"></textarea></div><div class="form-group" id="my-avatar-group"><label>我的头像</label><div class="avatar-upload"><img id="my-avatar-preview"><button onclick="document.getElementById('my-avatar-input').click()">上传我的头像</button><button id="open-persona-library-btn">预设</button><input type="file" id="my-avatar-input" accept="image/*"></div></div><div class="form-group" id="group-members-group"><label>群成员人设</label><div id="group-members-settings"></div>
+            <div class="form-group" id="ai-persona-group"><label for="ai-persona">对方人设 (AI Persona)</label><textarea id="ai-persona" rows="3"></textarea></div><div class="form-group" id="ai-avatar-group"><label>对方头像</label><div class="avatar-upload"><img id="ai-avatar-preview"><button onclick="document.getElementById('ai-avatar-input').click()">上传对方头像</button><button id="manage-ai-avatar-library-btn">管理头像库</button><button class="change-frame-btn" data-type="ai">更换头像框</button>
+<input type="file" id="ai-avatar-input" accept="image/*"></div></div><div class="form-group" id="my-persona-group"><label for="my-persona">我的人设 (My Persona)</label><textarea id="my-persona" rows="3"></textarea></div><div class="form-group" id="my-avatar-group"><label>我的头像</label><div class="avatar-upload"><img id="my-avatar-preview"><button onclick="document.getElementById('my-avatar-input').click()">上传我的头像</button><button class="change-frame-btn" data-type="my">更换头像框</button><button id="open-persona-library-btn">预设</button><input type="file" id="my-avatar-input" accept="image/*"></div></div><div class="form-group" id="group-members-group"><label>群成员人设</label><div id="group-members-settings"></div>
 
     <!-- 【新增】管理成员按钮 -->
     <button id="manage-members-btn" class="form-button form-button-secondary" style="margin-top: 15px;">管理群成员</button></div>
@@ -5298,7 +5450,7 @@ input:checked + .slider:before {
     <div id="member-settings-modal" class="modal"><div class="modal-content"><div class="modal-header"><span>编辑群成员</span></div><div class="modal-body">
     <div class="form-group"><label for="member-name-input">名字</label><input type="text" id="member-name-input"></div>
     <div class="form-group"><label for="member-persona-input">人设</label><textarea id="member-persona-input" rows="4"></textarea></div>
-    <div class="form-group"><label>头像</label><div class="avatar-upload"><img id="member-avatar-preview"><button onclick="document.getElementById('member-avatar-input').click()">上传头像</button><input type="file" id="member-avatar-input" accept="image/*"></div></div>
+    <div class="form-group"><label>头像</label><div class="avatar-upload"><img id="member-avatar-preview"><button onclick="document.getElementById('member-avatar-input').click()">上传头像</button><button class="change-frame-btn" data-type="member">更换头像框</button><input type="file" id="member-avatar-input" accept="image/*"></div></div>
     </div><div class="modal-footer"><button class="cancel" id="cancel-member-settings-btn">取消</button><button class="save" id="save-member-settings-btn">保存</button></div></div></div>
     
     <div id="custom-modal-overlay">
@@ -5925,6 +6077,106 @@ let heartRateTimers = {}; // 用于统一管理每个聊天的“恢复计时器
         // 1. 所有变量和常量定义
         // ===================================================================
         const db = new Dexie('GeminiChatDB');
+const avatarFrames = [ { id: 'none', url: '', name: '无' }, { id: 'frame_cat_ear', url: 'https://i.postimg.cc/fLDnz5Pn/IMG-5574.gif', name: '1' }, { id: 'frame_ribbon', url: 'https://i.postimg.cc/HxH3cNHz/IMG-6871.gif', name: '2' }, { id: 'frame_flower', url: 'https://i.postimg.cc/jCVK0fGL/IMG-6890.gif', name: '3' }, { id: 'frame_tech', url: 'https://i.postimg.cc/85Zsyjwn/IMG-6895.gif', name: '4' }, { id: 'frame_5', url: 'https://i.postimg.cc/cJtpZCB3/IMG-6894.gif', name: '5' }, { id: 'frame_6', url: 'https://i.postimg.cc/63sDQKMm/IMG-6893.gif', name: '6' }, { id: 'frame_7', url: 'https://i.postimg.cc/cHQPgzj4/IMG-6888.gif', name: '7' }, { id: 'frame_8', url: 'https://i.postimg.cc/dVLXm3Xf/IMG-6885.gif', name: '8' }, { id: 'frame_9', url: 'https://i.postimg.cc/kGsZwbq0/IMG-6886.gif', name: '9' }, { id: 'frame_10', url: 'https://i.postimg.cc/63NmX03s/IMG-4366.gif', name: '10' }, { id: 'frame_11', url: 'https://i.postimg.cc/zvz2LGK0/IMG-4367.gif', name: '11' }, { id: 'frame_12', url: 'https://i.postimg.cc/prsGKMBx/IMG-4370.gif', name: '12' }, { id: 'frame_13', url: 'https://i.postimg.cc/gk0BmrY0/IMG-4371.gif', name: '13' }, { id: 'frame_14', url: 'https://i.postimg.cc/fRt2SFSn/IMG-4368.gif', name: '14' }, { id: 'frame_cat_ear', url: 'https://i.postimg.cc/kGgwJhPH/IMG-4374.gif', name: '1' }, { id: 'frame_ribbon', url: 'https://i.postimg.cc/PrcKH436/IMG-4376.gif', name: '2' }, { id: 'frame_flower', url: 'https://i.postimg.cc/fRV86FMq/IMG-4381.gif', name: '3' }, { id: 'frame_tech', url: 'https://i.postimg.cc/HsyqMVyk/IMG-4385.gif', name: '4' }, { id: 'frame_5', url: 'https://i.postimg.cc/qBbKK7dS/IMG-4386.gif', name: '5' }, { id: 'frame_6', url: 'https://i.postimg.cc/05wnd389/IMG-4388.gif', name: '6' }, { id: 'frame_7', url: 'https://i.postimg.cc/RZNLhbbr/IMG-4389.gif', name: '7' }, { id: 'frame_8', url: 'https://i.postimg.cc/fLTc42dg/IMG-4391.gif', name: '8' }, { id: 'frame_9', url: 'https://i.postimg.cc/FzbGNdRT/IMG-4392.gif', name: '9' }, { id: 'frame_10', url: 'https://i.postimg.cc/XY63sTS3/IMG-4393.gif', name: '10' }, { id: 'frame_11', url: 'https://i.postimg.cc/Cx9vCVWH/IMG-4395.gif', name: '11' }, { id: 'frame_12', url: 'https://i.postimg.cc/kMfPQBwQ/IMG-4396.gif', name: '12' }, { id: 'frame_13', url: 'https://i.postimg.cc/CLrZQMMD/IMG-4398.gif', name: '13' }, { id: 'frame_14', url: 'https://i.postimg.cc/L4zwDhTC/IMG-4399.gif', name: '14' }, { id: 'frame_cat_ear', url: 'https://i.postimg.cc/yN3s8szM/IMG-4400.gif', name: '1' }, { id: 'frame_ribbon', url: 'https://i.postimg.cc/59Cn1tkB/IMG-4401.gif', name: '2' }, { id: 'frame_flower', url: 'https://i.postimg.cc/g0s1V0PX/IMG-4402.gif', name: '3' }, { id: 'frame_tech', url: 'https://i.postimg.cc/Jn1DFPgY/IMG-4403.gif', name: '4' }, { id: 'frame_5', url: 'https://i.postimg.cc/q7cQnDy1/IMG-4404.gif', name: '5' }, { id: 'frame_6', url: 'https://i.postimg.cc/RFK3q2t0/IMG-4407.gif', name: '6' }, { id: 'frame_7', url: 'https://i.postimg.cc/gcV0VR2t/IMG-4408.gif', name: '7' }, { id: 'frame_8', url: 'https://i.postimg.cc/W1CjLb4J/IMG-4409.gif', name: '8' }, { id: 'frame_9', url: 'https://i.postimg.cc/Ss7pM6fW/IMG-4410.gif', name: '9' }, { id: 'frame_10', url: 'https://i.postimg.cc/nrFfYX3N/IMG-4412.gif', name: '10' }, { id: 'frame_11', url: 'https://i.postimg.cc/cHWp0KG6/IMG-4413.gif', name: '11' }, { id: 'frame_12', url: 'https://i.postimg.cc/4yNjHrdg/IMG-4414.gif', name: '12' }, { id: 'frame_13', url: 'https://i.postimg.cc/hPX5F8Qp/IMG-4415.gif', name: '13' }, { id: 'frame_14', url: 'https://i.postimg.cc/vHCSG1WM/IMG-4416.gif', name: '14' }, { id: 'frame_cat_ear', url: 'https://i.postimg.cc/x1Hp80Rm/IMG-4417.gif', name: '1' }, { id: 'frame_ribbon', url: 'https://i.postimg.cc/FHRcCGfH/IMG-4418.gif', name: '2' }, { id: 'frame_flower', url: 'https://i.postimg.cc/13hhJ77p/IMG-4419.gif', name: '3' }, { id: 'frame_tech', url: 'https://i.postimg.cc/J4WCQd2j/IMG-4420.gif', name: '4' }, { id: 'frame_5', url: 'https://i.postimg.cc/Dydkpd9H/IMG-4421.gif', name: '5' }, { id: 'frame_6', url: 'https://i.postimg.cc/mrkvDxPW/IMG-4422.gif', name: '6' }, { id: 'frame_7', url: 'https://i.postimg.cc/76Tj3g1B/IMG-4425.gif', name: '7' }, { id: 'frame_8', url: 'https://i.postimg.cc/3N5Vndn3/IMG-4426.gif', name: '8' }, { id: 'frame_9', url: 'https://i.postimg.cc/05DLr0yj/IMG-4427.gif', name: '9' }, { id: 'frame_10', url: 'https://i.postimg.cc/GhR6DT4Q/IMG-4428.gif', name: '10' }, { id: 'frame_11', url: 'https://i.postimg.cc/fRTF24jS/IMG-4430.gif', name: '11' }, { id: 'frame_12', url: 'https://i.postimg.cc/R0WYmcYM/IMG-4431.gif', name: '12' }, { id: 'frame_13', url: 'https://i.postimg.cc/nrJSqNhz/IMG-4432.gif', name: '13' }, { id: 'frame_14', url: 'https://i.postimg.cc/tC9mJ0cv/IMG-4438.gif', name: '14' }, { id: 'frame_cat_ear', url: 'https://i.postimg.cc/XNkQTHvf/IMG-5561.gif', name: '1' }, { id: 'frame_ribbon', url: 'https://i.postimg.cc/Mpv5fzm5/IMG-4439.gif', name: '2' }, { id: 'frame_flower', url: 'https://i.postimg.cc/T1tjhsyB/IMG-4720.gif', name: '3' }, { id: 'frame_tech', url: 'https://i.postimg.cc/c4JMPd2W/IMG-4724.gif', name: '4' }, { id: 'frame_5', url: 'https://i.postimg.cc/g2XykNGB/IMG-4727.gif', name: '5' }, { id: 'frame_6', url: 'https://i.postimg.cc/y8MmJcd6/IMG-4728.gif', name: '6' }, { id: 'frame_7', url: 'https://i.postimg.cc/Lsjzj5Yt/IMG-4729.gif', name: '7' }, { id: 'frame_8', url: 'https://i.postimg.cc/bNdk33SN/IMG-4893.gif', name: '8' }, { id: 'frame_9', url: 'https://i.postimg.cc/4x9tTy1D/IMG-5563.gif', name: '9' }, { id: 'frame_10', url: 'https://i.postimg.cc/DZshzKv6/IMG-5576.gif', name: '10' }, { id: 'frame_11', url: 'https://i.postimg.cc/Fsvr71JL/IMG-5573.gif', name: '11' }, { id: 'frame_12', url: 'https://i.postimg.cc/Fz3HwLk9/IMG-5569.gif', name: '12' }, { id: 'frame_13', url: 'https://i.postimg.cc/wjH180kn/IMG-5566.gif', name: '13' }, { id: 'frame_14', url: 'https://i.postimg.cc/MG6qtLYK/IMG-5565.gif', name: '14' }, { id: 'frame_cat_ear', url: 'https://i.postimg.cc/CKgDNYVb/IMG-5577.gif', name: '1' }, { id: 'frame_ribbon', url: 'https://i.postimg.cc/hj4dkrvj/IMG-5578.gif', name: '2' }, { id: 'frame_flower', url: 'https://i.postimg.cc/hj4dkrvj/IMG-5578.gif', name: '3' }, { id: 'frame_tech', url: 'https://i.postimg.cc/C5XnfpNB/IMG-5579.gif', name: '4' }, { id: 'frame_5', url: 'https://i.postimg.cc/4y7mGFgJ/IMG-5716.gif', name: '5' }, { id: 'frame_6', url: 'https://i.postimg.cc/FzM1Hgr0/IMG-5717.gif', name: '6' }, { id: 'frame_7', url: 'https://i.postimg.cc/rF4KYbjj/IMG-5720.gif', name: '7' }, { id: 'frame_8', url: 'https://i.postimg.cc/6pLTBvDG/IMG-5721.gif', name: '8' }, { id: 'frame_9', url: 'https://i.postimg.cc/VNK6Ccsf/IMG-5722.gif', name: '9' }, { id: 'frame_10', url: 'https://i.postimg.cc/wx72fhr2/IMG-5968.gif', name: '10' }, { id: 'frame_11', url: 'https://i.postimg.cc/QdrqdvdY/IMG-5969.gif', name: '11' }, { id: 'frame_12', url: 'https://i.postimg.cc/0yd0MZ6k/IMG-5971.gif', name: '12' }, { id: 'frame_13', url: 'https://i.postimg.cc/1zmcp66p/IMG-5973.gif', name: '13' }, { id: 'frame_14', url: 'https://i.postimg.cc/wBw5Fvcn/IMG-5974.gif', name: '14' }, { id: 'frame_cat_ear', url: 'https://i.postimg.cc/R0pfKYvB/IMG-5976.gif', name: '1' }, { id: 'frame_ribbon', url: 'https://i.postimg.cc/9fQZ425b/IMG-5975.gif', name: '2' }, { id: 'frame_flower', url: 'https://i.postimg.cc/v8V9xXjJ/IMG-6137.gif', name: '3' }, { id: 'frame_tech', url: 'https://i.postimg.cc/WbmkXzsS/IMG-6138.gif', name: '4' }, { id: 'frame_5', url: 'https://i.postimg.cc/Dw2bDhZh/IMG-6140.gif', name: '5' }, { id: 'frame_6', url: 'https://i.postimg.cc/ZqQBCyLY/IMG-6144.gif', name: '6' }, { id: 'frame_7', url: 'https://i.postimg.cc/qRCtnMms/IMG-6145.gif', name: '7' }, { id: 'frame_8', url: 'https://i.postimg.cc/1Rwn3XVP/IMG-6146.gif', name: '8' }, { id: 'frame_9', url: 'https://i.postimg.cc/Kv51tW5H/IMG-6147.gif', name: '9' }, { id: 'frame_10', url: 'https://i.postimg.cc/nhcC21Rc/IMG-6148.gif', name: '10' }, { id: 'frame_11', url: 'https://i.postimg.cc/fTWzQRx8/IMG-6149.gif', name: '11' }, { id: 'frame_12', url: 'https://i.postimg.cc/LXyyqDbY/IMG-6294.gif', name: '12' }, { id: 'frame_13', url: 'https://i.postimg.cc/7Zgm1wRy/IMG-6295.gif', name: '13' }, { id: 'frame_14', url: 'https://i.postimg.cc/5tbpnDcQ/IMG-6296.gif', name: '14' }, { id: 'frame_cat_ear', url: 'https://i.postimg.cc/YSRRV8kn/IMG-6297.gif', name: '1' }, { id: 'frame_ribbon', url: 'https://i.postimg.cc/k45sd8gn/IMG-6375.gif', name: '2' }, { id: 'frame_flower', url: 'https://i.postimg.cc/50k390X8/IMG-6376.gif', name: '3' }, { id: 'frame_tech', url: 'https://i.postimg.cc/90RBDh9K/IMG-6377.gif', name: '4' }, { id: 'frame_5', url: 'https://i.postimg.cc/cCpBYbMH/IMG-6552.gif', name: '5' }, { id: 'frame_6', url: 'https://i.postimg.cc/Pf9g2fSL/IMG-6554.gif', name: '6' }, { id: 'frame_7', url: 'https://i.postimg.cc/gkhf597g/IMG-6555.gif', name: '7' }, { id: 'frame_8', url: 'https://i.postimg.cc/g2PfbSFm/IMG-6556.gif', name: '8' }, { id: 'frame_9', url: 'https://i.postimg.cc/pLY3WfR8/IMG-6557.gif', name: '9' }, { id: 'frame_10', url: 'https://i.postimg.cc/65Cmcr7S/IMG-6559.gif', name: '10' }, { id: 'frame_11', url: 'https://i.postimg.cc/Y94XWYKd/IMG-6560.gif', name: '11' }, { id: 'frame_12', url: 'https://i.postimg.cc/ydwLXx7s/IMG-6562.gif', name: '12' }, { id: 'frame_13', url: 'https://i.postimg.cc/G3y73Fj2/IMG-6563.gif', name: '13' }, { id: 'frame_14', url: 'https://i.postimg.cc/TYvkKKkc/IMG-6565.gif', name: '14' }, { id: 'frame_cat_ear', url: 'https://i.postimg.cc/GmcqjZn8/IMG-6566.gif', name: '1' }, { id: 'frame_ribbon', url: 'https://i.postimg.cc/k5Gs0K47/IMG-6567.gif', name: '2' }, { id: 'frame_flower', url: 'https://i.postimg.cc/XJy8JWdh/IMG-6568.gif', name: '3' }, { id: 'frame_tech', url: 'https://i.postimg.cc/fycfcvHf/IMG-6569.gif', name: '4' }, { id: 'frame_5', url: 'https://i.postimg.cc/J7ZxC11H/IMG-6570.gif', name: '5' }, { id: 'frame_6', url: 'https://i.postimg.cc/hPnrSHjy/IMG-4434.gif', name: '6' }, { id: 'frame_7', url: 'https://i.postimg.cc/YqxxjbLp/IMG-6572.gif', name: '7' }, { id: 'frame_8', url: 'https://i.postimg.cc/wjfcQMkZ/IMG-6573.gif', name: '8' }, { id: 'frame_9', url: 'https://i.postimg.cc/Vv8jkCYr/IMG-6574.gif', name: '9' }, { id: 'frame_10', url: 'https://i.postimg.cc/MZ77rdDy/IMG-6850.gif', name: '10' }, { id: 'frame_11', url: 'https://i.postimg.cc/T3NvqJCZ/IMG-6851.gif', name: '11' }, { id: 'frame_12', url: 'https://i.postimg.cc/28TsrxRV/IMG-6852.gif', name: '12' }, { id: 'frame_13', url: 'https://i.postimg.cc/VkV2bLNw/IMG-6853.gif', name: '13' }, { id: 'frame_14', url: 'https://i.postimg.cc/gJ95NSRB/IMG-6854.gif', name: '14' }, { id: 'frame_cat_ear', url: 'https://i.postimg.cc/d1qsQsbQ/IMG-6855.gif', name: '1' }, { id: 'frame_ribbon', url: 'https://i.postimg.cc/gJNYx9pV/IMG-6856.gif', name: '2' }, { id: 'frame_flower', url: 'https://i.postimg.cc/fyPDvxJk/IMG-6860.gif', name: '3' }, { id: 'frame_tech', url: 'https://i.postimg.cc/QMDsSNxg/IMG-6861.gif', name: '4' }, { id: 'frame_5', url: 'https://i.postimg.cc/vBqsQW7X/IMG-6858.gif', name: '5' }, { id: 'frame_6', url: 'https://i.postimg.cc/Y0vwjhb7/IMG-6857.gif', name: '6' }, { id: 'frame_7', url: 'https://i.postimg.cc/90sH9Cn7/IMG-6868.gif', name: '7' }, { id: 'frame_8', url: 'https://i.postimg.cc/Y2PHZzCC/IMG-6866.gif', name: '8' }, { id: 'frame_9', url: 'https://i.postimg.cc/7Z8yYP7v/IMG-6889.gif', name: '9' }, { id: 'frame_10', url: 'https://i.postimg.cc/nryNzTXK/IMG-6915.gif', name: '10' }, { id: 'frame_11', url: 'https://i.postimg.cc/Qx5dqyJ3/IMG-6917.gif', name: '11' }, { id: 'frame_12', url: 'https://i.postimg.cc/Wbr0JSDD/IMG-5316.gif', name: '12' }, { id: 'frame_13', url: 'https://i.postimg.cc/tgR6wjBP/IMG-5570.gif', name: '13' }, { id: 'frame_14', url: 'https://i.postimg.cc/d0WCKxff/IMG-6932.gif', name: '14' }, { id: 'frame_11', url: 'https://i.postimg.cc/Ss3znzk7/IMG-6934.gif', name: '11' }, { id: 'frame_12', url: 'https://i.postimg.cc/nrm9BcL8/IMG-6941.gif', name: '12' }, { id: 'frame_13', url: 'https://i.postimg.cc/ZYvd1jxf/IMG-6937.gif', name: '13' }, { id: 'frame_14', url: 'https://i.postimg.cc/sDFhySn3/IMG-6936.gif', name: '14' }, { id: 'frame_13', url: 'https://i.postimg.cc/43PhvxRq/IMG-6922.gif', name: '13' }, { id: 'frame_14', url: 'https://i.postimg.cc/3Rb46fRZ/IMG-6923.gif', name: '14' }, { id: 'frame_13', url: 'https://i.postimg.cc/PJppkbvn/IMG-6918.gif', name: '13' }, { id: 'frame_14', url: 'https://i.postimg.cc/XqRZNZ9G/IMG-6916.gif', name: '14' }, { id: 'frame_14', url: 'https://i.postimg.cc/RVt6sRzc/IMG-6939.gif', name: '14' }, { id: 'frame_13', url: 'https://i.postimg.cc/mgGc0HbK/IMG-6926.gif', name: '13' }, { id: 'frame_14', url: 'https://i.postimg.cc/P5zLh5JJ/IMG-6942.gif', name: '14' }, { id: 'frame_14', url: 'https://i.postimg.cc/xCqqKGRN/IMG-6929.gif', name: '14' },
+      { id: 'frame_12', url: 'https://i.postimg.cc/7LSRp4hx/e7fa949b9pc84cff0dabe57defceb54c.gif', name: '12' },
+    { id: 'frame_13', url: 'https://i.postimg.cc/DZgMwc1H/817178fdbpf2ff7740dc98e26ab78759.gif', name: '13' },
+    { id: 'frame_14', url: 'https://i.postimg.cc/3NffgJSZ/e09c07034ld7e62266c0a5de6a36ae62.gif', name: '14' },
+  { id: 'frame_13', url: 'https://i.postimg.cc/vHDNGfT2/35ac7f372v588bf48d4f659077196b85.gif', name: '13' },
+    { id: 'frame_14', url: 'https://i.postimg.cc/KvVsjjgG/3c3aa5219s18b90187ef1f54b3db7ba8.gif', name: '14' },
+  { id: 'frame_13', url: 'https://i.postimg.cc/k5P1NHcL/55f3e31d8qbc8a02d152b07b99d31567.gif', name: '13' },
+    { id: 'frame_14', url: 'https://i.postimg.cc/FFCTCzpy/641bad3b3udc599fdb63ca75fde427e5.gif', name: '14' },
+  { id: 'frame_14', url: 'https://i.postimg.cc/8k7YSLjK/1689aa46aqc4b9ffc0f970e668f56537.gif', name: '14' },
+  { id: 'frame_13', url: 'https://i.postimg.cc/J0CZSwyW/IMG-6938.gif', name: '13' },
+    { id: 'frame_14', url: 'https://i.postimg.cc/Df1qLzDf/IMG-6927.gif', name: '14' },
+  { id: 'frame_14', url: 'https://i.postimg.cc/CLNkrQSW/IMG-6925.gif', name: '14' },
+  { id: 'frame_13', url: 'https://i.postimg.cc/y8p9s3Jj/IMG-6919.gif', name: '13' },
+    { id: 'frame_14', url: 'https://i.postimg.cc/Lsr1Zd3Z/IMG-6928.gif', name: '14' },
+  { id: 'frame_14', url: 'https://i.postimg.cc/Ssgbv41n/IMG-6876.gif', name: '14' },
+{ id: 'frame_14', url: 'https://i.postimg.cc/SNByPrf9/IMG-7005.gif', name: '14' },
+  { id: 'frame_13', url: 'https://i.postimg.cc/Z5nrCyS5/IMG-7006.gif', name: '13' },
+    { id: 'frame_14', url: 'https://i.postimg.cc/mDfMXXFP/IMG-7007.gif', name: '14' },
+  { id: 'frame_14', url: 'https://i.postimg.cc/DZrGtrqB/IMG-7008.gif', name: '14' },
+  { id: 'frame_13', url: 'https://i.postimg.cc/ZnJNZWHZ/IMG-7009.gif', name: '13' },
+    { id: 'frame_14', url: 'https://i.postimg.cc/RhGH0vpt/IMG-7010.gif', name: '14' },
+  { id: 'frame_14', url: 'https://i.postimg.cc/tRzPkzRg/IMG-7012.gif', name: '14' },
+  { id: 'frame_13', url: 'https://i.postimg.cc/wTTNGs3Q/IMG-7013.gif', name: '13' },
+    { id: 'frame_14', url: 'https://i.postimg.cc/3JSG5Jv5/IMG-7014.gif', name: '14' },
+  { id: 'frame_14', url: 'https://i.postimg.cc/rwDr8X1d/IMG-7015.gif', name: '14' },
+{ id: 'frame_14', url: 'https://i.postimg.cc/DzDy2vS7/IMG-7017.gif', name: '14' },
+  { id: 'frame_13', url: 'https://i.postimg.cc/QMVdG9x6/IMG-7016.gif', name: '13' },
+    { id: 'frame_14', url: 'https://i.postimg.cc/mZ9hgH3J/IMG-7019.gif', name: '14' },
+  { id: 'frame_14', url: 'https://i.postimg.cc/t4ksHGdg/IMG-7020.gif', name: '14' },
+  { id: 'frame_13', url: 'https://i.postimg.cc/hP9JpdfT/IMG-7023.gif', name: '13' },
+    { id: 'frame_14', url: 'https://i.postimg.cc/wTKyXVT9/IMG-7024.gif', name: '14' },
+  { id: 'frame_14', url: 'https://i.postimg.cc/ZqjKXPSv/IMG-7025.gif', name: '14' },
+
+  { id: 'frame_14', url: 'https://i.postimg.cc/gj3Tmqz5/mmexport1751030241029.gif', name: '14' },
+  { id: 'frame_13', url: 'https://i.postimg.cc/4yCXW52F/mmexport1751030908335.gif', name: '13' },
+    { id: 'frame_14', url: 'https://i.postimg.cc/VkXngG72/mmexport1751031208329.gif', name: '14' },
+  { id: 'frame_14', url: 'https://i.postimg.cc/LscBkxZb/mmexport1751017556565.gif', name: '14' },
+  { id: 'frame_13', url: 'https://i.postimg.cc/1XqzGKwJ/mmexport1751018282681.gif', name: '13' },
+    { id: 'frame_14', url: 'https://i.postimg.cc/8kHCQwbQ/mmexport1751020645824.gif', name: '14' },
+  { id: 'frame_14', url: 'https://i.postimg.cc/HWynLK7f/mmexport1751021724230.gif', name: '14' },
+{ id: 'frame_14', url: 'https://i.postimg.cc/JnwFp3Kx/mmexport1751031208329.gif', name: '14' },
+  { id: 'frame_13', url: 'https://i.postimg.cc/HLZNWkQw/mmexport1751031767634.gif', name: '13' },
+    { id: 'frame_14', url: 'https://i.postimg.cc/vH2X6N1y/mmexport1751032231179.gif', name: '14' },
+  { id: 'frame_14', url: 'https://i.postimg.cc/NFS4ZyvM/mmexport1751032686953.gif', name: '14' },
+  { id: 'frame_13', url: 'https://i.postimg.cc/3RpmWc8c/mmexport1751033102811.gif', name: '13' },
+    { id: 'frame_14', url: 'https://i.postimg.cc/L5RLr3tg/mmexport1751035976943.gif', name: '14' },
+  { id: 'frame_14', url: 'https://i.postimg.cc/4NCPsp5d/mmexport1751034427637.gif', name: '14' },
+{ id: 'frame_14', url: 'https://i.postimg.cc/CMv02LHm/mmexport1751034842120.gif', name: '14' },
+  { id: 'frame_13', url: 'https://i.postimg.cc/rFnSzWGx/mmexport1751035618517.gif', name: '13' },
+    { id: 'frame_14', url: 'https://i.postimg.cc/7YRbzN51/mmexport1751036276038.gif', name: '14' },
+  { id: 'frame_14', url: 'https://i.postimg.cc/cJpbtPWq/mmexport1751036607799.gif', name: '14' },
+  { id: 'frame_13', url: 'https://i.postimg.cc/HxLV5v92/mmexport1751036977582.gif', name: '13' },
+    { id: 'frame_14', url: 'https://i.postimg.cc/D01rYy86/mmexport1751037965259.gif', name: '14' },
+  { id: 'frame_14', url: 'https://i.postimg.cc/J4fwkTLW/mmexport1751038167142.gif', name: '14' },
+  
+  
+{ id: 'frame_14', url: 'https://i.postimg.cc/xjpN4swz/IMG-7240.gif', name: '14' },
+  { id: 'frame_13', url: 'https://i.postimg.cc/ZnzbGdxX/IMG-7239.gif', name: '13' },
+    { id: 'frame_14', url: 'https://i.postimg.cc/DyYDmKtw/IMG-7238.gif', name: '14' },
+  { id: 'frame_14', url: 'https://i.postimg.cc/W40f9qtd/IMG-7098.gif', name: '14' },
+  { id: 'frame_13', url: 'https://i.postimg.cc/8PsK20jQ/IMG-7236.gif', name: '13' },
+    { id: 'frame_14', url: 'https://i.postimg.cc/cHsTXDVz/IMG-7235.gif', name: '14' },
+  { id: 'frame_14', url: 'https://i.postimg.cc/sXwm8Yzg/IMG-7234.gif', name: '14' },
+{ id: 'frame_14', url: 'https://i.postimg.cc/xTk5xN49/IMG-7233.gif', name: '14' },
+  { id: 'frame_13', url: 'https://i.postimg.cc/k5yv6QBv/IMG-7232.gif', name: '13' },
+    { id: 'frame_14', url: 'https://i.postimg.cc/yx2m4nbs/IMG-7231.gif', name: '14' },
+  { id: 'frame_14', url: 'https://i.postimg.cc/vZt0fFKn/IMB-r-HMBXY.gif', name: '14' },
+  { id: 'frame_13', url: 'https://i.postimg.cc/pddJj9zN/IMG-7094.gif', name: '13' },
+    { id: 'frame_14', url: 'https://i.postimg.cc/rmB17Qbc/IMB-f-VDf-Fc.gif', name: '14' },
+  { id: 'frame_14', url: 'https://i.postimg.cc/VkKjzYTK/IMB-f4kk-CT.gif', name: '14' },
+{ id: 'frame_14', url: 'https://i.postimg.cc/B6KD52vz/IMG-7096.gif', name: '14' },
+  { id: 'frame_13', url: 'https://i.postimg.cc/9XPwWmwy/IMB-Kf7um-P.gif', name: '13' },
+    { id: 'frame_14', url: 'https://i.postimg.cc/mrFhKBGz/IMB-e-QWBpa.gif', name: '14' },
+  { id: 'frame_14', url: 'https://i.postimg.cc/bw4wxW2z/IMB-16r-COL.gif', name: '14' },
+  { id: 'frame_13', url: 'https://i.postimg.cc/3x0Kx1fz/IMB-K1u-Jp-P.gif', name: '13' },
+    { id: 'frame_14', url: 'https://i.postimg.cc/CLz0cJ0d/IMG-7116.gif', name: '14' },
+  { id: 'frame_14', url: 'https://i.postimg.cc/fyyGgW61/IMG-7115.gif', name: '14' },
+{ id: 'frame_14', url: 'https://i.postimg.cc/gkk7s0vD/IMG-6984.gif', name: '14' },
+  { id: 'frame_13', url: 'https://i.postimg.cc/0NpZPgYj/IMG-6985.gif', name: '13' },
+    { id: 'frame_14', url: 'https://i.postimg.cc/tTWKKmTN/IMG-7073.gif', name: '14' },
+  { id: 'frame_14', url: 'https://i.postimg.cc/jS8tc9wW/IMG-7083.gif', name: '14' },
+  { id: 'frame_13', url: 'https://i.postimg.cc/rmRVKJpD/IMG-7087.gif', name: '13' },
+    { id: 'frame_14', url: 'https://i.postimg.cc/zvWGPjms/IMG-7090.gif', name: '14' },
+  { id: 'frame_14', url: 'https://i.postimg.cc/YSkqDg8V/IMG-7092.gif', name: '14' },
+{ id: 'frame_14', url: 'https://i.postimg.cc/FzqHTBng/IMG-7093.gif', name: '14' },
+  { id: 'frame_13', url: 'https://i.postimg.cc/tTpZ6wLs/IMG-7095.gif', name: '13' },
+    { id: 'frame_14', url: 'https://i.postimg.cc/8P5vt8sW/IMG-7097.gif', name: '14' },
+  { id: 'frame_14', url: 'https://i.postimg.cc/wMxmCZVC/IMG-7099.gif', name: '14' },
+  { id: 'frame_13', url: 'https://i.postimg.cc/2jxd0FGp/IMG-7100.gif', name: '13' },
+    { id: 'frame_14', url: 'https://i.postimg.cc/B6T59xGK/IMG-7101.gif', name: '14' },
+  { id: 'frame_14', url: 'https://i.postimg.cc/kXfcgFRN/IMG-7106.gif', name: '14' },
+{ id: 'frame_14', url: 'https://i.postimg.cc/htZppbS4/IMG-7107.gif', name: '14' },
+  { id: 'frame_13', url: 'https://i.postimg.cc/hPgyjtyn/IMG-7108.gif', name: '13' },
+    { id: 'frame_14', url: 'https://i.postimg.cc/HLKvs0Kv/IMG-7109.gif', name: '14' },
+  { id: 'frame_14', url: 'https://i.postimg.cc/wjwbnYkp/IMG-7111.gif', name: '14' },
+  { id: 'frame_13', url: 'https://i.postimg.cc/bJDMQVkj/IMG-7112.gif', name: '13' },
+    { id: 'frame_14', url: 'https://i.postimg.cc/SNWBTP5S/IMG-7113.gif', name: '14' },
+  { id: 'frame_14', url: 'https://i.postimg.cc/jCVMQsKH/IMG-7114.gif', name: '14' },
+  
+  ];
         // --- 已修正 ---
         let state = { chats: {}, activeChatId: null, globalSettings: {}, apiConfig: {}, userStickers: [], worldBooks: [], personaPresets: [], qzoneSettings: {}, activeAlbumId: null };
         // --- 修正结束 ---
@@ -7134,10 +7386,12 @@ async function loadAllDataFromDB() {
     }
     // ▲▲▲ 添加结束 ▲▲▲
 // ▼▼▼ 在这里添加 ▼▼▼
-if (chat.isGroup && (!chat.settings || !chat.settings.groupAvatarLibrary)) {
-    if (!chat.settings) chat.settings = {}; // 以防万一连settings都没有
-    chat.settings.groupAvatarLibrary = [];
-    console.log(`为旧群聊 "${chat.name}" 补全了groupAvatarLibrary属性。`);
+if (chat.isGroup) {
+    (chat.members || []).forEach(member => {
+        if (typeof member.avatarFrame === 'undefined') {
+            member.avatarFrame = ''; // 为旧的群成员数据添加 avatarFrame 属性
+        }
+    });
 }
 // ▲▲▲ 添加结束 ▲▲▲
         if (!chat.musicData) chat.musicData = { totalTime: 0 };
@@ -7150,7 +7404,38 @@ if (chat.isGroup && (!chat.settings || !chat.settings.groupAvatarLibrary)) {
         chat.isPinned = false; // 为旧数据添加默认值
     }
     // ▲▲▲ 添加结束 ▲▲▲
+// ▼▼▼ 请用这个【终极加强版】的代码块，【替换】掉我上次给你的那个旧的头像框迁移代码块 ▼▼▼
+if (chat.isGroup && chat.members) {
+    let needsUpdate = false;
+    chat.members.forEach(member => {
+        // 1. 无论当前成员的头像框是什么，都去查找他原始单聊的正确设置
+        const originalCharacter = chatsArr.find(c => c.id === member.id);
 
+        if (originalCharacter && originalCharacter.settings) {
+            // 2. 获取这个角色【应该有】的头像框
+            const correctFrame = originalCharacter.settings.aiAvatarFrame || '';
+
+            // 3. 【核心修正】检查当前成员的头像框是否与【正确】的不一致
+            //    (这覆盖了 undefined, '', 以及任何过时的数据)
+            if (member.avatarFrame !== correctFrame) {
+                // 4. 如果不一致，就强制修正它
+                member.avatarFrame = correctFrame;
+                needsUpdate = true; // 标记需要保存
+                console.log(`强制修正了群聊 "${chat.name}" 中成员 "${member.originalName}" 的头像框。`);
+            }
+        } 
+        // 兼容性处理：如果成员对象连 avatarFrame 属性都没有，就给他补上
+        else if (typeof member.avatarFrame === 'undefined') {
+            member.avatarFrame = '';
+            needsUpdate = true;
+        }
+    });
+
+    if (needsUpdate) {
+        db.chats.put(chat); // 将修正后的整个群聊对象存回数据库
+    }
+}
+// ▲▲▲ 替换结束 ▲▲▲
         acc[chat.id] = chat;
         return acc;
     }, {});
@@ -7802,22 +8087,50 @@ if (msg.type === 'recalled_message') {
     timestampEl.className = 'timestamp';
     timestampEl.textContent = formatTimestamp(msg.timestamp);
 
-    let avatarSrc; 
-    if (chat.isGroup) {
-        if (isUser) {
-            avatarSrc = chat.settings.myAvatar || defaultMyGroupAvatar;
-        } else {
-            const member = chat.members.find(m => m.originalName === msg.senderName);
-            avatarSrc = member ? member.avatar : defaultGroupMemberAvatar;
-        }
+// ▼▼▼ 【这是最终的、修复所有问题的头像HTML生成逻辑】 ▼▼▼
+
+let avatarSrc, avatarFrameSrc = '';
+
+// 1. 获取正确的头像和头像框URL
+if (chat.isGroup) {
+    if (isUser) {
+        avatarSrc = chat.settings.myAvatar || defaultMyGroupAvatar;
+        avatarFrameSrc = chat.settings.myAvatarFrame || '';
     } else {
-        if (isUser) {
-            avatarSrc = chat.settings.myAvatar || defaultAvatar;
-        } else {
-            avatarSrc = chat.settings.aiAvatar || defaultAvatar;
-        }
+        const member = chat.members.find(m => m.originalName === msg.senderName);
+        avatarSrc = member ? member.avatar : defaultGroupMemberAvatar;
+        avatarFrameSrc = member ? (member.avatarFrame || '') : '';
     }
-    const avatarHtml = `<img src="${avatarSrc}" class="avatar">`;
+} else { // 单聊
+    if (isUser) {
+        avatarSrc = chat.settings.myAvatar || defaultAvatar;
+        avatarFrameSrc = chat.settings.myAvatarFrame || '';
+    } else {
+        avatarSrc = chat.settings.aiAvatar || defaultAvatar;
+        avatarFrameSrc = chat.settings.aiAvatarFrame || '';
+    }
+}
+
+// 2. 根据是否有头像框，动态生成不同的HTML结构
+let avatarHtml;
+if (avatarFrameSrc) {
+    // 如果有框，生成包含框的HTML
+    avatarHtml = `
+        <div class="avatar-with-frame">
+            <img src="${avatarSrc}" class="avatar-img">
+            <img src="${avatarFrameSrc}" class="avatar-frame">
+        </div>
+    `;
+} else {
+    // 如果没框，只生成简单的<img>标签
+    avatarHtml = `<img src="${avatarSrc}" class="avatar">`;
+}
+
+// 3. 将最终生成的HTML放入一个统一的容器，并添加has-frame类（如果需要）
+const hasFrameClass = avatarFrameSrc ? 'has-frame' : '';
+const avatarGroupHtml = `<div class="avatar-group ${hasFrameClass}">${avatarHtml}</div>`;
+
+// ▲▲▲ 替换结束 ▲▲▲
 
     let contentHtml;
     
@@ -14209,6 +14522,129 @@ function checkMessageForHeartRateTrigger(chatId, messageText) {
 
 // ▲▲▲ 替换结束 ▲▲▲
 // ▲▲▲ 全新代码块结束 ▲▲▲
+// ▼▼▼ 【这是您缺失的核心功能代码，请粘贴在这里】 ▼▼▼
+
+// ▼▼▼ 【这是您缺失的核心功能代码，请粘贴在这里】 ▼▼▼
+let editingFrameForMember = false;
+let currentFrameSelection = { ai: null, my: null };
+
+function openFrameSelectorModal(type = 'chat') {
+    const frameModal = document.getElementById('avatar-frame-modal');
+    if (!state.activeChatId) return;
+    const chat = state.chats[state.activeChatId];
+    editingFrameForMember = (type === 'member');
+
+    if (editingFrameForMember) {
+        const member = chat.members.find(m => m.id === editingMemberId);
+        if (!member) return;
+        currentFrameSelection.my = member.avatarFrame || '';
+        populateFrameGrids(true, member.avatar, member.avatarFrame);
+    } else {
+        currentFrameSelection.ai = chat.settings.aiAvatarFrame || '';
+        currentFrameSelection.my = chat.settings.myAvatarFrame || '';
+        populateFrameGrids(false);
+    }
+    frameModal.classList.add('visible');
+}
+
+function populateFrameGrids(isForMember = false, memberAvatar = null, memberFrame = null) {
+    const aiFrameGrid = document.getElementById('ai-frame-grid');
+    const myFrameGrid = document.getElementById('my-frame-grid');
+    const chat = state.chats[state.activeChatId];
+    aiFrameGrid.innerHTML = '';
+    myFrameGrid.innerHTML = '';
+
+    document.querySelector('#avatar-frame-modal .frame-tabs').style.display = isForMember ? 'none' : 'flex';
+    document.getElementById('ai-frame-content').style.display = 'block';
+    document.getElementById('my-frame-content').style.display = 'none';
+    document.getElementById('ai-frame-tab').classList.add('active');
+    document.getElementById('my-frame-tab').classList.remove('active');
+
+    if (isForMember) {
+        avatarFrames.forEach(frame => {
+            const item = createFrameItem(frame, 'my', memberAvatar);
+            if (frame.url === memberFrame) {
+                item.classList.add('selected');
+            }
+            aiFrameGrid.appendChild(item);
+        });
+    } else {
+        const aiAvatarForPreview = chat.settings.aiAvatar || defaultAvatar;
+        const myAvatarForPreview = chat.settings.myAvatar || (chat.isGroup ? defaultMyGroupAvatar : defaultAvatar);
+        avatarFrames.forEach(frame => {
+            const aiItem = createFrameItem(frame, 'ai', aiAvatarForPreview);
+            if (frame.url === currentFrameSelection.ai) aiItem.classList.add('selected');
+            aiFrameGrid.appendChild(aiItem);
+            const myItem = createFrameItem(frame, 'my', myAvatarForPreview);
+            if (frame.url === currentFrameSelection.my) myItem.classList.add('selected');
+            myFrameGrid.appendChild(myItem);
+        });
+    }
+}
+
+function createFrameItem(frame, type, previewAvatarSrc) {
+    const item = document.createElement('div');
+    item.className = 'frame-item';
+    item.dataset.frameUrl = frame.url;
+    item.title = frame.name;
+    item.innerHTML = `
+        <img src="${previewAvatarSrc}" class="preview-avatar">
+        ${frame.url ? `<img src="${frame.url}" class="preview-frame">` : ''}
+    `;
+    item.addEventListener('click', () => {
+        currentFrameSelection[type] = frame.url;
+        const grid = type === 'ai' ? document.getElementById('ai-frame-grid') : document.getElementById('my-frame-grid');
+        grid.querySelectorAll('.frame-item').forEach(el => el.classList.remove('selected'));
+        item.classList.add('selected');
+    });
+    return item;
+}
+
+async function saveSelectedFrames() {
+    if (!state.activeChatId) return;
+    const chat = state.chats[state.activeChatId];
+    if (editingFrameForMember) {
+        const member = chat.members.find(m => m.id === editingMemberId);
+        if (member) {
+            member.avatarFrame = currentFrameSelection.my;
+        }
+    } else {
+        chat.settings.aiAvatarFrame = currentFrameSelection.ai;
+        chat.settings.myAvatarFrame = currentFrameSelection.my;
+    }
+// ... (函数前面的代码) ...
+    await db.chats.put(chat);
+
+    // ▼▼▼ 在这里粘贴修复代码 ▼▼▼
+    // 核心修复：当更新单聊角色的头像框时，同步到所有包含该角色的群聊中
+    if (!editingFrameForMember && !chat.isGroup) {
+        const characterId = chat.id; // 获取被修改的角色的ID
+
+        // 遍历所有聊天，找出包含这个角色的群聊
+        for (const groupChat of Object.values(state.chats)) {
+            if (groupChat.isGroup && groupChat.members) {
+                // 在群聊中找到对应的成员对象
+                const memberToUpdate = groupChat.members.find(m => m.id === characterId);
+
+                // 如果找到了，就更新他的头像框信息
+                if (memberToUpdate) {
+                    memberToUpdate.avatarFrame = chat.settings.aiAvatarFrame;
+                    // 【至关重要】将修改后的【整个群聊对象】存回数据库
+                    await db.chats.put(groupChat);
+                    console.log(`已同步角色 ${characterId} 的头像框到群聊 "${groupChat.name}"`);
+                }
+            }
+        }
+    }
+    // ▲▲▲ 修复代码粘贴结束 ▲▲▲
+
+    document.getElementById('avatar-frame-modal').classList.remove('visible');
+    renderChatInterface(state.activeChatId);
+    alert('头像框已保存并同步！'); // 修改了提示，让您知道同步也完成了
+    editingFrameForMember = false;
+}
+
+// ▲▲▲ 粘贴结束 ▲▲▲
         // ===================================================================
         // 4. 初始化函数 init()
         // ===================================================================
@@ -14267,7 +14703,59 @@ applyAppIcons();
             // ==========================================================
             // --- 各种事件监听器 ---
             // ==========================================================
+// ▼▼▼ 【这是您缺失的核心功能代码，请粘贴在这里】 ▼▼▼
+let activeAnnouncementId = null; // 用于暂存正在操作的公告ID
 
+/**
+ * 点击“...”时，显示操作菜单（置顶/删除）
+ * @param {string} annoId - 公告的唯一ID
+ */
+function showAnnouncementActions(annoId) {
+    activeAnnouncementId = annoId;
+    const chat = state.chats[state.activeChatId];
+    const announcement = chat.announcements.find(a => a.id === annoId);
+    if (!announcement) return;
+
+    const pinButton = document.getElementById('announcement-action-pin');
+    // 根据当前是否已置顶，动态改变按钮文字
+    pinButton.textContent = announcement.isPinned ? '取消置顶' : '置顶公告';
+
+    document.getElementById('announcement-actions-modal').classList.add('visible');
+}
+
+/**
+ * 处理“置顶/取消置顶”操作
+ */
+async function handlePinAnnouncement() {
+    if (!activeAnnouncementId) return;
+    const chat = state.chats[state.activeChatId];
+    const announcement = chat.announcements.find(a => a.id === activeAnnouncementId);
+    if (announcement) {
+        announcement.isPinned = !announcement.isPinned; // 切换置顶状态
+        await db.chats.put(chat);
+        showAnnouncementBoard(); // 重新渲染公告板以更新UI
+    }
+    document.getElementById('announcement-actions-modal').classList.remove('visible');
+}
+
+/**
+ * 处理“删除公告”操作
+ */
+async function handleDeleteAnnouncement() {
+    if (!activeAnnouncementId) return;
+
+    const confirmed = await showCustomConfirm("确认删除", "确定要删除这条公告吗？此操作不可恢复。", { confirmButtonClass: 'btn-danger' });
+
+    if (confirmed) {
+        const chat = state.chats[state.activeChatId];
+        // 从公告数组中过滤掉要删除的公告
+        chat.announcements = chat.announcements.filter(a => a.id !== activeAnnouncementId);
+        await db.chats.put(chat);
+        showAnnouncementBoard(); // 重新渲染
+    }
+    document.getElementById('announcement-actions-modal').classList.remove('visible');
+}
+// ▲▲▲ 粘贴结束 ▲▲▲
             document.getElementById('custom-modal-cancel').addEventListener('click', hideCustomModal);
             document.getElementById('custom-modal-overlay').addEventListener('click', (e) => { if (e.target === modalOverlay) hideCustomModal(); });
             document.getElementById('export-data-btn').addEventListener('click', exportBackup);
@@ -14752,6 +15240,56 @@ if (linkMemoryToggleChecked) {
     renderChatInterface(state.activeChatId);
     renderChatList();
 });
+
+// ▼▼▼ 【这是最终的完整功能代码，请用它替换掉旧的】 ▼▼▼
+
+// 为聊天设置里的“更换头像框”按钮添加点击事件
+document.getElementById('chat-settings-modal').addEventListener('click', (e) => {
+    if (e.target.classList.contains('change-frame-btn')) {
+        openFrameSelectorModal('chat');
+    }
+});
+
+// 为成员设置里的“更换头像框”按钮添加点击事件
+document.getElementById('member-settings-modal').addEventListener('click', (e) => {
+    if (e.target.classList.contains('change-frame-btn')) { 
+        openFrameSelectorModal('member');
+    }
+});
+
+// --- 【新增】为头像框选择模态框的按钮和标签页绑定事件 ---
+const frameModal = document.getElementById('avatar-frame-modal');
+const aiFrameTab = document.getElementById('ai-frame-tab');
+const myFrameTab = document.getElementById('my-frame-tab');
+const aiFrameContent = document.getElementById('ai-frame-content');
+const myFrameContent = document.getElementById('my-frame-content');
+
+// “保存”按钮
+document.getElementById('save-frame-settings-btn').addEventListener('click', saveSelectedFrames);
+
+// “取消”按钮
+document.getElementById('cancel-frame-settings-btn').addEventListener('click', () => {
+    frameModal.classList.remove('visible');
+    editingFrameForMember = false; // 确保重置状态
+});
+
+// “对方的” 标签页
+aiFrameTab.addEventListener('click', () => {
+    aiFrameTab.classList.add('active');
+    myFrameTab.classList.remove('active');
+    aiFrameContent.style.display = 'block';
+    myFrameContent.style.display = 'none';
+});
+
+// “我的” 标签页
+myFrameTab.addEventListener('click', () => {
+    myFrameTab.classList.add('active');
+    aiFrameTab.classList.remove('active');
+    myFrameContent.style.display = 'block';
+    aiFrameContent.style.display = 'none';
+});
+
+// ▲▲▲ 替换结束 ▲▲▲
             document.getElementById('clear-chat-btn').addEventListener('click', async () => { if (!state.activeChatId) return; const chat = state.chats[state.activeChatId]; const confirmed = await showCustomConfirm('清空聊天记录', '此操作将永久删除此聊天的所有消息，无法恢复。确定要清空吗？', { confirmButtonClass: 'btn-danger' }); if (confirmed) { chat.history = []; await db.chats.put(chat); renderChatInterface(state.activeChatId); renderChatList(); chatSettingsModal.classList.remove('visible'); } });
             
             const setupFileUpload = (inputId, callback) => { document.getElementById(inputId).addEventListener('change', async (event) => { const file = event.target.files[0]; if (file) { const dataUrl = await new Promise((res, rej) => { const reader = new FileReader(); reader.onload = () => res(reader.result); reader.onerror = () => rej(reader.error); reader.readAsDataURL(file); }); callback(dataUrl); event.target.value = null; } }); };
@@ -16866,6 +17404,31 @@ document.getElementById('announcement-action-cancel').addEventListener('click', 
 </script>
 <div id="qzone-sticker-panel">
     <div id="qzone-sticker-grid"></div>
+</div>
+<div id="avatar-frame-modal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span>选择头像框</span>
+        </div>
+        <div class="modal-body">
+            <div class="frame-tabs">
+                <div id="ai-frame-tab" class="frame-tab active">对方的</div>
+                <div id="my-frame-tab" class="frame-tab">我的</div>
+            </div>
+            <div id="ai-frame-content" class="frame-content">
+                <div id="ai-frame-grid" class="frame-grid">
+                    </div>
+            </div>
+            <div id="my-frame-content" class="frame-content" style="display: none;">
+                 <div id="my-frame-grid" class="frame-grid">
+                    </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="cancel" id="cancel-frame-settings-btn">取消</button>
+            <button class="save" id="save-frame-settings-btn">保存</button>
+        </div>
+    </div>
 </div>
 </body>
 </html>
