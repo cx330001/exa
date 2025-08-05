@@ -3154,7 +3154,7 @@ body {
     -webkit-backdrop-filter: none;
 }
 
-.link-share-card {
+.link-share-card, .history-share-card {
     width: 210px; 
     background-color: #fff;
     border-radius: 10px;
@@ -3170,7 +3170,7 @@ body {
     background-color: #f9f9f9;
 }
 
-.link-share-card .title {
+.link-share-card .title, .history-share-card .title {
     font-weight: 600;
     font-size: 15px;
     line-height: 1.4;
@@ -3182,7 +3182,7 @@ body {
     text-overflow: ellipsis;
 }
 
-.link-share-card .description {
+.link-share-card .description, .history-share-card .description {
     font-size: 13px;
     color: #8a8a8a;
     display: -webkit-box;
@@ -3192,7 +3192,7 @@ body {
     text-overflow: ellipsis;
 }
 
-.link-share-card .footer {
+.link-share-card .footer, .history-share-card .footer {
     display: flex; /* 让图标和文字水平对齐 */
     align-items: center;
     gap: 6px; /* 图标和文字的间距 */
@@ -3200,7 +3200,7 @@ body {
     color: var(--text-secondary);
     margin-top: 4px; /* 和上面的描述拉开一点距离 */
 }
-.link-share-card .footer-icon {
+.link-share-card .footer-icon, .history-share-card .footer-icon {
     width: 14px;
     height: 14px;
     flex-shrink: 0; /* 防止图标被压缩 */
@@ -4699,6 +4699,20 @@ input:checked + .slider:before {
 #chat-interface-screen .message-bubble .avatar-with-frame .avatar-img {
     width: 100% !important;
     height: 100% !important;
+}
+/* ▲▲▲ 修正结束 ▲▲▲ */
+/* ▼▼▼ 【全新】卡片/特殊内容居中修正 ▼▼▼ */
+.message-bubble.is-link-share .content,
+.message-bubble.is-transfer .content,
+.message-bubble.is-waimai-request .content,
+.message-bubble.is-red-packet .content,
+.message-bubble.is-poll .content,
+.message-bubble.is-location-share .content,
+.message-bubble.is-sticker .content,
+.message-bubble.is-ai-image .content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 /* ▲▲▲ 修正结束 ▲▲▲ */
     </style>
@@ -8192,7 +8206,7 @@ const avatarGroupHtml = `<div class="avatar-group ${hasFrameClass}">${avatarHtml
 else if (msg.type === 'share_card') {
     bubble.classList.add('is-link-share'); // 复用链接分享的卡片样式
     contentHtml = `
-        <div class="link-share-card" style="cursor: pointer;" data-timestamp="${msg.timestamp}">
+        <div class="history-share-card" style="cursor: pointer;" data-timestamp="${msg.timestamp}">
             <div class="title">${msg.payload.title}</div>
             <div class="description">共 ${msg.payload.sharedHistory.length} 条消息</div>
             <div class="footer">
@@ -8717,7 +8731,11 @@ ${contextSummary || "（无有效对话记录）"}
 let linkedMemoryContext = '';
 const memoryCount = chat.settings.linkedMemoryCount || 10;
 if (chat.settings.linkedMemoryChatIds && chat.settings.linkedMemoryChatIds.length > 0) {
-    linkedMemoryContext += `\n\n# 参考记忆 (你必须参考以下其他聊天的近期内容来丰富你的行为和对话)\n`;
+    // 修改前
+// linkedMemoryContext += `\n\n# 参考记忆 (你必须参考以下其他聊天的近期内容来丰富你的行为和对话)\n`;
+
+// 修改后
+linkedMemoryContext += `\n\n# 参考记忆 (至关重要！你必须【主动】将这些参考记忆中的【关键信息和事件】，自然地融入到当前的对话中，以体现你拥有完整的记忆。不要只是被动等待用户提问！)\n`;
 
     for (const linkedId of chat.settings.linkedMemoryChatIds) {
         const linkedChat = state.chats[linkedId];
@@ -10492,7 +10510,11 @@ ${recentlyPostedSummaries.join('\n')}
     let linkedMemoryContext = '';
     const memoryCount = chat.settings.linkedMemoryCount || 10;
     if (chat.settings.linkedMemoryChatIds && chat.settings.linkedMemoryChatIds.length > 0) {
-        linkedMemoryContext += `\n\n# 参考记忆 (你必须参考以下其他聊天的近期内容来丰富你的行为和对话)\n`;
+        // 修改前
+// linkedMemoryContext += `\n\n# 参考记忆 (你必须参考以下其他聊天的近期内容来丰富你的行为和对话)\n`;
+
+// 修改后
+linkedMemoryContext += `\n\n# 参考记忆 (至关重要！你必须【主动】将这些参考记忆中的【关键信息和事件】，自然地融入到当前的对话中，以体现你拥有完整的记忆。不要只是被动等待用户提问！)\n`;
         for (const linkedId of chat.settings.linkedMemoryChatIds) {
             const linkedChat = state.chats[linkedId];
             if (linkedChat) {
@@ -10758,7 +10780,11 @@ async function triggerGroupAiAction(chatId) {
     let linkedMemoryContext = '';
     const memoryCount = chat.settings.linkedMemoryCount || 10;
     if (chat.settings.linkedMemoryChatIds && chat.settings.linkedMemoryChatIds.length > 0) {
-        linkedMemoryContext += `\n\n# 参考记忆 (你必须参考以下其他聊天的近期内容来丰富你的行为和对话)\n`;
+        // 修改前
+// linkedMemoryContext += `\n\n# 参考记忆 (你必须参考以下其他聊天的近期内容来丰富你的行为和对话)\n`;
+
+// 修改后
+linkedMemoryContext += `\n\n# 参考记忆 (至关重要！你必须【主动】将这些参考记忆中的【关键信息和事件】，自然地融入到当前的对话中，以体现你拥有完整的记忆。不要只是被动等待用户提问！)\n`;
 
         for (const linkedId of chat.settings.linkedMemoryChatIds) {
             const linkedChat = state.chats[linkedId];
@@ -17165,9 +17191,9 @@ document.getElementById('chat-messages').addEventListener('click', (e) => {
     // ...你已有的其他点击事件逻辑...
 
     // 新增逻辑：处理分享卡片的点击
-    const shareCard = e.target.closest('.link-share-card[data-timestamp]');
-    if (shareCard && shareCard.closest('.message-bubble.is-link-share')) {
-        const timestamp = parseInt(shareCard.dataset.timestamp);
+    const historyCard = e.target.closest('.history-share-card[data-timestamp]');
+    if (historyCard) {
+        const timestamp = parseInt(historyCard.dataset.timestamp);
         openSharedHistoryViewer(timestamp);
     }
 });
