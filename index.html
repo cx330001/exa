@@ -192,6 +192,7 @@ body {
     align-items: flex-start;
     gap: 12px;
     max-width: 100%;
+    min-width: 0; /* <-- 核心修复：允许气泡容器自身收缩 */
 }
 
 .timestamp {
@@ -362,6 +363,7 @@ body {
     padding: 8px 12px;
     line-height: 1.5;
     word-break: break-word; /* 核心修正: 强制长单词或URL换行，防止撑破气泡 */
+
 }
 /* ▲▲▲ 替换结束 ▲▲▲ */
 
@@ -4597,70 +4599,108 @@ input:checked + .slider:before {
 }
 
 
-/* ▼▼▼ 请用下面这【一整块最终修正版】的代码，替换掉所有旧的头像相关样式 ▼▼▼ */
+/* ▼▼▼ 【最终修复方案】请用这一整块代码替换所有旧的头像相关样式 ▼▼▼ */
 
 /* 1. 头像最外层容器，负责占位和动态变宽 */
 .avatar-group {
     width: 34px;
-    flex-shrink: 0;
+    flex-shrink: 0; /* 确保在flex布局中不被压缩 */
     position: relative;
     transition: width 0.2s ease;
 }
+/* 当佩戴头像框时，外层容器变宽，为更大的头像框创造空间 */
 .avatar-group.has-frame {
-    width: 42px; /* 佩戴头像框时，容器变宽以推动消息文本 */
+    width: 42px; 
 }
 
-/* 2. 普通的、无框的头像样式 */
+/* 2. 基础的、无框的头像样式 */
 .message-bubble .avatar {
     width: 34px;
     height: 34px;
-    border-radius: 20%;
+    border-radius: 20%; /* 默认的方圆形头像 */
     object-fit: cover;
 }
 
-/* 3. 【核心】带框头像的容器 */
+/* 3. 带框头像的“内部容器” */
 .avatar-with-frame {
-    position: relative; /* 关键：为内部的头像框提供定位锚点 */
-    width: 43px; /* 默认大小 */
-    height: 43px;
+    position: relative; /* 关键：为内部的头像和框提供定位锚点 */
+    width: 38px;
+    height: 38px;
     margin: 0 auto;
     transition: all 0.2s ease;
 }
-/* 当有框时，此容器也变大，让内部图片可以更大 */
+/* 【核心】当有框时，这个内部容器也变大，让里面的图片可以更大 */
 .avatar-group.has-frame .avatar-with-frame {
     width: 43px;
     height: 43px;
 }
 
-/* 4. 带框头像中的图片本身，永远撑满其容器 */
+/* 4. 带框头像中的“头像图片本身” */
 .avatar-with-frame .avatar-img {
     position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
-    border-radius: 50%; /* 佩戴头像框时，图片本身是圆形的 */
+    width: 100%; /* 宽度撑满其父容器 (.avatar-with-frame) */
+    height: 100%;/* 高度也撑满 */
+    border-radius: 50%; /* 佩戴头像框时，图片本身变为圆形以更好地适配 */
     object-fit: cover;
-    z-index: 1;
+    z-index: 1; /* 确保在头像框下方 */
 }
 
-/* 5. 【最终解决方案】头像框本身，使用transform进行完美居中 */
+/* 5. “头像框图片本身” */
 .avatar-with-frame .avatar-frame {
     position: absolute;
-    width: 52px;  /* 保持您头像框素材的原始尺寸 */
-    height: 52px;
-    /* --- 这就是确保完美包裹的关键代码 --- */
+    width: 120%;  
+    height: 120%; 
+
+    /* --- 这就是确保完美包裹和居中的关键代码 --- */
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     /* --- 关键代码结束 --- */
-    z-index: 2;
-    pointer-events: none; /* 让鼠标可以点到下面的头像 */
+    z-index: 2; /* 确保在头像图片上方 */
+    pointer-events: none; /* 让鼠标事件可以穿透头像框，点到下面的头像 */
 }
 
 /* ▲▲▲ 替换结束 ▲▲▲ */
+/* ▼▼▼ 【最终修复方案】用于彻底解决 Safari 头像挤压的 Bug ▼▼▼ */
 
+/* 1. 强制外层气泡容器(.message-bubble)成为一个真正的“弹性”项目。*/
+/* 这让它可以正确地为旁边的“时间戳”收缩。*/
+.message-bubble {
+    flex: 1;          /* 关键修复①: 让它填充所有可用空间 (flex-grow: 1, flex-shrink: 1) */
+    min-width: 0;     /* 关键修复②: 允许它收缩至比其内容更小，这是解决此类问题的核心技巧 */
+}
 
+/* 2. 强制内层内容区(.content)也成为一个“弹性”项目。*/
+/* 这让它可以正确地为旁边的“头像”收缩。*/
+.message-bubble .content {
+    flex: 1;          /* 关键修复③: 让内容区填充气泡内的所有可用空间 */
+    min-width: 0;     /* 关键修复④: 同样允许它收缩，防止长文本撑破布局 */
+    word-break: break-all !important; /* 关键修复⑤: 使用最强力的换行模式，确保长串字符能被截断 */
+}
+
+/* 3. 再次确保头像容器绝对不收缩 (作为最终保险) */
+.message-bubble .avatar-group {
+    flex-shrink: 0 !important;
+}
+
+/* ▲▲▲ 修复方案结束 ▲▲▲ */
+/* ▼▼▼ 【终极强制修正】请将这段代码粘贴到 <style> 的最末尾 ▼▼▼ */
+
+/* 使用ID选择器和!important，强制提升这条规则的优先级到最高，
+   以覆盖任何可能存在的未知冲突样式。*/
+
+#chat-interface-screen .message-bubble .avatar-group.has-frame .avatar-with-frame {
+    width: 43px !important;
+    height: 43px !important;
+}
+
+#chat-interface-screen .message-bubble .avatar-with-frame .avatar-img {
+    width: 100% !important;
+    height: 100% !important;
+}
+/* ▲▲▲ 修正结束 ▲▲▲ */
     </style>
 </head>
 <body>
@@ -7557,26 +7597,18 @@ async function renderChatList() {
         return;
     }
 
-    // --- 【核心修正开始】---
-
     // 3. 为每个分组找到其内部最新的消息时间戳
     allGroups.forEach(group => {
-        // 从已排序的 allChats 中找到本组的第一个（也就是最新的）聊天
         const latestChatInGroup = allChats.find(chat => chat.groupId === group.id);
-        // 如果找到了，就用它的时间戳；如果该分组暂时没有聊天或聊天没有历史记录，就用0
         group.latestTimestamp = latestChatInGroup ? (latestChatInGroup.history.slice(-1)[0]?.timestamp || 0) : 0;
     });
 
     // 4. 根据这个最新的时间戳来对“分组本身”进行排序
     allGroups.sort((a, b) => b.latestTimestamp - a.latestTimestamp);
 
-    // --- 【核心修正结束】---
-
     // 5. 现在，我们按照排好序的分组来渲染
     allGroups.forEach(group => {
-        // 从总列表里过滤出属于这个（已排序）分组的好友
         const groupChats = allChats.filter(chat => !chat.isGroup && chat.groupId === group.id);
-        // 如果这个分组是空的（可能所有好友都被删了），就跳过
         if (groupChats.length === 0) return;
 
         const groupContainer = document.createElement('div');
@@ -7589,7 +7621,6 @@ async function renderChatList() {
             <div class="chat-group-content"></div>
         `;
         const contentEl = groupContainer.querySelector('.chat-group-content');
-        // 因为 allChats 本身就是有序的，所以 groupChats 自然也是有序的
         groupChats.forEach(chat => {
             const item = createChatListItem(chat);
             contentEl.appendChild(item);
@@ -7598,7 +7629,6 @@ async function renderChatList() {
     });
 
     // 6. 最后，渲染所有群聊和未分组的好友
-    // 他们的顺序因为 allChats 的初始排序，天然就是正确的
     const ungroupedOrGroupChats = allChats.filter(chat => chat.isGroup || (!chat.isGroup && !chat.groupId));
     ungroupedOrGroupChats.forEach(chat => {
         const item = createChatListItem(chat);
@@ -8092,16 +8122,26 @@ if (msg.type === 'recalled_message') {
 let avatarSrc, avatarFrameSrc = '';
 
 // 1. 获取正确的头像和头像框URL
+// ▼▼▼ 将其【替换为】下面这段【新代码】▼▼▼
 if (chat.isGroup) {
     if (isUser) {
         avatarSrc = chat.settings.myAvatar || defaultMyGroupAvatar;
         avatarFrameSrc = chat.settings.myAvatarFrame || '';
     } else {
         const member = chat.members.find(m => m.originalName === msg.senderName);
-        avatarSrc = member ? member.avatar : defaultGroupMemberAvatar;
-        avatarFrameSrc = member ? (member.avatarFrame || '') : '';
+        // 【核心修改】通过 member.id 去查找角色的主配置
+        const characterProfile = member ? state.chats[member.id] : null;
+        
+        if (characterProfile) {
+            avatarSrc = characterProfile.settings.aiAvatar || defaultAvatar;
+            avatarFrameSrc = characterProfile.settings.aiAvatarFrame || '';
+        } else {
+            // 如果找不到角色（例如被删除了），则显示默认头像
+            avatarSrc = defaultGroupMemberAvatar;
+            avatarFrameSrc = '';
+        }
     }
-} else { // 单聊
+}  else { // 单聊
     if (isUser) {
         avatarSrc = chat.settings.myAvatar || defaultAvatar;
         avatarFrameSrc = chat.settings.myAvatarFrame || '';
@@ -11560,18 +11600,18 @@ async function handleCreateGroup() {
     const members = [];
     
     // 遍历选中的联系人ID
+// ▼▼▼ 将其【替换为】下面这段【新代码】▼▼▼
+    // 遍历选中的联系人ID
     for (const contactId of selectedContacts) {
         const contactChat = state.chats[contactId];
         if (contactChat) {
-            // ★★★【核心重构】★★★
-            // 我们现在同时存储角色的“本名”和“群昵称”
+            // 【核心修改】不再存储 avatar 和 avatarFrame，因为我们将实时查找它们
             members.push({
                 id: contactId, 
-                originalName: contactChat.name,   // 角色的“本名”，用于AI识别
-                groupNickname: contactChat.name, // 角色的“群昵称”，用于显示和修改，初始值和本名相同
-                avatar: contactChat.settings.aiAvatar || defaultAvatar,
-                persona: contactChat.settings.aiPersona,
-                avatarFrame: contactChat.settings.aiAvatarFrame || ''
+                originalName: contactChat.name,
+                groupNickname: contactChat.name,
+                persona: contactChat.settings.aiPersona
+                // avatar 和 avatarFrame 字段已被移除
             });
         }
     }
@@ -15157,7 +15197,11 @@ function renderGroupMemberSettings(members) {
         div.dataset.memberId = member.id; 
         // ★★★【核心重构】★★★
         // 显示的是 groupNickname
-        div.innerHTML = `<img src="${member.avatar}" alt="${member.groupNickname}"><div class="member-name">${member.groupNickname}</div>`; 
+        // ▼▼▼ 将其【替换为】下面这段【新代码】▼▼▼
+// 【核心修改】实时查找头像
+const characterProfile = state.chats[member.id];
+const memberAvatar = characterProfile ? characterProfile.settings.aiAvatar : defaultGroupMemberAvatar;
+div.innerHTML = `<img src="${memberAvatar}" alt="${member.groupNickname}"><div class="member-name">${member.groupNickname}</div>`;
         div.addEventListener('click', () => openMemberEditor(member.id)); 
         container.appendChild(div); 
     }); 
@@ -15169,27 +15213,40 @@ function openMemberEditor(memberId) {
     const member = chat.members.find(m => m.id === memberId); 
     document.getElementById('member-name-input').value = member.groupNickname; 
     document.getElementById('member-persona-input').value = member.persona; 
-    document.getElementById('member-avatar-preview').src = member.avatar; 
+    // ▼▼▼ 将其【替换为】下面这段【新代码】▼▼▼
+// 【核心修改】实时查找头像
+const characterProfile = state.chats[member.id];
+const memberAvatar = characterProfile ? characterProfile.settings.aiAvatar : defaultGroupMemberAvatar;
+document.getElementById('member-avatar-preview').src = memberAvatar;
     document.getElementById('member-settings-modal').classList.add('visible'); 
 }
             document.getElementById('cancel-member-settings-btn').addEventListener('click', () => { document.getElementById('member-settings-modal').classList.remove('visible'); editingMemberId = null; });
-            document.getElementById('save-member-settings-btn').addEventListener('click', () => { 
+            // ▼▼▼ 将其【完整替换为】下面这段修正后的代码 ▼▼▼
+document.getElementById('save-member-settings-btn').addEventListener('click', async () => { // <---【已修正】在这里加上 async
     if (!editingMemberId) return; 
     const chat = state.chats[state.activeChatId]; 
     const member = chat.members.find(m => m.id === editingMemberId); 
-    
-    // ★★★【核心重构】★★★
+    if (!member) return; // 安全检查
+
     const newNickname = document.getElementById('member-name-input').value.trim();
     if (!newNickname) {
         alert("群昵称不能为空！");
         return;
     }
-    member.groupNickname = newNickname; // 只修改群昵称
+    member.groupNickname = newNickname; 
     member.persona = document.getElementById('member-persona-input').value; 
-    member.avatar = document.getElementById('member-avatar-preview').src; 
+    
+    // 【核心修改】找到角色的主配置并更新其头像
+    const characterProfile = state.chats[member.id];
+    if (characterProfile) {
+        characterProfile.settings.aiAvatar = document.getElementById('member-avatar-preview').src;
+        // 现在 await 可以正常工作了
+        await db.chats.put(characterProfile);
+    }
     
     renderGroupMemberSettings(chat.members); 
     document.getElementById('member-settings-modal').classList.remove('visible'); 
+    editingMemberId = null; // 操作完成后重置
 });
             document.getElementById('reset-theme-btn').addEventListener('click', () => { document.getElementById('theme-default').checked = true; });
             document.getElementById('cancel-chat-settings-btn').addEventListener('click', () => { chatSettingsModal.classList.remove('visible'); });
