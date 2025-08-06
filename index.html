@@ -10650,19 +10650,22 @@ ${linkedMemoryContext}
              console.warn(`API格式不正确，角色 "${chat.name}" 的本次后台活动跳过。原始回复:`, aiResponseContent);
              return;
         }
+        // ▼▼▼ 核心修正区域 ▼▼▼
+        let actionTimestamp = Date.now(); // 在循环外初始化时间戳
 
         for (const action of responseArray) {
             if (!action) continue;
 
+            // 所有的消息创建，都使用 actionTimestamp++
             if (action.type === 'update_status' && action.status_text) {
                 chat.status.text = action.status_text;
                 chat.status.isBusy = action.is_busy || false;
-                chat.status.lastUpdate = Date.now();
+                chat.status.lastUpdate = Date.now(); // 状态更新时间用实时
                 await db.chats.put(chat);
                 renderChatList();
             }
             if (action.type === 'text' && action.content) {
-                const aiMessage = { role: 'assistant', content: String(action.content), timestamp: Date.now() };           
+                const aiMessage = { role: 'assistant', content: String(action.content), timestamp: actionTimestamp++ };           
                 chat.unreadCount = (chat.unreadCount || 0) + 1;
                 chat.history.push(aiMessage);
                 await db.chats.put(chat);
@@ -10676,7 +10679,7 @@ ${linkedMemoryContext}
                     content: action.content || '', 
                     publicText: action.publicText || '', 
                     hiddenContent: action.hiddenContent || '', 
-                    timestamp: Date.now(), 
+                    timestamp: actionTimestamp++, // 使用递增时间戳
                     authorId: chatId, 
                     authorGroupId: chat.groupId,
                     visibleGroupIds: null 
@@ -10743,6 +10746,7 @@ ${linkedMemoryContext}
                 }
             }
         }
+        // ▲▲▲ 修正结束 ▲▲▲
     } catch (error) {
         console.error(`角色 "${chat.name}" 的独立行动失败:`, error);
     } finally {
@@ -10855,35 +10859,39 @@ ${recentHistory}
         if (!responseArray || responseArray.length === 0) return;
 
         let notificationShown = false;
+        // ▼▼▼ 核心修正区域 ▼▼▼
+        let actionTimestamp = Date.now(); // 在循环外初始化时间戳
+
         for (const action of responseArray) {
+            // 使用 actionTimestamp++ 来确保时间戳唯一
             if (action.type === 'text' && action.message) {
-                const aiMessage = { role: 'assistant', senderName: action.name, content: String(action.message), timestamp: Date.now() };
+                const aiMessage = { role: 'assistant', senderName: action.name, content: String(action.message), timestamp: actionTimestamp++ };
                 chat.history.push(aiMessage);
                 if (!notificationShown) {
                     showNotification(chatId, `${action.name}: ${aiMessage.content}`);
                     notificationShown = true;
                 }
                 chat.unreadCount = (chat.unreadCount || 0) + 1;
-            }    // ▼▼▼ 把新代码粘贴在这里 ▼▼▼
-    else if (action.type === 'sticker' && action.name && action.url) {
-        const stickerMessage = {
-            role: 'assistant',
-            senderName: action.name,
-            type: 'sticker',
-            content: action.url,
-            meaning: action.meaning || '',
-            timestamp: Date.now()
-        };
-        chat.history.push(stickerMessage);
-        if (!notificationShown) {
-            const notifText = action.meaning ? `[表情: ${action.meaning}]` : '[表情]';
-            showNotification(chatId, `${action.name}: ${notifText}`);
-            notificationShown = true;
+            }
+            else if (action.type === 'sticker' && action.name && action.url) {
+                const stickerMessage = {
+                    role: 'assistant',
+                    senderName: action.name,
+                    type: 'sticker',
+                    content: action.url,
+                    meaning: action.meaning || '',
+                    timestamp: actionTimestamp++
+                };
+                chat.history.push(stickerMessage);
+                if (!notificationShown) {
+                    const notifText = action.meaning ? `[表情: ${action.meaning}]` : '[表情]';
+                    showNotification(chatId, `${action.name}: ${notifText}`);
+                    notificationShown = true;
+                }
+                chat.unreadCount = (chat.unreadCount || 0) + 1;
+            }
         }
-        chat.unreadCount = (chat.unreadCount || 0) + 1;
-    }
-    // ▲▲▲ 新代码粘贴结束 ▲▲▲
-        }
+        // ▲▲▲ 修正结束 ▲▲▲
         await db.chats.put(chat);
         renderChatList(); 
 
