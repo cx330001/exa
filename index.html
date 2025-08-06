@@ -10626,7 +10626,7 @@ ${linkedMemoryContext}
             headers: {'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}`},
             body: JSON.stringify({
                 model: model,
-                messages: [{role: 'system', content: systemPrompt}, ...messagesPayload.slice(1)],
+                messages:messagesPayload, // <-- 已修正
                 temperature: 0.9,
             })
         });
@@ -10846,7 +10846,7 @@ ${recentHistory}
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
             body: JSON.stringify({
                 model: model,
-                messages: [{ role: 'system', content: systemPrompt.split('# 参考信息')[0] }, ...messagesPayload],
+                messages: messagesPayload, // <-- 已修正
                 temperature: 0.9,
             })
         });
