@@ -10441,7 +10441,7 @@ function runBackgroundSimulationTick() {
 // ▲▲▲ 到这里替换结束 ▲▲▲
 
 // ▼▼▼ 从这里开始复制，完整替换旧的 triggerInactiveAiAction 函数 ▼▼▼
-// ▼▼▼ 从这里开始复制，替换整个旧函数 ▼▼▼
+// ▼▼▼ 请用这个【已修复转发内容不可见问题】的全新版本，完整替换您现有的 triggerInactiveAiAction 函数 ▼▼▼
 async function triggerInactiveAiAction(chatId) {
     const chat = state.chats[chatId];
     if (!chat) return;
@@ -10486,22 +10486,17 @@ async function triggerInactiveAiAction(chatId) {
         recentContextSummary = "你们从没聊过天，主动打个招呼吧！";
     }
     
-    // ▼▼▼ 核心修改开始：准备“内容禁忌”列表 ▼▼▼
-    
-    // 1. 获取最近的动态
     const allRecentPosts = await db.qzonePosts.orderBy('timestamp').reverse().limit(5).toArray();
     const visiblePosts = filterVisiblePostsForAI(allRecentPosts, chat);
 
-    // 2. 将动态内容整理成一个摘要列表
     let recentlyPostedSummaries = [];
     if (visiblePosts.length > 0) {
         recentlyPostedSummaries = visiblePosts.map(post => {
             let summary = post.content || post.publicText || post.hiddenContent || post.imageDescription || "（图片或无文字动态）";
-            return `- "${summary.substring(0, 20)}..."`; // 提取前20个字符作为摘要
+            return `- "${summary.substring(0, 20)}..."`;
         });
     }
 
-    // 3. 构建“内容禁忌”部分的Prompt
     let contentTabooPrompt = '';
     if (recentlyPostedSummaries.length > 0) {
         contentTabooPrompt = `
@@ -10510,8 +10505,6 @@ async function triggerInactiveAiAction(chatId) {
 ${recentlyPostedSummaries.join('\n')}
 `;
     }
-
-    // ▲▲▲ 核心修改结束 ▲▲▲
 
     let worldBookContent = '';
     if (chat.settings.linkedWorldBookIds && chat.settings.linkedWorldBookIds.length > 0) {
@@ -10527,11 +10520,7 @@ ${recentlyPostedSummaries.join('\n')}
     let linkedMemoryContext = '';
     const memoryCount = chat.settings.linkedMemoryCount || 10;
     if (chat.settings.linkedMemoryChatIds && chat.settings.linkedMemoryChatIds.length > 0) {
-        // 修改前
-// linkedMemoryContext += `\n\n# 参考记忆 (你必须参考以下其他聊天的近期内容来丰富你的行为和对话)\n`;
-
-// 修改后
-linkedMemoryContext += `\n\n# 参考记忆 (至关重要！你必须【主动】将这些参考记忆中的【关键信息和事件】，自然地融入到当前的对话中，以体现你拥有完整的记忆。不要只是被动等待用户提问！)\n`;
+        linkedMemoryContext += `\n\n# 参考记忆 (至关重要！你必须【主动】将这些参考记忆中的【关键信息和事件】，自然地融入到当前的对话中，以体现你拥有完整的记忆。不要只是被动等待用户提问！)\n`;
         for (const linkedId of chat.settings.linkedMemoryChatIds) {
             const linkedChat = state.chats[linkedId];
             if (linkedChat) {
@@ -10556,7 +10545,6 @@ linkedMemoryContext += `\n\n# 参考记忆 (至关重要！你必须【主动】
         }
     }
     
-    // 【最终Prompt】在这里将“内容禁忌”部分注入
     const systemPrompt = `
 # 你的任务
 你现在扮演一个名为"${chat.name}"的角色。你已经有一段时间没有和用户（${userNickname}）互动了，现在你有机会【主动】做点什么，来表现你的个性和独立生活。这是一个秘密的、后台的独立行动。
@@ -10587,7 +10575,6 @@ ${linkedMemoryContext}
 -   **对话状态**: ${timeContextText}
 -   **你们最后的对话摘要**: ${recentContextSummary}`;
 
-    // ... 函数的后续部分（try-catch API调用等）保持不变 ...
     try {
         const unInteractedPosts = visiblePosts.filter(post => {
             const aiName = chat.name;
@@ -10606,14 +10593,39 @@ ${linkedMemoryContext}
                 if (post.comments && post.comments.some(c => c.commenterName === chat.name)) interactionStatus += " [你已评论]";
                 if (post.authorId === chatId) authorName += " (这是你的帖子)";
 
+                // ▼▼▼ 从这里开始是核心修复 ▼▼▼
                 let contentSummary;
-                if (post.type === 'text_image') {
+                if (post.type === 'repost') {
+                    const repostComment = post.repostComment ? `并评论说：“${post.repostComment}”` : '';
+                    
+                    let originalAuthorName = '原作者';
+                    const originalAuthorId = post.originalPost.authorId;
+                    if (originalAuthorId === 'user') {
+                        originalAuthorName = state.qzoneSettings.nickname;
+                    } else if (state.chats[originalAuthorId]) {
+                        originalAuthorName = state.chats[originalAuthorId].name;
+                    }
+
+                    let originalContentSummary;
+                    const originalPost = post.originalPost;
+                    if (originalPost.type === 'text_image') {
+                        originalContentSummary = `[文字图] ${originalPost.hiddenContent || ''}`;
+                    } else if (originalPost.type === 'image_post') {
+                        originalContentSummary = `[图片] ${originalPost.publicText || ''}`;
+                    } else {
+                        originalContentSummary = originalPost.content || '';
+                    }
+                    
+                    contentSummary = `转发了 @${originalAuthorName} 的动态（内容：“${originalContentSummary.substring(0, 20)}...”）${repostComment}`;
+
+                } else if (post.type === 'text_image') {
                     contentSummary = `[一张图片，其隐藏文字为：“${post.hiddenContent}”] ${post.publicText || ''}`.substring(0, 50) + '...';
                 } else if (post.type === 'image_post') {
                     contentSummary = `[一张图片，描述为：“${post.imageDescription}”] ${post.publicText || ''}`.substring(0, 50) + '...';
                 } else {
                     contentSummary = (post.publicText || post.content || "一条动态").substring(0, 50) + '...';
                 }
+                // ▲▲▲ 修复结束 ▲▲▲
 
                 postsContext += `- (ID: ${post.id}) 作者: ${authorName}, 内容: "${contentSummary}"${interactionStatus}\n`;
 
@@ -10643,7 +10655,7 @@ ${linkedMemoryContext}
             headers: {'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}`},
             body: JSON.stringify({
                 model: model,
-                messages:messagesPayload, // <-- 已修正
+                messages:messagesPayload,
                 temperature: 0.9,
             })
         });
@@ -10667,17 +10679,15 @@ ${linkedMemoryContext}
              console.warn(`API格式不正确，角色 "${chat.name}" 的本次后台活动跳过。原始回复:`, aiResponseContent);
              return;
         }
-        // ▼▼▼ 核心修正区域 ▼▼▼
-        let actionTimestamp = Date.now(); // 在循环外初始化时间戳
+        let actionTimestamp = Date.now();
 
         for (const action of responseArray) {
             if (!action) continue;
 
-            // 所有的消息创建，都使用 actionTimestamp++
             if (action.type === 'update_status' && action.status_text) {
                 chat.status.text = action.status_text;
                 chat.status.isBusy = action.is_busy || false;
-                chat.status.lastUpdate = Date.now(); // 状态更新时间用实时
+                chat.status.lastUpdate = Date.now();
                 await db.chats.put(chat);
                 renderChatList();
             }
@@ -10696,7 +10706,7 @@ ${linkedMemoryContext}
                     content: action.content || '', 
                     publicText: action.publicText || '', 
                     hiddenContent: action.hiddenContent || '', 
-                    timestamp: actionTimestamp++, // 使用递增时间戳
+                    timestamp: actionTimestamp++,
                     authorId: chatId, 
                     authorGroupId: chat.groupId,
                     visibleGroupIds: null 
@@ -10763,7 +10773,6 @@ ${linkedMemoryContext}
                 }
             }
         }
-        // ▲▲▲ 修正结束 ▲▲▲
     } catch (error) {
         console.error(`角色 "${chat.name}" 的独立行动失败:`, error);
     } finally {
@@ -10772,155 +10781,7 @@ ${linkedMemoryContext}
         }, 1500);
     }
 }
-// ▲▲▲ 到这里结束复制 ▲▲▲
-
-
-// ▼▼▼ 【全新】请将这个函数粘贴到 triggerInactiveAiAction 之后 ▼▼▼
-/**
- * 【全新】触发后台群聊中的AI独立行动
- * @param {string} chatId - 群聊的ID
- */
-async function triggerGroupAiAction(chatId) {
-    const chat = state.chats[chatId];
-    if (!chat || !chat.isGroup) return;
-
-    setAvatarActingState(chatId, true);
-
-    const { proxyUrl, apiKey, model } = state.apiConfig;
-    if (!proxyUrl || !apiKey || !model) return;
-
-    const myNickname = chat.settings.myNickname || '我';
-    const recentHistory = chat.history.slice(-5).map(msg => {
-        const sender = msg.role === 'user' ? myNickname : (msg.senderName || '未知成员');
-        return `${sender}: ${String(msg.content).substring(0, 40)}...`;
-    }).join('\n');
-
-    const membersList = chat.members.map(m => `- **${m.originalName}**: ${m.persona}`).join('\n');
-    
-    // ▼▼▼ 【核心修复】同样在这里添加生成“挂载记忆”的逻辑 ▼▼▼
-    let linkedMemoryContext = '';
-    const memoryCount = chat.settings.linkedMemoryCount || 10;
-    if (chat.settings.linkedMemoryChatIds && chat.settings.linkedMemoryChatIds.length > 0) {
-        // 修改前
-// linkedMemoryContext += `\n\n# 参考记忆 (你必须参考以下其他聊天的近期内容来丰富你的行为和对话)\n`;
-
-// 修改后
-linkedMemoryContext += `\n\n# 参考记忆 (至关重要！你必须【主动】将这些参考记忆中的【关键信息和事件】，自然地融入到当前的对话中，以体现你拥有完整的记忆。不要只是被动等待用户提问！)\n`;
-
-        for (const linkedId of chat.settings.linkedMemoryChatIds) {
-            const linkedChat = state.chats[linkedId];
-            if (linkedChat) {
-                const prefix = linkedChat.isGroup ? '[群聊]' : '[私聊]';
-                linkedMemoryContext += `\n## --- 来自${prefix}“${linkedChat.name}”的参考记忆 ---\n`;
-
-                const recentHistory = linkedChat.history.slice(-memoryCount);
-                if (recentHistory.length > 0) {
-                    recentHistory.forEach(msg => {
-                        const sender = msg.role === 'user' ? (linkedChat.settings.myNickname || '我') : (msg.senderName || linkedChat.name);
-                        let contentText = String(msg.content);
-                        if (msg.type === 'ai_image' || msg.type === 'user_photo') {
-                            contentText = `[发送了一张图片，描述为：${msg.content}]`;
-                        } else if (msg.type === 'voice_message') {
-                            contentText = `[发送了一条语音，内容是：${msg.content}]`;
-                        }
-                        linkedMemoryContext += `${sender}: ${contentText}\n`;
-                    });
-                } else {
-                    linkedMemoryContext += "(暂无聊天记录)\n";
-                }
-            }
-        }
-    }
-    // ▲▲▲ 【核心修复】逻辑代码块添加结束 ▲▲▲
-    
-    const systemPrompt = `
-# 你的任务
-你是一个群聊AI导演。现在是后台时间，用户不在线，但群聊是活跃的。你需要根据每个角色的设定和最近的聊天记录，选择【一个或多个】角色，让他们【主动发起】对话或互动，让群聊看起来充满生活气息。
-# 核心规则
-1.  **【【【身份铁律】】】**: 用户的身份是【${myNickname}】，你【绝对不能】扮演用户。
-2.  **【【【输出格式】】】**: 你的回复【必须】是一个JSON数组，每个对象代表一个角色的发言或行动。
-3.  **自然感**: 你的行动应该符合逻辑和角色性格。可以是延续之前的话题，也可以是开启新话题，或者只是一个简单的互动（如发表情）。
-# 可用指令:
--   发送文本: \`{"type": "text", "name": "角色名", "message": "文本内容"}\`
--   发送表情: \`{"type": "sticker", "name": "角色名", "url": "...", "meaning": "..."}\`
--   发动态: \`{"type": "qzone_post", "postType": "shuoshuo", "content": "..."}\` (注意：后台行动中，角色发动态比发消息更常见)
--   拍一拍群友: \`{"type": "pat_user", "name": "你的角色名", "target": "被拍的群友名"}\`
-# 参考信息
--   **群成员列表及人设**:
-${linkedMemoryContext} // <-- 【核心修复】使用正确的变量名
-${membersList}
--   **最近的聊天记录**:
-${recentHistory}
-现在，请开始你的导演工作。`;
-
-    const messagesPayload = [{ role: 'user', content: systemPrompt }];
-    
-    try {
-        let isGemini = proxyUrl === GEMINI_API_URL;
-        let geminiConfig = toGeminiRequestData(model, apiKey, systemPrompt, messagesPayload);
-        const response = isGemini ? await fetch(geminiConfig.url, geminiConfig.data) : await fetch(`${proxyUrl}/v1/chat/completions`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
-            body: JSON.stringify({
-                model: model,
-                messages: messagesPayload, // <-- 已修正
-                temperature: 0.9,
-            })
-        });
-
-        if (!response.ok) throw new Error(`API请求失败: ${response.status}`);
-        const data = await response.json();
-        const aiResponseContent = isGemini ? data.candidates[0].content.parts[0].text : data.choices[0].message.content;
-
-        const responseArray = parseAiResponse(aiResponseContent);
-        if (!responseArray || responseArray.length === 0) return;
-
-        let notificationShown = false;
-        // ▼▼▼ 核心修正区域 ▼▼▼
-        let actionTimestamp = Date.now(); // 在循环外初始化时间戳
-
-        for (const action of responseArray) {
-            // 使用 actionTimestamp++ 来确保时间戳唯一
-            if (action.type === 'text' && action.message) {
-                const aiMessage = { role: 'assistant', senderName: action.name, content: String(action.message), timestamp: actionTimestamp++ };
-                chat.history.push(aiMessage);
-                if (!notificationShown) {
-                    showNotification(chatId, `${action.name}: ${aiMessage.content}`);
-                    notificationShown = true;
-                }
-                chat.unreadCount = (chat.unreadCount || 0) + 1;
-            }
-            else if (action.type === 'sticker' && action.name && action.url) {
-                const stickerMessage = {
-                    role: 'assistant',
-                    senderName: action.name,
-                    type: 'sticker',
-                    content: action.url,
-                    meaning: action.meaning || '',
-                    timestamp: actionTimestamp++
-                };
-                chat.history.push(stickerMessage);
-                if (!notificationShown) {
-                    const notifText = action.meaning ? `[表情: ${action.meaning}]` : '[表情]';
-                    showNotification(chatId, `${action.name}: ${notifText}`);
-                    notificationShown = true;
-                }
-                chat.unreadCount = (chat.unreadCount || 0) + 1;
-            }
-        }
-        // ▲▲▲ 修正结束 ▲▲▲
-        await db.chats.put(chat);
-        renderChatList(); 
-
-    } catch (error) {
-        console.error(`群聊 "${chat.name}" 的后台行动失败:`, error);
-    } finally {
-        setTimeout(() => {
-            setAvatarActingState(chatId, false);
-        }, 1500);
-    }
-}
-// ▲▲▲ 全新函数粘贴结束 ▲▲▲
+// ▲▲▲ 替换结束 ▲▲▲
 
 
 
