@@ -8615,7 +8615,7 @@ function setAvatarActingState(chatId, isActing) {
 
 
 
-// ▼▼▼ 【请用这个全新版本】替换旧的 triggerAiResponse 函数 ▼▼▼
+// ▼▼▼ 请用这个【已修复主动聊天时遗忘挂载记忆问题】的全新版本，完整替换您现有的 triggerAiResponse 函数 ▼▼▼
 async function triggerAiResponse() {
     if (!state.activeChatId) return;
     const chatId = state.activeChatId;
@@ -8727,44 +8727,7 @@ ${contextSummary || "（无有效对话记录）"}
             return; 
         }
 
-// ▼▼▼ 在这里粘贴新的代码块 ▼▼▼
-let linkedMemoryContext = '';
-const memoryCount = chat.settings.linkedMemoryCount || 10;
-if (chat.settings.linkedMemoryChatIds && chat.settings.linkedMemoryChatIds.length > 0) {
-    // 修改前
-// linkedMemoryContext += `\n\n# 参考记忆 (你必须参考以下其他聊天的近期内容来丰富你的行为和对话)\n`;
-
-// 修改后
-linkedMemoryContext += `\n\n# 参考记忆 (至关重要！你必须【主动】将这些参考记忆中的【关键信息和事件】，自然地融入到当前的对话中，以体现你拥有完整的记忆。不要只是被动等待用户提问！)\n`;
-
-    for (const linkedId of chat.settings.linkedMemoryChatIds) {
-        const linkedChat = state.chats[linkedId];
-        if (linkedChat) {
-            const prefix = linkedChat.isGroup ? '[群聊]' : '[私聊]';
-            linkedMemoryContext += `\n## --- 来自${prefix}“${linkedChat.name}”的参考记忆 ---\n`;
-
-            const recentHistory = linkedChat.history.slice(-memoryCount);
-            if (recentHistory.length > 0) {
-                recentHistory.forEach(msg => {
-                    const sender = msg.role === 'user' ? (linkedChat.settings.myNickname || '我') : (msg.senderName || linkedChat.name);
-                    let contentText = String(msg.content);
-                    if (msg.type === 'ai_image' || msg.type === 'user_photo') {
-                        contentText = `[发送了一张图片，描述为：${msg.content}]`;
-                    } else if (msg.type === 'voice_message') {
-                        contentText = `[发送了一条语音，内容是：${msg.content}]`;
-                    }
-                    linkedMemoryContext += `${sender}: ${contentText}\n`;
-                });
-            } else {
-                linkedMemoryContext += "(暂无聊天记录)\n";
-            }
-        }
-    }
-}
-// ▲▲▲ 代码块粘贴结束 ▲▲▲
-        console.log("本次发送给AI的【挂载记忆】内容如下：\n", linkedMemoryContext);
         const now = new Date();
-      
         const currentTime = now.toLocaleString('zh-CN', { dateStyle: 'full', timeStyle: 'short' });
         let worldBookContent = '';
         if (chat.settings.linkedWorldBookIds && chat.settings.linkedWorldBookIds.length > 0) {
@@ -8847,6 +8810,40 @@ ${formattedHistory}
 ---
 `;
         }
+        
+        // ▼▼▼ 从这里开始是核心修复 ▼▼▼
+        let linkedMemoryContext = '';
+        const memoryCount = chat.settings.linkedMemoryCount || 10;
+        if (chat.settings.linkedMemoryChatIds && chat.settings.linkedMemoryChatIds.length > 0) {
+            linkedMemoryContext += `\n\n# 参考记忆 (至关重要！你必须【主动】将这些参考记忆中的【关键信息和事件】，自然地融入到当前的对话中，以体现你拥有完整的记忆。不要只是被动等待用户提问！)\n`;
+
+            for (const linkedId of chat.settings.linkedMemoryChatIds) {
+                const linkedChat = state.chats[linkedId];
+                if (linkedChat) {
+                    const prefix = linkedChat.isGroup ? '[群聊]' : '[私聊]';
+                    linkedMemoryContext += `\n## --- 来自${prefix}“${linkedChat.name}”的参考记忆 ---\n`;
+
+                    const recentHistory = linkedChat.history.slice(-memoryCount);
+                    if (recentHistory.length > 0) {
+                        recentHistory.forEach(msg => {
+                            const sender = msg.role === 'user' ? (linkedChat.settings.myNickname || '我') : (msg.senderName || linkedChat.name);
+                            let contentText = String(msg.content);
+                            if (msg.type === 'ai_image' || msg.type === 'user_photo') {
+                                contentText = `[发送了一张图片，描述为：${msg.content}]`;
+                            } else if (msg.type === 'voice_message') {
+                                contentText = `[发送了一条语音，内容是：${msg.content}]`;
+                            }
+                            linkedMemoryContext += `${sender}: ${contentText}\n`;
+                        });
+                    } else {
+                        linkedMemoryContext += "(暂无聊天记录)\n";
+                    }
+                }
+            }
+        }
+        console.log("本次发送给AI的【挂载记忆】内容如下：\n", linkedMemoryContext);
+        // ▲▲▲ 修复结束 ▲▲▲
+
 if (chat.isGroup) {
         const membersList = chat.members.map(m => `- **${m.originalName}**: ${m.persona}`).join('\n');
         const myNickname = chat.settings.myNickname || '我';
@@ -8956,6 +8953,29 @@ ${membersList}
                     content = `[${sender} 分享了Ta的位置：'${msg.content}']`;
 
                 } 
+                else if (msg.type === 'repost') {
+                    const repostComment = msg.repostComment ? `并评论说：“${msg.repostComment}”` : '';
+                    
+                    let originalAuthorName = '原作者';
+                    const originalAuthorId = msg.originalPost.authorId;
+                    if (originalAuthorId === 'user') {
+                        originalAuthorName = state.qzoneSettings.nickname;
+                    } else if (state.chats[originalAuthorId]) {
+                        originalAuthorName = state.chats[originalAuthorId].name;
+                    }
+
+                    let originalContentSummary;
+                    const originalPost = msg.originalPost;
+                    if (originalPost.type === 'text_image') {
+                        originalContentSummary = `[文字图] ${originalPost.publicText || ''} (图片描述: “${(originalPost.hiddenContent || '').substring(0, 40)}...”)`;
+                    } else if (originalPost.type === 'image_post') {
+                        originalContentSummary = `[图片] ${originalPost.publicText || ''} (图片描述: “${(originalPost.imageDescription || '').substring(0, 40)}...”)`;
+                    } else { // 'shuoshuo'
+                        originalContentSummary = `“${(originalPost.content || '').substring(0, 40)}...”`;
+                    }
+                    
+                    content = `[${sender} 转发了 @${originalAuthorName} 的动态 ${repostComment}【原动态内容: ${originalContentSummary}】]`;
+                }
                 else if (msg.type === 'waimai_request') {
                     if(msg.status === 'paid') {
                         content = `[系统提示：${msg.paidBy} 为 ${sender} 的外卖订单支付了 ${msg.amount} 元。此订单已完成。]`;
@@ -8963,7 +8983,6 @@ ${membersList}
                         content = `[${sender} 发起了外卖代付请求，商品是“${msg.productInfo}”，金额是 ${msg.amount} 元，订单时间戳为 ${msg.timestamp}]`;
                     }
                 }
-                // ▼▼▼ 修正点 1：修改历史记录中的红包提示 ▼▼▼
                 else if (msg.type === 'red_packet') {
                     const packetSenderName = msg.senderName === myNickname ? `用户 (${myNickname})` : msg.senderName;
                     let instructionText;
@@ -9026,7 +9045,7 @@ ${chat.settings.aiAvatarLibrary && chat.settings.aiAvatarLibrary.length > 0
 - **【全新】共享位置**: \`{"type": "location_share", "content": "你想分享的位置名"}\`
 - **发布说说 (原创内容)**: \`{"type": "qzone_post", "postType": "shuoshuo", "content": "动态的文字内容..."}\`
 - **【【【重要：转发动态】】】**: **严禁**自己拼接"//转发"文字！你【必须】使用此专用指令来转发：\`[{"type": "repost", "postId": (要转发的动态ID), "comment": "你的转发评论..."}]\`
-- **发布文字图**: \`{"type": "qzone_post", "postType": "text_image", "publicText": "(可选)动态的公开文字", "hiddenContent": "对于图片的具体描述..."}\`
+- **发布文字图**: \`[{"type": "qzone_post", "postType": "text_image", "publicText": "(可选)动态的公开文字", "hiddenContent": "对于图片的具体描述..."}]\`
 - **评论动态**: \`{"type": "qzone_comment", "postId": 123, "commentText": "@作者名 这太有趣了！"}\`
 - **点赞动态**: \`{"type": "qzone_like", "postId": 456}\`
 -   **拍一拍用户**: \`{"type": "pat_user", "suffix": "(可选)你想加的后缀，如“的脑袋”"}\`
@@ -9144,7 +9163,6 @@ ${contextSummaryForApproval}
         const allRecentPosts = await db.qzonePosts.orderBy('timestamp').reverse().limit(5).toArray();
         const visiblePosts = filterVisiblePostsForAI(allRecentPosts, chat);
 
-// ▼▼▼ 这是你要粘贴的【新代码块】第1处 ▼▼▼
 if (visiblePosts.length > 0 && !chat.isGroup) {
     let postsContext = "\n\n# 最近的动态列表 (供你参考和评论):\n";
     const aiName = chat.name;
@@ -9155,7 +9173,6 @@ if (visiblePosts.length > 0 && !chat.isGroup) {
         if (post.comments && post.comments.some(c => c.commenterName === aiName)) interactionStatus += " [你已评论]";
         if (post.authorId === chatId) authorName += " (这是你的帖子)";
 
-        // 【FIX】这个代码块现在可以正确地为AI总结不同类型的动态了
         let contentSummary;
         if (post.type === 'text_image') {
             contentSummary = `[一张图片，其隐藏文字为：“${post.hiddenContent}”] ${post.publicText || ''}`.substring(0, 50) + '...';
@@ -9399,7 +9416,6 @@ case 'repost': {
                     };
                     break;
                 
-                // ▼▼▼ 【这是修复的核心代码】 ▼▼▼
                 case 'change_music':
                     if (musicState.isActive && musicState.activeChatId === chatId) {
                         const songNameToFind = msgData.song_name.replace(/^\[?\d+\]?[\s.-]*/, '').trim();
@@ -9409,15 +9425,11 @@ case 'repost': {
                             playSong(targetSongIndex);
                             const track = musicState.playlist[targetSongIndex];
                             
-                            // **【关键修正】**
-                            // 在单聊中，msgData.name不存在，我们用chat.name
-                            // 在群聊中，msgData.name存在，我们就用它
                             const changerName = chat.isGroup ? msgData.name : chat.name;
                             
                             const musicChangeMessage = {
                                 role: 'system',
                                 type: 'pat_message',
-                                // 使用修正后的 changerName
                                 content: `[♪ ${changerName} 为你切歌: 《${track.name}》 - ${track.artist}]`,
                                 timestamp: Date.now()
                             };
@@ -9429,8 +9441,7 @@ case 'repost': {
                             console.warn(`歌曲查找失败: AI请求的歌曲名"${msgData.song_name}"(处理后为"${songNameToFind}") 在播放列表中未找到。`);
                         }
                     }
-                    continue; // 处理完直接进行下一次循环
-                // ▲▲▲ 【修复结束】 ▲▲▲
+                    continue;
                     
                 case 'create_memory':
                     const newMemory = {
@@ -9541,16 +9552,17 @@ case 'repost': {
                         isFullyClaimed: false,
                     };
                     break;
-
+                
                 case 'open_red_packet':
                     const packetToOpen = chat.history.find(m => m.timestamp === msgData.packet_timestamp);
-                    // 【新增验证】如果是专属红包，检查接收人是否是当前AI
+                    
                     if (packetToOpen && packetToOpen.packetType === 'direct') {
                         if (packetToOpen.receiverName !== msgData.name) {
                             console.warn(`AI 角色 "${msgData.name}" 尝试领取不属于自己的专属红包 (接收人: ${packetToOpen.receiverName})。操作已被拦截。`);
-                            continue; // 拦截并跳过此操作
+                            continue;
                         }
                     }
+                    
                     if (packetToOpen && !packetToOpen.isFullyClaimed && !(packetToOpen.claimedBy && packetToOpen.claimedBy[msgData.name])) {
                         let claimedAmountAI = 0;
                         const remainingAmount = packetToOpen.totalAmount - Object.values(packetToOpen.claimedBy || {}).reduce((sum, val) => sum + val, 0);
@@ -9890,6 +9902,7 @@ case 'change_group_avatar':
         renderChatList();
     }
 }
+// ▲▲▲ 替换结束 ▲▲▲
 
 
 
