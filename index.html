@@ -10441,7 +10441,7 @@ function runBackgroundSimulationTick() {
 // ▲▲▲ 到这里替换结束 ▲▲▲
 
 // ▼▼▼ 从这里开始复制，完整替换旧的 triggerInactiveAiAction 函数 ▼▼▼
-// ▼▼▼ 请用这个【已修复转发内容不可见问题】的全新版本，完整替换您现有的 triggerInactiveAiAction 函数 ▼▼▼
+// ▼▼▼ 请用这个【已修复AI间转发内容不可见问题】的全新版本，完整替换您现有的 triggerInactiveAiAction 函数 ▼▼▼
 async function triggerInactiveAiAction(chatId) {
     const chat = state.chats[chatId];
     if (!chat) return;
@@ -10608,15 +10608,16 @@ ${linkedMemoryContext}
 
                     let originalContentSummary;
                     const originalPost = post.originalPost;
+                    
                     if (originalPost.type === 'text_image') {
-                        originalContentSummary = `[文字图] ${originalPost.hiddenContent || ''}`;
+                        originalContentSummary = `[文字图] ${originalPost.publicText || ''} (图片描述: “${(originalPost.hiddenContent || '').substring(0, 40)}...”)`;
                     } else if (originalPost.type === 'image_post') {
-                        originalContentSummary = `[图片] ${originalPost.publicText || ''}`;
-                    } else {
-                        originalContentSummary = originalPost.content || '';
+                        originalContentSummary = `[图片] ${originalPost.publicText || ''} (图片描述: “${(originalPost.imageDescription || '').substring(0, 40)}...”)`;
+                    } else { // 'shuoshuo'
+                        originalContentSummary = `“${(originalPost.content || '').substring(0, 40)}...”`;
                     }
                     
-                    contentSummary = `转发了 @${originalAuthorName} 的动态（内容：“${originalContentSummary.substring(0, 20)}...”）${repostComment}`;
+                    contentSummary = `转发了 @${originalAuthorName} 的动态 ${repostComment}【原动态内容: ${originalContentSummary}】`;
 
                 } else if (post.type === 'text_image') {
                     contentSummary = `[一张图片，其隐藏文字为：“${post.hiddenContent}”] ${post.publicText || ''}`.substring(0, 50) + '...';
