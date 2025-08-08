@@ -7659,27 +7659,19 @@ async function renderChatList() {
 }
 // ▲▲▲ 替换结束 ▲▲▲
 
+// ▼▼▼ 请用这个【已升级HTML结构并修复点击问题】的全新版本，完整替换您现有的 createChatListItem 函数 ▼▼▼
 function createChatListItem(chat) {
     const lastMsgObj = chat.history.filter(msg => !msg.isHidden).slice(-1)[0] || {};
     let lastMsgDisplay;
 
-    // --- ▼▼▼ 【核心修改】在这里加入对关系状态的判断 ▼▼▼ ---
     if (!chat.isGroup && chat.relationship?.status === 'pending_user_approval') {
         lastMsgDisplay = `<span style="color: #ff8c00;">[好友申请] ${chat.relationship.applicationReason || '请求添加你为好友'}</span>`;
     }
-    // --- ▲▲▲ 修改结束 ▲▲▲ ---
-
-// ▼▼▼ 在这里新增 else if ▼▼▼
-else if (!chat.isGroup && chat.relationship?.status === 'blocked_by_ai') {
-    lastMsgDisplay = `<span style="color: #dc3545;">[你已被对方拉黑]</span>`;
-}
-// ▲▲▲ 新增结束 ▲▲▲
-    
-    // 【核心修改】优先显示状态，而不是最后一条消息
-    if (chat.isGroup) {
-        // 群聊逻辑保持不变
+    else if (!chat.isGroup && chat.relationship?.status === 'blocked_by_ai') {
+        lastMsgDisplay = `<span style="color: #dc3545;">[你已被对方拉黑]</span>`;
+    }
+    else if (chat.isGroup) {
         if (lastMsgObj.type === 'pat_message') { lastMsgDisplay = `[系统消息] ${lastMsgObj.content}`; }
-        // ... (其他群聊消息类型判断) ...
         else if (lastMsgObj.type === 'transfer') { lastMsgDisplay = '[转账]'; }
         else if (lastMsgObj.type === 'ai_image' || lastMsgObj.type === 'user_photo') { lastMsgDisplay = '[照片]'; }
         else if (lastMsgObj.type === 'voice_message') { lastMsgDisplay = '[语音]'; }
@@ -7690,10 +7682,7 @@ else if (!chat.isGroup && chat.relationship?.status === 'blocked_by_ai') {
         if (lastMsgObj.senderName && lastMsgObj.type !== 'pat_message') {
             lastMsgDisplay = `${lastMsgObj.senderName}: ${lastMsgDisplay}`;
         }
-
     } else {
-        // 单聊逻辑：显示状态
-        // 确保 chat.status 对象存在
         const statusText = chat.status?.text || '在线';
         lastMsgDisplay = `[${statusText}]`;
     }
@@ -7701,16 +7690,35 @@ else if (!chat.isGroup && chat.relationship?.status === 'blocked_by_ai') {
     const item = document.createElement('div');
     item.className = 'chat-list-item';
     item.dataset.chatId = chat.id;
-    // ▼▼▼ 在这里添加一行代码 ▼▼▼
     if (chat.isPinned) {
         item.classList.add('pinned');
     }
-    // ▲▲▲ 添加结束 ▲▲▲
 
+    // ▼▼▼ 从这里开始是核心修改：为聊天列表也生成带框头像的HTML结构 ▼▼▼
     const avatar = chat.isGroup ? chat.settings.groupAvatar : chat.settings.aiAvatar;
-    
+    // 群聊列表项暂时不显示头像框，只为单聊显示
+    const avatarFrameSrc = chat.isGroup ? '' : (chat.settings.aiAvatarFrame || '');
+
+    let avatarHtml;
+    if (avatarFrameSrc) {
+        avatarHtml = `
+            <div class="avatar-with-frame">
+                <img src="${avatar || defaultAvatar}" class="avatar-img">
+                <img src="${avatarFrameSrc}" class="avatar-frame">
+            </div>
+        `;
+    } else {
+        // 注意：这里的 class 依然是 'avatar'，以兼容旧的CSS样式
+        avatarHtml = `<img src="${avatar || defaultAvatar}" class="avatar">`;
+    }
+
+    const hasFrameClass = avatarFrameSrc ? 'has-frame' : '';
+    // 使用与聊天界面一致的 .avatar-group 容器
+    const avatarGroupHtml = `<div class="avatar-group ${hasFrameClass}">${avatarHtml}</div>`;
+    // ▲▲▲ HTML结构升级结束 ▲▲▲
+
     item.innerHTML = `
-        <img src="${avatar || defaultAvatar}" class="avatar">
+        ${avatarGroupHtml}
         <div class="info">
             <div class="name-line">
                 <span class="name">${chat.name}</span>
@@ -7718,81 +7726,71 @@ else if (!chat.isGroup && chat.relationship?.status === 'blocked_by_ai') {
             </div>
             <div class="last-msg" style="color: ${chat.isGroup ? 'var(--text-secondary)' : '#b5b5b5'}; font-style: italic;">${lastMsgDisplay}</div>
         </div>
-        <!-- 这里就是我们新加的红点HTML结构 -->
         <div class="unread-count-wrapper">
             <span class="unread-count" style="display: none;">0</span>
         </div>
     `;
     
-    // 【核心修改2】在这里添加控制红点显示/隐藏的逻辑
     const unreadCount = chat.unreadCount || 0;
     const unreadEl = item.querySelector('.unread-count');
     if (unreadCount > 0) {
         unreadEl.textContent = unreadCount > 99 ? '99+' : unreadCount;
-        // 注意这里是 'inline-flex'，与我们的CSS对应，使其垂直居中
         unreadEl.style.display = 'inline-flex';
     } else {
         unreadEl.style.display = 'none';
     }
     
-    const avatarEl = item.querySelector('.avatar');
-    if (avatarEl) {
-        avatarEl.style.cursor = 'pointer';
-        avatarEl.addEventListener('click', (e) => {
+    // ▼▼▼ 核心修复：将事件监听器从 .avatar 改为 .avatar-group ▼▼▼
+    const avatarGroupEl = item.querySelector('.avatar-group');
+    if (avatarGroupEl) {
+        avatarGroupEl.style.cursor = 'pointer';
+        avatarGroupEl.addEventListener('click', (e) => {
             e.stopPropagation();
-            handleUserPat(chat.id, chat.name);
+            // 群聊时，拍的是群本身；单聊时，拍的是对方
+            const characterNameToPat = chat.isGroup ? chat.name : chat.name;
+            handleUserPat(chat.id, characterNameToPat);
         });
     }
+    // ▲▲▲ 修复结束 ▲▲▲
     
     const infoEl = item.querySelector('.info');
     if (infoEl) {
         infoEl.addEventListener('click', () => openChat(chat.id));
     }
 
-// ▼▼▼ 用这块【新代码】完整替换 createChatListItem 函数末尾的 addLongPressListener ▼▼▼
-addLongPressListener(item, async (e) => {
-    // 1. 调用我们新的、清晰的操作菜单
-    const action = await showChatListActions(chat);
-
-    // 2. 使用 switch 语句清晰地处理用户的选择
-    switch (action) {
-        case 'pin':
-            // 用户点击了“置顶”或“取消置顶”
-            chat.isPinned = !chat.isPinned;
-            await db.chats.put(chat);
-            renderChatList(); // 重新渲染列表以应用新排序
-            break;
-            
-        case 'delete':
-            // 用户点击了“删除”，现在我们再弹出最终确认框
-            const deleteConfirmed = await showCustomConfirm(
-                '删除对话', 
-                `确定要删除与 "${chat.name}" 的整个对话吗？此操作不可撤销。`, 
-                { confirmButtonClass: 'btn-danger' }
-            );
-            
-            // 如果最终确认了，才执行删除操作
-            if (deleteConfirmed) {
-                if (musicState.isActive && musicState.activeChatId === chat.id) {
-                    await endListenTogetherSession(false);
-                }
-                delete state.chats[chat.id];
-                if (state.activeChatId === chat.id) {
-                    state.activeChatId = null;
-                }
-                await db.chats.delete(chat.id);
+    addLongPressListener(item, async (e) => {
+        const action = await showChatListActions(chat);
+        switch (action) {
+            case 'pin':
+                chat.isPinned = !chat.isPinned;
+                await db.chats.put(chat);
                 renderChatList();
-            }
-            break;
-
-        default:
-            // 用户点击了“取消”或关闭了菜单，什么也不做
-            break;
-    }
-});
-// ▲▲▲ 替换结束 ▲▲▲
+                break;
+            case 'delete':
+                const deleteConfirmed = await showCustomConfirm(
+                    '删除对话', 
+                    `确定要删除与 "${chat.name}" 的整个对话吗？此操作不可撤销。`, 
+                    { confirmButtonClass: 'btn-danger' }
+                );
+                if (deleteConfirmed) {
+                    if (musicState.isActive && musicState.activeChatId === chat.id) {
+                        await endListenTogetherSession(false);
+                    }
+                    delete state.chats[chat.id];
+                    if (state.activeChatId === chat.id) {
+                        state.activeChatId = null;
+                    }
+                    await db.chats.delete(chat.id);
+                    renderChatList();
+                }
+                break;
+            default:
+                break;
+        }
+    });
     return item;
 }
+// ▲▲▲ 替换结束 ▲▲▲
 
 // ▼▼▼ 请用这个【带诊断功能的全新版本】替换旧的 renderChatInterface 函数 ▼▼▼
 function renderChatInterface(chatId) {
@@ -8058,35 +8056,27 @@ async function openWorldBookEditor(bookId) {
 
         function renderStickerPanel() { const grid = document.getElementById('sticker-grid'); grid.innerHTML = ''; if (state.userStickers.length === 0) { grid.innerHTML = '<p style="text-align:center; color: var(--text-secondary); grid-column: 1 / -1;">大人请点击右上角“添加”或“上传”来添加你的第一个表情吧！</p>'; return; } state.userStickers.forEach(sticker => { const item = document.createElement('div'); item.className = 'sticker-item'; item.style.backgroundImage = `url(${sticker.url})`; item.title = sticker.name; item.addEventListener('click', () => sendSticker(sticker)); addLongPressListener(item, () => { if (isSelectionMode) return; const existingDeleteBtn = item.querySelector('.delete-btn'); if (existingDeleteBtn) return; const deleteBtn = document.createElement('div'); deleteBtn.className = 'delete-btn'; deleteBtn.innerHTML = '&times;'; deleteBtn.onclick = async (e) => { e.stopPropagation(); const confirmed = await showCustomConfirm('删除表情', `确定要删除表情 "${sticker.name}" 吗？`, { confirmButtonClass: 'btn-danger' }); if (confirmed) { await db.userStickers.delete(sticker.id); state.userStickers = state.userStickers.filter(s => s.id !== sticker.id); renderStickerPanel(); } }; item.appendChild(deleteBtn); deleteBtn.style.display = 'block'; setTimeout(() => item.addEventListener('mouseleave', () => deleteBtn.remove(), { once: true }), 3000); }); grid.appendChild(item); }); }
 
-// ▼▼▼ 选中从 7741 行到 8218 行的旧函数，用下面这段完整代码替换 ▼▼▼
+// ▼▼▼ 请用这个【已修复头像框点击问题】的全新版本，完整替换您现有的 createMessageElement 函数 ▼▼▼
 function createMessageElement(msg, chat) {
 
 if (msg.type === 'recalled_message') {
     const wrapper = document.createElement('div');
-    // 1. 【核心】给 wrapper 也加上 timestamp，方便事件委托时查找
     wrapper.className = 'message-wrapper system-pat';
     wrapper.dataset.timestamp = msg.timestamp; 
 
     const bubble = document.createElement('div');
-    // 2. 【核心】让这个元素同时拥有 .message-bubble 和 .recalled-message-placeholder 两个class
-    //    这样它既能被选择系统识别，又能保持原有的居中灰色样式
     bubble.className = 'message-bubble recalled-message-placeholder';
-    // 3. 【核心】把 timestamp 放在 bubble 上，这是多选逻辑的关键
     bubble.dataset.timestamp = msg.timestamp; 
     bubble.textContent = msg.content;
     
     wrapper.appendChild(bubble);
     
-    // 4. 【核心】为它补上和其他消息一样的标准事件监听器
     addLongPressListener(wrapper, () => showMessageActions(msg.timestamp));
     wrapper.addEventListener('click', () => { 
         if (isSelectionMode) {
             toggleMessageSelection(msg.timestamp);
         }
     });
-
-    // 5. 【重要】在之前的“点击查看原文”的逻辑中，我们已经使用了事件委托，所以这里不需要再单独为这个元素添加点击事件了。
-    //    init() 函数中的那个事件监听器会处理它。
     
     return wrapper;
 }
@@ -8131,31 +8121,25 @@ if (msg.type === 'recalled_message') {
     timestampEl.className = 'timestamp';
     timestampEl.textContent = formatTimestamp(msg.timestamp);
 
-// ▼▼▼ 【这是最终的、修复所有问题的头像HTML生成逻辑】 ▼▼▼
-
 let avatarSrc, avatarFrameSrc = '';
 
-// 1. 获取正确的头像和头像框URL
-// ▼▼▼ 将其【替换为】下面这段【新代码】▼▼▼
 if (chat.isGroup) {
     if (isUser) {
         avatarSrc = chat.settings.myAvatar || defaultMyGroupAvatar;
         avatarFrameSrc = chat.settings.myAvatarFrame || '';
     } else {
         const member = chat.members.find(m => m.originalName === msg.senderName);
-        // 【核心修改】通过 member.id 去查找角色的主配置
         const characterProfile = member ? state.chats[member.id] : null;
         
         if (characterProfile) {
             avatarSrc = characterProfile.settings.aiAvatar || defaultAvatar;
             avatarFrameSrc = characterProfile.settings.aiAvatarFrame || '';
         } else {
-            // 如果找不到角色（例如被删除了），则显示默认头像
             avatarSrc = defaultGroupMemberAvatar;
             avatarFrameSrc = '';
         }
     }
-}  else { // 单聊
+}  else {
     if (isUser) {
         avatarSrc = chat.settings.myAvatar || defaultAvatar;
         avatarFrameSrc = chat.settings.myAvatarFrame || '';
@@ -8165,10 +8149,8 @@ if (chat.isGroup) {
     }
 }
 
-// 2. 根据是否有头像框，动态生成不同的HTML结构
 let avatarHtml;
 if (avatarFrameSrc) {
-    // 如果有框，生成包含框的HTML
     avatarHtml = `
         <div class="avatar-with-frame">
             <img src="${avatarSrc}" class="avatar-img">
@@ -8176,15 +8158,11 @@ if (avatarFrameSrc) {
         </div>
     `;
 } else {
-    // 如果没框，只生成简单的<img>标签
     avatarHtml = `<img src="${avatarSrc}" class="avatar">`;
 }
 
-// 3. 将最终生成的HTML放入一个统一的容器，并添加has-frame类（如果需要）
 const hasFrameClass = avatarFrameSrc ? 'has-frame' : '';
 const avatarGroupHtml = `<div class="avatar-group ${hasFrameClass}">${avatarHtml}</div>`;
-
-// ▲▲▲ 替换结束 ▲▲▲
 
     let contentHtml;
     
@@ -8204,7 +8182,7 @@ const avatarGroupHtml = `<div class="avatar-group ${hasFrameClass}">${avatarHtml
     }
 
 else if (msg.type === 'share_card') {
-    bubble.classList.add('is-link-share'); // 复用链接分享的卡片样式
+    bubble.classList.add('is-link-share');
     contentHtml = `
         <div class="link-share-card" style="cursor: pointer;" data-timestamp="${msg.timestamp}">
             <div class="title">${msg.payload.title}</div>
@@ -8216,7 +8194,6 @@ else if (msg.type === 'share_card') {
         </div>
     `;
 }
-// ▼▼▼ 在这里粘贴下面的新代码块 ▼▼▼
 else if (msg.type === 'location_share') {
     bubble.classList.add('is-location-share');
     
@@ -8234,7 +8211,6 @@ else if (msg.type === 'location_share') {
         </div>
     `;
 }
-// ▲▲▲ 新代码块粘贴结束 ▲▲▲
     else if (msg.type === 'user_photo' || msg.type === 'ai_image') {
         bubble.classList.add('is-ai-image');
         const altText = msg.type === 'user_photo' ? "用户描述的照片" : "AI生成的图片";
@@ -8476,7 +8452,6 @@ else if (msg.type === 'location_share') {
         contentHtml = String(msg.content || '').replace(/\n/g, '<br>');
     }
 
-    // ▼▼▼ 核心修正：将“引用”模块的生成逻辑移动到这里，确保 contentHtml 已被赋值 ▼▼▼
     let quoteHtml = '';
     if (msg.quote) {
         const fullQuotedContent = String(msg.quote.content || '');
@@ -8489,7 +8464,7 @@ else if (msg.type === 'location_share') {
     }
 
     bubble.innerHTML = `
-        ${avatarHtml}
+        ${avatarGroupHtml}
         <div class="content">
             ${quoteHtml}
             ${contentHtml}
@@ -8503,15 +8478,18 @@ else if (msg.type === 'location_share') {
     wrapper.addEventListener('click', () => { if (isSelectionMode) toggleMessageSelection(msg.timestamp); });
 
     if (!isUser) {
-        const avatarEl = wrapper.querySelector('.avatar'); 
-        if (avatarEl) {
-            avatarEl.style.cursor = 'pointer';
-            avatarEl.addEventListener('click', (e) => {
+        // ▼▼▼ 从这里开始是核心修复 ▼▼▼
+        // 将事件监听器从 .avatar 改为 .avatar-group
+        const avatarGroupEl = wrapper.querySelector('.avatar-group'); 
+        if (avatarGroupEl) {
+            avatarGroupEl.style.cursor = 'pointer';
+            avatarGroupEl.addEventListener('click', (e) => {
                 e.stopPropagation();
                 const characterName = chat.isGroup ? msg.senderName : chat.name;
                 handleUserPat(chat.id, characterName);
             });
         }
+        // ▲▲▲ 修复结束 ▲▲▲
     }
 
     return wrapper;
