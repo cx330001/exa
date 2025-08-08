@@ -4715,6 +4715,47 @@ input:checked + .slider:before {
     align-items: center;
 }
 /* ▲▲▲ 修正结束 ▲▲▲ */
+/* ▼▼▼ 【全新】隐藏聊天列表中的头像框 (最终修正版) ▼▼▼ */
+
+/* 1. 在聊天列表屏幕中，直接隐藏头像框图片 */
+#chat-list-screen .avatar-frame {
+    display: none;
+}
+
+/* 2. 强制所有头像的最外层容器，在列表页都保持 45px 的正确尺寸 */
+#chat-list-screen .avatar-group {
+    width: 45px;
+    height: 45px;
+}
+
+/* 3. 如果一个头像是带框结构，也强制其内部容器和图片适应 45px 的尺寸 */
+#chat-list-screen .avatar-group.has-frame .avatar-with-frame,
+#chat-list-screen .avatar-group.has-frame .avatar-img {
+    width: 45px;
+    height: 45px;
+}
+
+/* 4. 确保所有头像在列表页都是圆形的，保持统一 */
+#chat-list-screen .avatar-img,
+#chat-list-screen .avatar {
+    border-radius: 50%;
+}
+
+/* ▲▲▲ 新增CSS结束 ▲▲▲ */
+/* ▼▼▼ 【全新】增加聊天列表头像与文字的间距 ▼▼▼ */
+
+/* 1. 强制为聊天列表中的头像容器设置右边距 */
+/*    这将覆盖任何可能存在的旧样式，并确保间距生效 */
+#chat-list .chat-list-item .avatar-group {
+    margin-right: 15px !important; /* 核心：增加右边距，将文字推开 */
+}
+
+/* 2. (可选但推荐) 确保旧的头像样式不再干扰布局 */
+#chat-list .chat-list-item .avatar {
+    margin-right: 0; /* 移除旧的边距，防止重复计算 */
+}
+
+/* ▲▲▲ 新增CSS结束 ▲▲▲ */
     </style>
 </head>
 <body>
